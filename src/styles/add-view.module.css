@@ -1,0 +1,31 @@
+.title {
+  padding-bottom: 8px !important;
+  font-size: 1.2rem !important;
+  font-weight: 700 !important;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 72vh;
+  overflow-y: auto;
+  padding-top: 8px !important;
+}
+
+.description {
+  margin: 0;
+  color: #475569;
+  font-size: 0.875rem !important;
+  line-height: 1.5 !important;
+}
+
+.actions {
+  gap: 8px;
+  padding: 8px 24px 16px !important;
+}
+
+.actionButton {
+  text-transform: none !important;
+  font-weight: 600 !important;
+}

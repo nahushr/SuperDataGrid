@@ -1,0 +1,51 @@
+{
+  "name": "super-data-grid",
+  "version": "0.1.0",
+  "description": "A plug-and-play React data grid with columns inferred from field names.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./style.css": "./dist/style.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "scripts": {
+    "build": "vite build && tsc --emitDeclarationOnly -p tsconfig.build.json"
+  },
+  "peerDependencies": {
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.15.0",
+    "@mui/material": "^5.15.0",
+    "@mui/x-data-grid": "^8.17.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.15.0",
+    "@mui/material": "^5.15.0",
+    "@mui/x-data-grid": "^8.17.0",
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.8"
+  },
+  "dependencies": {
+    "libphonenumber-js": "^1.13.11",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+  }
+}

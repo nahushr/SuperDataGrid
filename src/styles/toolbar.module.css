@@ -1,0 +1,74 @@
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 0.25rem;
+  overflow: visible;
+  padding-top: 0.75rem;
+  padding-bottom: 0.5rem;
+}
+
+.toolbarRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  flex: 1 1 500px;
+  min-width: 0;
+  width: auto;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.trailingActions {
+  display: flex;
+  flex: 0 1 auto;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  max-width: 100%;
+  margin-left: auto;
+  gap: 0.5rem;
+}
+
+.includeDeletedLabel {
+  margin: 0 0 0 0.25rem !important;
+  color: #475569;
+  white-space: nowrap;
+}
+
+.toolbarButton {
+  text-transform: none !important;
+  font-weight: 600 !important;
+}
+
+.clearSelectionButton,
+.bulkDeleteButton {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .toolbarRow {
+    align-items: center;
+  }
+
+  .actions {
+    flex-basis: 100%;
+  }
+
+  .trailingActions {
+    flex-basis: 100%;
+    width: 100%;
+    margin-left: 0;
+    justify-content: flex-end;
+  }
+}

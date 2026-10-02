@@ -1,0 +1,38 @@
+.actionsCell {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  min-width: 0;
+  padding: 2px 0;
+}
+
+.actionButton {
+  min-width: 0 !important;
+  min-height: 0;
+  justify-content: flex-start;
+  padding: 4px 6px !important;
+  color: #1976d2;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: left;
+  text-transform: none;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.actionButton :global(.MuiButton-startIcon) {
+  flex: 0 0 auto;
+  margin-right: 8px;
+  margin-left: 0;
+}
+
+.destructiveAction {
+  color: #d32f2f !important;
+}
+
+.emptyValue {
+  color: #64748b;
+}

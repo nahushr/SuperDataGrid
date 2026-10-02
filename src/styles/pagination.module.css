@@ -1,0 +1,87 @@
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 64px;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 8px 16px;
+}
+
+.pageSizeControls {
+  display: flex;
+  flex: 0 1 auto;
+  align-items: center;
+  min-width: 0;
+  min-height: 36px;
+  flex-wrap: nowrap;
+  column-gap: 8px;
+  row-gap: 6px;
+}
+
+.paginationLabel,
+.rowRange {
+  color: #475569;
+  white-space: nowrap;
+}
+
+.rowRange {
+  margin-left: 4px !important;
+}
+
+.pageSizeSelect {
+  min-width: 72px;
+  height: 36px;
+  color: #0f172a;
+}
+
+.pageSizeSelect :global(.MuiSelect-select) {
+  padding: 6px 28px 6px 10px;
+}
+
+.pageSizeSelect :global(.MuiOutlinedInput-notchedOutline) {
+  border-color: #cbd5e1;
+}
+
+.pages :global(.MuiPagination-ul) {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.pages :global(.MuiPaginationItem-root) {
+  min-width: 36px;
+  height: 36px;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+.pages :global(.MuiPaginationItem-root.Mui-selected) {
+  border-color: #267e81;
+  color: #ffffff;
+  background-color: #267e81;
+}
+
+.pages :global(.MuiPaginationItem-root.Mui-selected:hover) {
+  background-color: #1e6b6e;
+}
+
+@media (max-width: 700px) {
+  .pagination {
+    justify-content: center;
+  }
+
+  .pageSizeControls {
+    justify-content: center;
+  }
+
+  .pages {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .pages :global(.MuiPagination-ul) {
+    justify-content: center;
+  }
+}

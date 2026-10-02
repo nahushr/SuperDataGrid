@@ -1,0 +1,278 @@
+.gridWorkspace {
+  --super-data-grid-min-height: 800px;
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  width: 100%;
+  height: min(76vh, 760px);
+  min-height: var(--super-data-grid-min-height);
+}
+
+.viewsSidebarSlot {
+  display: flex;
+  flex: 0 0 240px;
+  width: 240px;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  opacity: 1;
+  transform: translateX(0);
+  transition:
+    flex-basis 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    width 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    height 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    margin 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 200ms ease,
+    transform 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s;
+}
+
+.viewsSidebarSlotClosed {
+  flex-basis: 0;
+  width: 0;
+  margin-right: -16px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-12px);
+  visibility: hidden;
+  transition:
+    flex-basis 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    width 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    height 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    margin 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 180ms ease,
+    transform 300ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s linear 300ms;
+}
+
+.gridFrame {
+  flex: 1 1 auto;
+  width: 0;
+  min-width: 0;
+  height: 100%;
+  min-height: var(--super-data-grid-min-height);
+}
+
+.gridRoot {
+  height: 100%;
+  border: none !important;
+  outline: none !important;
+  color: #0f172a;
+  background-color: #ffffff;
+  --DataGrid-containerBackground: #ffffff;
+  --DataGrid-pinnedBackground: #ffffff;
+  --DataGrid-rowBorderColor: #e2e8f0;
+}
+
+.gridRoot :global(.MuiDataGrid-main),
+.gridRoot :global(.MuiDataGrid-virtualScroller) {
+  border: none !important;
+}
+
+.gridRoot :global(.MuiDataGrid-main) {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.gridRoot :global(.MuiDataGrid-virtualScroller) {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.gridRoot :global(.MuiDataGrid-columnHeaders),
+.gridRoot :global(.MuiDataGrid-columnHeader) {
+  background-color: #267e81 !important;
+  border-bottom: none !important;
+  color: #ffffff !important;
+}
+
+.gridRoot :global(.MuiDataGrid-columnHeader) {
+  justify-content: flex-start !important;
+  text-align: left !important;
+}
+
+.gridRoot :global(.MuiDataGrid-columnHeaderCheckbox),
+.gridRoot :global(.MuiDataGrid-cellCheckbox) {
+  justify-content: center !important;
+}
+
+.gridRoot :global(.MuiDataGrid-columnHeaderTitle),
+.gridRoot :global(.MuiDataGrid-columnHeader .MuiSvgIcon-root) {
+  color: #ffffff !important;
+}
+
+.gridRoot
+  :global(.MuiDataGrid-columnHeader:not(.MuiDataGrid-columnHeaderCheckbox) .MuiDataGrid-iconButtonContainer) {
+  visibility: visible !important;
+  width: auto !important;
+}
+
+.gridRoot
+  :global(.MuiDataGrid-columnHeader:not(.MuiDataGrid-columnHeader--sorted) .MuiDataGrid-sortButton) {
+  opacity: 0.82 !important;
+}
+
+.gridRoot :global(.MuiDataGrid-columnHeaderTitleContainer),
+.gridRoot :global(.MuiDataGrid-columnHeaderTitleContainerContent) {
+  overflow: visible !important;
+  white-space: normal !important;
+}
+
+.gridRoot :global(.MuiDataGrid-columnHeaderTitleContainerContent) {
+  width: 100%;
+  min-width: 0;
+}
+
+.gridRoot :global(.MuiDataGrid-columnHeaderTitle) {
+  display: block;
+  overflow: visible !important;
+  overflow-wrap: anywhere;
+  text-align: left !important;
+  text-overflow: clip !important;
+  white-space: normal !important;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.gridRoot :global(.MuiDataGrid-cell) {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  overflow: visible !important;
+  border-bottom: none !important;
+  color: #0f172a !important;
+  text-align: left !important;
+  text-overflow: clip !important;
+  white-space: normal !important;
+}
+
+.gridRoot :global(.MuiDataGrid-cell > *) {
+  align-self: center;
+  margin-block: auto;
+}
+
+.gridRoot :global(.MuiDataGrid-cellContent) {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 100%;
+  overflow: visible !important;
+  overflow-wrap: anywhere;
+  text-overflow: clip !important;
+  white-space: normal !important;
+  line-height: 1.35;
+}
+
+.cellText {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  min-height: 52px;
+  box-sizing: border-box;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  line-height: 1.35;
+}
+
+.cellTextValue {
+  display: block;
+  width: 100%;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  text-align: left;
+}
+
+.compact .cellText {
+  min-height: 36px;
+}
+
+.comfortable .cellText {
+  min-height: 68px;
+}
+
+.gridRoot :global(.MuiDataGrid-row.even) {
+  background-color: #f8fbfb !important;
+}
+
+.gridRoot :global(.MuiDataGrid-row.odd) {
+  background-color: #ffffff !important;
+}
+
+.gridRoot :global(.MuiDataGrid-row:hover) {
+  background-color: rgb(15 23 42 / 4%) !important;
+}
+
+.gridRoot :global(.MuiDataGrid-footerContainer) {
+  flex: 0 0 auto !important;
+  height: auto !important;
+  min-height: 64px !important;
+  box-sizing: border-box;
+  overflow: visible;
+  border-top: none !important;
+  color: #0f172a;
+  background-color: #ffffff;
+}
+
+.gridRoot :global(.MuiTablePagination-root),
+.gridRoot :global(.MuiTablePagination-selectLabel),
+.gridRoot :global(.MuiTablePagination-displayedRows) {
+  color: #475569;
+}
+
+.gridRoot :global(.MuiTablePagination-selectIcon) {
+  color: #64748b;
+}
+
+.gridRoot :global(.MuiTablePagination-actions) {
+  color: #0f172a;
+}
+
+.gridRoot :global(.MuiDataGrid-overlay) {
+  color: #0f172a;
+}
+
+.gridRoot :global(.MuiDataGrid-columnHeader:focus),
+.gridRoot :global(.MuiDataGrid-cell:focus),
+.gridRoot :global(.MuiDataGrid-columnHeader:focus-within),
+.gridRoot :global(.MuiDataGrid-cell:focus-within) {
+  outline: none !important;
+}
+
+@media (max-width: 760px) {
+  .gridWorkspace {
+    flex-direction: column;
+    height: auto;
+    min-height: 0;
+  }
+
+  .viewsSidebarSlot {
+    flex: 0 0 220px;
+    width: 100%;
+    height: 220px;
+    transform: translateY(0);
+  }
+
+  .viewsSidebarSlotClosed {
+    flex-basis: 0;
+    height: 0;
+    margin-right: 0;
+    margin-bottom: -16px;
+    transform: translateY(-10px);
+  }
+
+  .gridFrame {
+    flex: 0 0 var(--super-data-grid-min-height);
+    width: 100%;
+    height: var(--super-data-grid-min-height);
+    min-height: var(--super-data-grid-min-height);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .viewsSidebarSlot,
+  .viewsSidebarSlotClosed {
+    transition: none;
+    transform: none;
+  }
+}

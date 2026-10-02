@@ -1,0 +1,111 @@
+.builder {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid #dbe4ee;
+  border-radius: 10px;
+  background: #f8fafc;
+}
+
+.builderHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.builderTitle {
+  color: #0f172a;
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+}
+
+.builderDescription,
+.emptyState {
+  color: #64748b;
+  font-size: 0.8rem !important;
+  line-height: 1.45 !important;
+}
+
+.addConditionButton {
+  flex: 0 0 auto;
+  text-transform: none !important;
+}
+
+.matchRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: #475569;
+  font-size: 0.8rem;
+}
+
+.matchRow :global(.MuiToggleButton-root) {
+  padding: 4px 9px;
+  font-size: 0.72rem;
+  text-transform: none;
+}
+
+.conditionList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.conditionDivider {
+  border-color: #e2e8f0 !important;
+}
+
+.conditionRow {
+  display: grid;
+  grid-template-columns: minmax(130px, 1fr) minmax(130px, 1fr) minmax(130px, 1fr) 34px;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.valueField {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  min-height: 40px;
+}
+
+.noValue {
+  color: #64748b;
+  font-size: 0.75rem;
+}
+
+.removeConditionButton {
+  color: #c62828 !important;
+}
+
+.emptyState {
+  margin: 0;
+  padding: 4px 0;
+}
+
+@media (max-width: 700px) {
+  .builderHeader {
+    flex-direction: column;
+  }
+
+  .conditionRow {
+    grid-template-columns: minmax(0, 1fr) 34px;
+  }
+
+  .conditionRow > :nth-child(1),
+  .conditionRow > :nth-child(2),
+  .valueField {
+    grid-column: 1;
+  }
+
+  .removeConditionButton {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+  }
+}

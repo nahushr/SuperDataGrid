@@ -1,0 +1,169 @@
+.peopleDetails,
+.addressCell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+  width: 100%;
+  min-width: 0;
+  padding: 2px 0;
+  color: #0f172a;
+  line-height: 1.35;
+}
+
+.auditCell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+  width: 100%;
+  min-width: 0;
+  padding: 2px 0;
+}
+
+.personRow,
+.addressStreetRow,
+.contactLink,
+.auditTimestamp {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+.personIcon,
+.addressIcon {
+  flex: 0 0 20px;
+  width: 20px !important;
+  height: 20px !important;
+  color: #0f172a;
+}
+
+.personAvatar {
+  flex: 0 0 32px;
+  width: 32px !important;
+  height: 32px !important;
+  font-size: 13px !important;
+  font-weight: 700;
+}
+
+.avatarColor0 {
+  background-color: #1d4ed8 !important;
+}
+
+.avatarColor1 {
+  background-color: #6d28d9 !important;
+}
+
+.avatarColor2 {
+  background-color: #a21caf !important;
+}
+
+.avatarColor3 {
+  background-color: #be123c !important;
+}
+
+.avatarColor4 {
+  background-color: #b91c1c !important;
+}
+
+.avatarColor5 {
+  background-color: #c2410c !important;
+}
+
+.avatarColor6 {
+  background-color: #92400e !important;
+}
+
+.avatarColor7 {
+  background-color: #15803d !important;
+}
+
+.avatarColor8 {
+  background-color: #0f766e !important;
+}
+
+.avatarColor9 {
+  background-color: #0369a1 !important;
+}
+
+.contactIcon {
+  flex: 0 0 20px;
+  width: 20px !important;
+  height: 20px !important;
+  color: #1976d2;
+}
+
+.auditIcon {
+  flex: 0 0 20px;
+  width: 20px !important;
+  height: 20px !important;
+  color: #64748b;
+}
+
+.personName,
+.addressStreet,
+.addressSubtextText,
+.contactText,
+.auditTimestampText {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.personName {
+  font-weight: 600;
+}
+
+.contactLink {
+  color: #1976d2;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.contactLink:hover {
+  color: #125aa0;
+}
+
+.contactText {
+  flex: 1 1 auto;
+  word-break: break-word;
+}
+
+.auditTimestamp {
+  align-items: flex-start;
+  color: #64748b;
+}
+
+.auditTimestampText {
+  flex: 1 1 auto;
+}
+
+.addressSubtext {
+  width: 100%;
+  min-width: 0;
+  padding-left: 28px;
+}
+
+.addressSubtextText {
+  display: block;
+}
+
+.addressContact {
+  width: 100%;
+  min-width: 0;
+  margin-top: 2px;
+}
+
+.emptyValue {
+  color: #64748b;
+}
+
+.emptyContactValue {
+  padding-left: 28px;
+  color: #64748b;
+}
