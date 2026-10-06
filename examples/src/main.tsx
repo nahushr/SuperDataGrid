@@ -5,7 +5,7 @@ import { CssBaseline, createTheme, ThemeProvider } from "@mui/material";
 import App from "./App";
 import DemoSnackbarProvider from "./components/DemoSnackbarProvider";
 import "./index.css";
-import "super-data-grid/style.css";
+import "@nahushr18/super-data-grid/style.css";
 
 const simpliShelfTheme = createTheme({
   palette: {

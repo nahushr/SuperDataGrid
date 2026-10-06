@@ -9,7 +9,7 @@ import {
   SUPER_DATA_GRID_ACTIONS,
   type SuperDataGridActionType,
   type SuperDataGridBulkDeleteRequest,
-} from "super-data-grid";
+} from "@nahushr18/super-data-grid";
 
 export interface DemoUser {
   id: number;

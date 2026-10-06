@@ -16,7 +16,7 @@
     "@mui/x-data-grid": "^8.17.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "super-data-grid": "file:.."
+    "@nahushr18/super-data-grid": "file:.."
   },
   "devDependencies": {
     "@types/react": "^18.2.43",

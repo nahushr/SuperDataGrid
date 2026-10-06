@@ -1,5 +1,5 @@
 import { Chip } from "@mui/material";
-import type { SuperDataGridCellProps } from "super-data-grid";
+import type { SuperDataGridCellProps } from "@nahushr18/super-data-grid";
 import type { DemoUser } from "../mockServer";
 import styles from "./role-cell.module.css";
 
