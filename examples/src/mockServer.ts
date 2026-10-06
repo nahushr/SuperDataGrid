@@ -61,6 +61,7 @@ export interface DemoUser {
     invoice: { number: string; paid: boolean };
     tags: string[];
   };
+  productName: string;
   productImage: Array<{ url: string; label: string }>;
   actions: SuperDataGridActionType[];
   createdAt: string;
@@ -106,6 +107,72 @@ const MOCK_LAST_NAMES = [
   "Bennett",
 ];
 
+const unsplashProductImage = (photoId: string) =>
+  `https://images.unsplash.com/${photoId}?auto=format&fit=crop&w=1200&q=82`;
+
+const PRODUCT_GALLERIES = [
+  {
+    name: "Studio headphones",
+    images: [
+      {
+        url: unsplashProductImage("photo-1505740420928-5e560c06d30e"),
+        label: "Front view",
+        alt: "Over-ear headphones photographed on a warm studio background",
+      },
+      {
+        url: unsplashProductImage("photo-1546435770-a3e426bf472b"),
+        label: "Side view",
+        alt: "Wireless over-ear headphones shown from the side",
+      },
+      {
+        url: unsplashProductImage("photo-1484704849700-f032a568e944"),
+        label: "Detail view",
+        alt: "Close product view of over-ear headphones",
+      },
+    ],
+  },
+  {
+    name: "Runner sneakers",
+    images: [
+      {
+        url: unsplashProductImage("photo-1542291026-7eec264c27ff"),
+        label: "Front view",
+        alt: "Red running sneaker photographed on a red studio background",
+      },
+      {
+        url: unsplashProductImage("photo-1600185365483-26d7a4cc7519"),
+        label: "Side view",
+        alt: "Athletic sneaker shown in a clean product photograph",
+      },
+      {
+        url: unsplashProductImage("photo-1608231387042-66d1773070a5"),
+        label: "Detail view",
+        alt: "Running shoe photographed against a dark background",
+      },
+    ],
+  },
+  {
+    name: "Minimal wristwatch",
+    images: [
+      {
+        url: unsplashProductImage("photo-1523275335684-37898b6baf30"),
+        label: "Front view",
+        alt: "Minimal wristwatch photographed against a light background",
+      },
+      {
+        url: unsplashProductImage("photo-1524805444758-089113d48a6d"),
+        label: "On-wrist view",
+        alt: "Wristwatch shown in a lifestyle product photograph",
+      },
+      {
+        url: unsplashProductImage("photo-1434056886845-dac89ffe9b56"),
+        label: "Detail view",
+        alt: "Close view of a classic wristwatch",
+      },
+    ],
+  },
+] as const;
+
 export const largeDataset: DemoUser[] = Array.from(
   { length: 1000 },
   (_, index) => {
@@ -117,6 +184,7 @@ export const largeDataset: DemoUser[] = Array.from(
     const fullName = `${firstName} ${lastName}`;
     const email = `user${index + 1}@example.com`;
     const phone = `+34943482${String(9000 + index).slice(-4)}`;
+    const product = PRODUCT_GALLERIES[index % PRODUCT_GALLERIES.length];
 
     const grossSubtotal = 129999 + ((index * 137) % 4_200_000);
     const totalDiscount = index % 3 === 0 ? 2500 + ((index * 43) % 24000) : 0;
@@ -185,11 +253,8 @@ export const largeDataset: DemoUser[] = Array.from(
         },
         tags: index % 2 === 0 ? ["verified", "priority"] : ["verified"],
       },
-      productImage: [
-        { url: "/demo-product.svg", label: "Main" },
-        { url: "/demo-product-front.svg", label: "Front" },
-        { url: "/demo-product-detail.svg", label: "Details" },
-      ],
+      productName: product.name,
+      productImage: product.images.map((image) => ({ ...image })),
       actions: [
         SUPER_DATA_GRID_ACTIONS.VIEW,
         SUPER_DATA_GRID_ACTIONS.EDIT,

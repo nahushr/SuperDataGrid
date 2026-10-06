@@ -143,7 +143,7 @@ Additional built-in cell types cover common values. Configure the renderer with 
 | `email` / `phone` | Clickable mail and telephone links with optional icons; phone values include a country flag when the country can be resolved. | `showIcon`, `showFlag`, and for phones `countryCode` / `format` |
 | `longText` | Short cell preview with the full value in a tooltip. | `maxPreviewLength` |
 | `json` | Compact preview that opens formatted JSON with a copy action. | `maxPreviewLength` |
-| `image` | Product image tile that opens the SimpliShelf-style carousel with arrows, count, and thumbnails. Accepts a URL, an array of `{ url, label }`, an `{ images: [...] }` object, or SimpliShelf product image fields. | `altField`, `labelField`, `thumbnailAlt`, `fallbackLetter` |
+| `image` | Compact product-photo card that opens a large gallery with previous/next controls, a selectable thumbnail strip, and keyboard navigation. Accepts a URL, an array of `{ url, label }`, an `{ images: [...] }` object, or SimpliShelf product image fields. | `titleField`, `altField`, `labelField`, `thumbnailAlt`, `fallbackLetter` |
 | `priceBreakdown` | Purchase-order total with a detailed dialog for subtotal, discount, packaging, shipping, fees, tax, and total. | Currency options plus `title` and `labels` |
 
 Badge colors are named, CSS-backed tokens exported as `SUPER_DATA_GRID_BADGE_COLORS`; independently select the text color and pass React icons per status. The palette supports primary, info, success, warning, error, purple, neutral, teal, cyan, indigo, orange, and slate. For currency values stored as integer cents, set `amountInMinorUnits: true` and `minorUnits: 2`.
@@ -205,7 +205,7 @@ const columnTypes = {
 />
 ```
 
-For the `priceBreakdown` type, pass a purchase-order summary object in the `orderTotal` field. The grid shows the grand total in that same cell and opens the complete subtotal, discount, packaging, shipping, fees, tax, and total breakdown when clicked. `productImage` accepts multiple product images; it prefers a label containing “Main” for the tile and opens the full carousel when selected.
+For the `priceBreakdown` type, pass a purchase-order summary object in the `orderTotal` field. The grid shows the grand total in that same cell and opens the complete subtotal, discount, packaging, shipping, fees, tax, and total breakdown when clicked. `productImage` accepts multiple product images; it prefers a label containing “Main” for the card thumbnail and opens the full gallery when selected. Set `titleField` to a row property such as `productName` to show that product name in the cell and gallery heading.
 
 ```ts
 const order = {

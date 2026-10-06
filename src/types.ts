@@ -116,6 +116,8 @@ export interface SuperDataGridJsonOptions {
 
 export interface SuperDataGridImageOptions {
   thumbnailAlt?: string;
+  /** Row property to use as the product title in the cell and image gallery. */
+  titleField?: string;
   /** Optional property on an object cell value to use as its alt text. */
   altField?: string;
   /** Optional property on an object cell value to use as a caption. */

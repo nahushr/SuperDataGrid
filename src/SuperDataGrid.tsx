@@ -125,7 +125,7 @@ function getColumnMinWidth(columnType?: SuperDataGridColumnType): number {
     case "longText":
     case "json": return 220;
     case "phone": return 190;
-    case "image": return 200;
+    case "image": return 240;
     case "priceBreakdown": return 235;
     case "currency":
     case "date":
@@ -216,7 +216,7 @@ function renderGridCell<Row extends SuperDataGridRow>(
     case "json":
       return <JsonPreviewCell value={rawValue} field={field} options={options?.json} />;
     case "image":
-      return <ImagePreviewCell value={rawValue} field={field} options={options?.image} />;
+      return <ImagePreviewCell value={rawValue} field={field} row={row} options={options?.image} />;
     case "priceBreakdown":
       return <PriceBreakdownCell value={rawValue} row={row} options={options?.priceBreakdown} />;
     case "actions":

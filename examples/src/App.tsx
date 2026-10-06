@@ -108,7 +108,8 @@ const columnOptions = {
     image: {
       altField: "alt",
       labelField: "label",
-      thumbnailAlt: "Product package preview",
+      titleField: "productName",
+      thumbnailAlt: "Product photo",
       fallbackLetter: "P",
     },
   },

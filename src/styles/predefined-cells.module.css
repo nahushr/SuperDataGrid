@@ -261,249 +261,524 @@
   font-size: 13px;
 }
 
-.imageCell {
+.productImageCell {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
   width: 100%;
   min-width: 0;
 }
 
-.imageButton {
-  display: block;
-  width: 64px;
-  height: 48px;
-  padding: 0;
-  overflow: hidden;
-  border: 1px solid #dbe2ea;
-  border-radius: 7px;
-  background: #f8fafc;
+.productImageCard {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  min-height: 78px;
+  padding: 6px;
+  border: 1px solid #e2e8f0;
+  border-radius: 13px;
+  background: linear-gradient(120deg, #fff, #f8fafc);
+  box-shadow: 0 1px 2px rgb(15 23 42 / 5%);
+  color: #172033;
   cursor: zoom-in;
+  text-align: left;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
 }
 
-.imageThumbnail {
+.productImageCard:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: #93c5fd;
+  box-shadow: 0 5px 14px rgb(30 64 175 / 11%);
+}
+
+.productImageCard:focus-visible,
+.carousel:focus-visible,
+.carouselThumbnail:focus-visible {
+  outline: 3px solid rgb(37 99 235 / 55%);
+  outline-offset: 2px;
+}
+
+.productImageCard:disabled {
+  cursor: default;
+}
+
+.productImageCardVisual {
+  position: relative;
+  display: block;
+  flex: 0 0 66px;
+  width: 66px;
+  height: 64px;
+  overflow: hidden;
+  border-radius: 9px;
+  background: linear-gradient(145deg, #e2e8f0, #f8fafc 62%, #dbeafe);
+}
+
+.productImageThumbnail {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 220ms ease;
 }
 
-.imageLabel {
-  width: 100%;
-  overflow-wrap: anywhere;
-  color: #64748b;
-  font-size: 12px;
+.productImageCard:hover .productImageThumbnail {
+  transform: scale(1.06);
 }
 
-.imageDialogPaper {
-  max-width: min(900px, calc(100vw - 32px));
-}
-
-.imageDialogContent {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  padding: 20px;
-}
-
-.imageExpanded {
-  display: block;
-  max-width: 100%;
-  max-height: 70vh;
-  object-fit: contain;
-}
-
-.productImageTile {
-  display: block;
-  width: 150px;
-  height: 150px;
-  min-width: 150px;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  border: 0;
-  border-radius: 5px;
-  background: #f1f5f9;
-  cursor: default;
-  text-align: inherit;
-}
-
-.productImageTileActive {
-  cursor: pointer;
-}
-
-.productImageTile:focus-visible {
-  outline: 2px solid #1976d2;
-  outline-offset: 2px;
-}
-
-.productImageThumbnail,
 .productImageFallback {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 100%;
-  box-sizing: border-box;
-  object-fit: contain;
+  color: #1d4ed8;
+  font-size: 25px;
+  font-weight: 800;
 }
 
-.productImageFallback {
-  background: #e8f2ff;
-  color: #0b4f9c;
-  font-size: 44px;
+.productImageCountBadge {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  padding: 2px 5px;
+  border: 1px solid rgb(255 255 255 / 55%);
+  border-radius: 6px;
+  background: rgb(15 23 42 / 82%);
+  color: #fff;
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
   font-weight: 700;
+  line-height: 1.2;
 }
 
-.productImageLabel {
-  display: block;
-  max-width: 150px;
+.productImageExpandIcon {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: rgb(255 255 255 / 90%);
+  color: #334155;
+}
+
+.productImageExpandIcon svg {
+  width: 13px;
+  height: 13px;
+}
+
+.productImageCardMeta {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.productImageCardTitle {
+  display: -webkit-box;
+  overflow: hidden;
+  color: #1e293b;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.productImageCardHint {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   overflow: hidden;
   color: #64748b;
-  font-size: 12px;
+  font-size: 10px;
+  font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+.productImageCardHint svg {
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+  color: #2563eb;
+}
+
 .productImageDialogPaper {
-  width: min(900px, calc(100vw - 32px));
-  max-width: min(900px, calc(100vw - 32px));
+  width: min(980px, calc(100vw - 32px));
+  max-width: min(980px, calc(100vw - 32px));
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 24px 80px rgb(15 23 42 / 24%);
+}
+
+.productImageDialogTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 22px 26px 17px;
+  border-bottom: 1px solid #edf1f5;
+}
+
+.productImageDialogHeading {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.productImageDialogEyebrow {
+  color: #2563eb;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+}
+
+.productImageDialogName {
+  overflow: hidden;
+  color: #172033;
+  font-size: 20px;
+  font-weight: 750;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+}
+
+.productImageDialogClose {
+  flex: 0 0 auto;
+  color: #64748b;
+}
+
+.productImageDialogClose:hover {
+  background: #f1f5f9;
+  color: #0f172a;
 }
 
 .productImageDialogContent {
-  padding: 24px;
+  padding: 19px 24px 24px;
 }
 
 .carousel {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   width: 100%;
+  outline: none;
+}
+
+.carouselToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 28px;
+}
+
+.carouselInfo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.carouselCounter {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+}
+
+.carouselCounterDivider {
+  color: #93c5fd;
+}
+
+.carouselLabel {
+  overflow: hidden;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.carouselKeyboardHint {
+  color: #94a3b8;
+  font-size: 11px;
+  white-space: nowrap;
 }
 
 .carouselMain {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  position: relative;
+  width: 100%;
 }
 
 .carouselImageFrame {
   display: flex;
-  flex: 1;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  height: clamp(300px, 59vh, 580px);
   min-width: 0;
-  min-height: min(360px, 55vh);
-  max-height: min(65vh, 520px);
   overflow: hidden;
-  border-radius: 8px;
-  background: #f5f5f5;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background:
+    radial-gradient(ellipse at 50% 42%, rgb(255 255 255 / 96%), transparent 61%),
+    linear-gradient(145deg, #f1f5f9, #e8eef5);
 }
 
 .carouselImage {
   display: block;
   width: 100%;
   height: 100%;
-  max-width: 100%;
-  max-height: min(65vh, 520px);
+  padding: 18px;
   object-fit: contain;
+  filter: drop-shadow(0 14px 16px rgb(15 23 42 / 15%));
 }
 
-.carouselImageFallback,
-.carouselEmpty {
+.carouselImageFallback {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  min-height: min(360px, 55vh);
-  color: #64748b;
-  font-size: 20px;
+  width: 100%;
+  height: 100%;
+  color: #2563eb;
+  font-size: 80px;
+  font-weight: 800;
+}
+
+.carouselStageCount {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  padding: 6px 10px;
+  border: 1px solid rgb(255 255 255 / 60%);
+  border-radius: 999px;
+  background: rgb(15 23 42 / 72%);
+  color: #fff;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  backdrop-filter: blur(8px);
 }
 
 .carouselNav {
+  position: absolute;
+  top: 50%;
+  z-index: 1;
   display: inline-flex;
-  flex: 0 0 34px;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
   padding: 0;
-  border: 1px solid #dbe2ea;
+  transform: translateY(-50%);
+  border: 1px solid rgb(255 255 255 / 80%);
   border-radius: 50%;
-  background: #f8fafc;
-  color: #334155;
+  background: rgb(255 255 255 / 94%);
+  box-shadow: 0 5px 18px rgb(15 23 42 / 14%);
+  color: #1e293b;
   cursor: pointer;
+  transition: background 140ms ease, color 140ms ease, transform 140ms ease;
+}
+
+.carouselNavPrevious {
+  left: 14px;
+}
+
+.carouselNavNext {
+  right: 14px;
 }
 
 .carouselNav:hover:not(:disabled) {
-  background: #e8f2ff;
-  color: #0b4f9c;
+  transform: translateY(-50%) scale(1.06);
+  background: #2563eb;
+  color: #fff;
 }
 
 .carouselNav:disabled {
   cursor: default;
-  opacity: 0.35;
-}
-
-.carouselInfo {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.carouselCounter,
-.carouselLabel {
-  display: inline-block;
-  padding: 3px 9px;
-  border-radius: 999px;
-  background: #eff6ff;
-  color: #475569;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.carouselLabel {
-  color: #1976d2;
+  opacity: 0.4;
 }
 
 .carouselThumbnails {
   display: flex;
-  justify-content: center;
-  gap: 6px;
-  flex-wrap: wrap;
-  max-height: 90px;
-  overflow: auto;
-  padding: 4px;
+  justify-content: flex-start;
+  gap: 9px;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 3px 2px 8px;
+  scrollbar-color: #cbd5e1 transparent;
+  scrollbar-width: thin;
 }
 
 .carouselThumbnail {
-  width: 48px;
-  height: 48px;
-  padding: 2px;
+  display: flex;
+  flex: 0 0 112px;
+  flex-direction: column;
+  gap: 5px;
+  width: 112px;
+  height: 88px;
+  padding: 4px;
   overflow: hidden;
   border: 2px solid transparent;
-  border-radius: 6px;
+  border-radius: 11px;
   background: #f1f5f9;
   cursor: pointer;
+  transition: border-color 140ms ease, background 140ms ease, transform 140ms ease;
 }
 
 .carouselThumbnail:hover {
-  transform: scale(1.04);
+  transform: translateY(-1px);
+  background: #eaf2ff;
 }
 
 .carouselThumbnailActive {
-  border-color: #1976d2;
+  border-color: #2563eb;
+  background: #eff6ff;
 }
 
-.carouselThumbnailImage {
+.carouselThumbnailImage,
+.carouselThumbnailFallback {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #e2e8f0;
+  object-fit: cover;
+}
+
+.carouselThumbnailFallback {
+  color: #2563eb;
+  font-weight: 800;
+}
+
+.carouselThumbnailLabel {
   display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  overflow: hidden;
+  color: #475569;
+  font-size: 10px;
+  font-weight: 650;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.carouselEmpty {
+  display: flex;
+  min-height: 220px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #64748b;
+  font-size: 15px;
+}
+
+.carouselEmptyMonogram {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 68px;
+  height: 68px;
+  border-radius: 18px;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 30px;
+  font-weight: 800;
+}
+
+@media (max-width: 600px) {
+  .productImageCard {
+    gap: 7px;
+    min-height: 66px;
+    padding: 4px;
+  }
+
+  .productImageCardVisual {
+    flex-basis: 54px;
+    width: 54px;
+    height: 54px;
+  }
+
+  .productImageCardTitle {
+    font-size: 11px;
+  }
+
+  .productImageCardHint {
+    font-size: 9px;
+  }
+
+  .productImageDialogPaper {
+    width: calc(100vw - 20px);
+    max-width: calc(100vw - 20px);
+    margin: 10px;
+    border-radius: 16px;
+  }
+
+  .productImageDialogTitle {
+    padding: 16px 16px 13px;
+  }
+
+  .productImageDialogName {
+    font-size: 17px;
+  }
+
+  .productImageDialogContent {
+    padding: 14px 14px 17px;
+  }
+
+  .carouselImageFrame {
+    height: clamp(220px, 46vh, 420px);
+    border-radius: 13px;
+  }
+
+  .carouselImage {
+    padding: 10px;
+  }
+
+  .carouselNav {
+    width: 38px;
+    height: 38px;
+  }
+
+  .carouselNavPrevious {
+    left: 8px;
+  }
+
+  .carouselNavNext {
+    right: 8px;
+  }
+
+  .carouselKeyboardHint {
+    display: none;
+  }
+
+  .carouselThumbnail {
+    flex-basis: 96px;
+    width: 96px;
+    height: 78px;
+  }
 }
 
 .breakdownTrigger {

@@ -9,64 +9,108 @@ export interface ProductImageCarouselProps {
   fallbackLetter?: string;
 }
 
-/** Full-size product gallery matching SimpliShelf's data-grid image carousel. */
+/** Large, keyboard-friendly product gallery with a selectable thumbnail strip. */
 export default function ProductImageCarousel({
   images,
   fallbackLetter = "P",
 }: Readonly<ProductImageCarouselProps>) {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [failedImages, setFailedImages] = useState<ReadonlySet<string>>(
     () => new Set(),
   );
+  const currentIndex = Math.max(0, Math.min(selectedIndex, images.length - 1));
   const currentImage = images[currentIndex];
+
   if (!currentImage) {
     return (
       <div className={styles.carouselEmpty}>
-        <span>{fallbackLetter}</span>
-        <span>No product images</span>
+        <span className={styles.carouselEmptyMonogram}>{fallbackLetter}</span>
+        <span>No product images to show</span>
       </div>
     );
   }
 
+  const selectPrevious = () => {
+    setSelectedIndex((index) => (index === 0 ? images.length - 1 : index - 1));
+  };
+  const selectNext = () => {
+    setSelectedIndex((index) => (index === images.length - 1 ? 0 : index + 1));
+  };
   const showPrevious = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
-    setCurrentIndex((index) => (index === 0 ? images.length - 1 : index - 1));
+    selectPrevious();
   };
   const showNext = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
-    setCurrentIndex((index) => (index === images.length - 1 ? 0 : index + 1));
+    selectNext();
+  };
+  const handleKeyboardNavigation = (
+    event: React.KeyboardEvent<HTMLDivElement>,
+  ) => {
+    if (images.length < 2) return;
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      selectPrevious();
+    } else if (event.key === "ArrowRight") {
+      event.preventDefault();
+      selectNext();
+    }
   };
   const markFailed = (url: string) => {
     setFailedImages((current) => new Set(current).add(url));
   };
+  const currentLabel = currentImage.label || `Image ${currentIndex + 1}`;
 
   return (
-    <div className={styles.carousel}>
+    <div
+      className={styles.carousel}
+      onKeyDown={handleKeyboardNavigation}
+      tabIndex={0}
+    >
+      <div className={styles.carouselToolbar}>
+        <div aria-live="polite" className={styles.carouselInfo}>
+          <span className={styles.carouselCounter}>
+            {String(currentIndex + 1).padStart(2, "0")}
+            <span className={styles.carouselCounterDivider}>/</span>
+            {String(images.length).padStart(2, "0")}
+          </span>
+          <span className={styles.carouselLabel}>{currentLabel}</span>
+        </div>
+        {images.length > 1 && (
+          <span className={styles.carouselKeyboardHint}>Use ← → to browse</span>
+        )}
+      </div>
       <div className={styles.carouselMain}>
+        <div className={styles.carouselImageFrame}>
+          {failedImages.has(currentImage.url) ? (
+            <div className={styles.carouselImageFallback}>{fallbackLetter}</div>
+          ) : (
+            <img
+              alt={currentImage.alt || currentLabel}
+              className={styles.carouselImage}
+              decoding="async"
+              onError={() => markFailed(currentImage.url)}
+              src={currentImage.url}
+            />
+          )}
+          {images.length > 1 && (
+            <span className={styles.carouselStageCount}>
+              {currentIndex + 1} of {images.length}
+            </span>
+          )}
+        </div>
         <button
           aria-label="Previous product image"
-          className={styles.carouselNav}
+          className={`${styles.carouselNav} ${styles.carouselNavPrevious}`}
           disabled={images.length < 2}
           onClick={showPrevious}
           type="button"
         >
           <ChevronLeftIcon />
         </button>
-        <div className={styles.carouselImageFrame}>
-          {failedImages.has(currentImage.url) ? (
-            <div className={styles.carouselImageFallback}>{fallbackLetter}</div>
-          ) : (
-            <img
-              alt={currentImage.label || `Product image ${currentIndex + 1}`}
-              className={styles.carouselImage}
-              onError={() => markFailed(currentImage.url)}
-              src={currentImage.url}
-            />
-          )}
-        </div>
         <button
           aria-label="Next product image"
-          className={styles.carouselNav}
+          className={`${styles.carouselNav} ${styles.carouselNavNext}`}
           disabled={images.length < 2}
           onClick={showNext}
           type="button"
@@ -74,38 +118,37 @@ export default function ProductImageCarousel({
           <ChevronRightIcon />
         </button>
       </div>
-      <div aria-live="polite" className={styles.carouselInfo}>
-        {images.length > 1 && (
-          <span className={styles.carouselCounter}>
-            {currentIndex + 1}/{images.length}
-          </span>
-        )}
-        {currentImage.label && (
-          <span className={styles.carouselLabel}>{currentImage.label}</span>
-        )}
-      </div>
       {images.length > 1 && (
         <div aria-label="Product image thumbnails" className={styles.carouselThumbnails}>
           {images.map((image, index) => {
             const imageLabel = image.label || `image ${index + 1}`;
+            const isActive = index === currentIndex;
             return (
               <button
                 aria-label={`Show ${imageLabel}`}
-                aria-pressed={index === currentIndex}
-                className={`${styles.carouselThumbnail} ${index === currentIndex ? styles.carouselThumbnailActive : ""}`}
+                aria-pressed={isActive}
+                className={`${styles.carouselThumbnail} ${isActive ? styles.carouselThumbnailActive : ""}`}
                 key={`${image.url}-${index}`}
                 onClick={(event) => {
                   event.stopPropagation();
-                  setCurrentIndex(index);
+                  setSelectedIndex(index);
                 }}
                 type="button"
               >
-                <img
-                  alt=""
-                  className={styles.carouselThumbnailImage}
-                  onError={() => markFailed(image.url)}
-                  src={image.url}
-                />
+                {failedImages.has(image.url) ? (
+                  <span className={styles.carouselThumbnailFallback}>
+                    {fallbackLetter}
+                  </span>
+                ) : (
+                  <img
+                    alt=""
+                    className={styles.carouselThumbnailImage}
+                    loading="lazy"
+                    onError={() => markFailed(image.url)}
+                    src={image.url}
+                  />
+                )}
+                <span className={styles.carouselThumbnailLabel}>{imageLabel}</span>
               </button>
             );
           })}
