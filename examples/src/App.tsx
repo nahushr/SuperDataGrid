@@ -12,6 +12,7 @@ import SuperDataGrid, {
   type SuperDataGridView,
 } from "super-data-grid";
 import RoleCell from "./components/RoleCell";
+import DemoActionJsonPanel from "./components/DemoActionJsonPanel";
 import { useDemoSnackbar } from "./components/DemoSnackbarProvider";
 import {
   fetchAllServerData,
@@ -76,6 +77,7 @@ export default function App() {
   });
   const [filterModel, setFilterModel] = useState(initialFilterModel);
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
+  const [actionJson, setActionJson] = useState<string | number[]>([]);
   const [views, setViews] = useState(initialViews);
   const previousQueryRef = useRef({
     page: paginationModel.page,
@@ -187,7 +189,8 @@ export default function App() {
 
   const handleBulkDelete = useCallback(
     async (request: SuperDataGridBulkDeleteRequest<DemoUser>) => {
-      await bulkDeleteServerRows(request);
+      const deletedIds = await bulkDeleteServerRows(request);
+      setActionJson(deletedIds);
       setPaginationModel((current) => ({ ...current, page: 0 }));
       setDataRevision((revision) => revision + 1);
       notify(`Bulk delete completed for ${request.selectedCount} users`);
@@ -220,6 +223,7 @@ export default function App() {
           columns={columns}
           columnTypes={columnTypes}
           data={data}
+          beforeTable={<DemoActionJsonPanel value={actionJson} />}
           minHeight={900}
           sortingMode="server"
           sortModel={sortModel}
@@ -249,9 +253,14 @@ export default function App() {
           includeDeleted={includeDeleted}
           onIncludeDeletedChange={handleIncludeDeletedChange}
           onBulkDelete={handleBulkDelete}
-          onAction={({ action, row }) =>
-            notify(`${action} action selected for ${row.name}`)
-          }
+          onAction={({ action, row }) => {
+            const actionLabel =
+              action === "deactivate"
+                ? "Deactivate"
+                : action.charAt(0).toUpperCase() + action.slice(1);
+            setActionJson(`${actionLabel}, selected for IDs [${row.id}]`);
+            notify(`${actionLabel} action selected for ${row.name}`);
+          }}
           cellComponents={{ role: RoleCell }}
           checkboxSelection
           selectionLabel="users"

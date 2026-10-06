@@ -17,10 +17,10 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import {
   GridLogicOperator,
-  type GridColDef,
   type GridFilterItem,
   type GridFilterModel,
 } from "@mui/x-data-grid";
+import type { SuperDataGridFilterField } from "../utils/filterFields";
 import styles from "../styles/view-filter-builder.module.css";
 
 interface FilterCondition {
@@ -31,7 +31,7 @@ interface FilterCondition {
 }
 
 interface SuperDataGridViewFilterBuilderProps {
-  columns: GridColDef[];
+  columns: SuperDataGridFilterField[];
   initialModel: GridFilterModel;
   onChange: (model: GridFilterModel) => void;
 }
@@ -71,7 +71,7 @@ function needsValue(operator: string): boolean {
   return operator !== "isEmpty" && operator !== "isNotEmpty";
 }
 
-function operatorsFor(column?: GridColDef) {
+function operatorsFor(column?: SuperDataGridFilterField) {
   if (column?.type === "number") return NUMBER_OPERATORS;
   if (column?.type === "boolean") return BOOLEAN_OPERATORS;
   if (column?.type === "date" || column?.type === "dateTime") {
@@ -106,7 +106,7 @@ function modelToConditions(model: GridFilterModel): FilterCondition[] {
 
 function toFilterModel(
   filters: FilterCondition[],
-  columns: GridColDef[],
+  columns: SuperDataGridFilterField[],
   logicOperator: GridLogicOperator,
 ): GridFilterModel {
   const items: GridFilterItem[] = filters
@@ -259,7 +259,7 @@ export default function SuperDataGridViewFilterBuilder({
                     >
                       {filterableColumns.map((column) => (
                         <MenuItem key={column.field} value={column.field}>
-                          {column.headerName ?? column.field}
+                          {column.headerName}
                         </MenuItem>
                       ))}
                     </Select>

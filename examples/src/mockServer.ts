@@ -150,81 +150,177 @@ const EMPTY_FILTER_MODEL: GridFilterModel = {
 
 function matchesFilter(user: DemoUser, filter: GridFilterItem): boolean {
   const operator = filter.operator ?? "contains";
-  const cellValue =
-    filter.field === "peopleDetails"
-      ? [user.name, user.email, user.phone].join(" | ")
-      : filter.field === "address"
-        ? [
-            user.address.streetAddress,
-            user.address.streetAddress2,
-            user.address.streetAddress3,
-            user.address.city,
-            user.address.state,
-            user.address.postalCode,
-            user.address.nameOnAddress,
-            user.address.emailOnAddress,
-            user.address.phoneOnAddress,
-          ].join(" | ")
-        : filter.field === "createdAt"
-          ? [
-              user.createdByUserInfo.fullName,
-              user.createdByUserInfo.loginName,
-              user.createdAt,
-            ].join(" | ")
-        : user[filter.field as keyof DemoUser];
-  const value = filter.value;
-  const cellText = cellValue == null ? "" : String(cellValue).toLowerCase();
-  const filterText = value == null ? "" : String(value).toLowerCase();
+  const [column, ...nestedPath] = filter.field.split(".");
+  let cellValue: unknown;
 
-  if (operator === "isEmpty") return cellText.length === 0;
-  if (operator === "isNotEmpty") return cellText.length > 0;
+  if (column === "peopleDetails" && nestedPath.length > 0) {
+    const path = nestedPath.join(".");
+    cellValue = path === "name"
+      ? `${user.peopleDetails.firstName} ${user.peopleDetails.lastName}`.trim()
+      : readNestedValue(user.peopleDetails, nestedPath);
+  } else if (column === "address" && nestedPath.length > 0) {
+    cellValue = readNestedValue(user.address, nestedPath);
+  } else if (column === "createdAt" && nestedPath.length > 0) {
+    const auditPath = nestedPath.join(".");
+    cellValue = auditPath === "fullName" || auditPath === "name"
+      ? user.createdByUserInfo.fullName
+      : auditPath === "email"
+        ? user.createdByUserInfo.loginName
+        : auditPath === "timestamp"
+          ? user.createdAt
+          : readNestedValue(user.createdByUserInfo, nestedPath);
+  } else {
+    cellValue =
+      filter.field === "peopleDetails"
+        ? [user.name, user.email, user.phone].join(" | ")
+        : filter.field === "address"
+          ? [
+              user.address.streetAddress,
+              user.address.streetAddress2,
+              user.address.streetAddress3,
+              user.address.city,
+              user.address.state,
+              user.address.postalCode,
+              user.address.nameOnAddress,
+              user.address.emailOnAddress,
+              user.address.phoneOnAddress,
+            ].join(" | ")
+          : filter.field === "createdAt"
+            ? [
+                user.createdByUserInfo.fullName,
+                user.createdByUserInfo.loginName,
+                user.createdAt,
+              ].join(" | ")
+            : user[filter.field as keyof DemoUser];
+  }
+
+  const cellValues = Array.isArray(cellValue) ? cellValue : [cellValue];
+  const value = filter.value;
+  const filterText = value == null ? "" : String(value).toLowerCase();
+  const nonEmptyValues = cellValues.filter((entry) => entry != null && entry !== "");
+  if (operator === "isEmpty") return nonEmptyValues.length === 0;
+  if (operator === "isNotEmpty") return nonEmptyValues.length > 0;
   if (value == null || filterText.length === 0) return true;
 
-  if (Array.isArray(value) || operator === "isAnyOf") {
-    const options = Array.isArray(value) ? value : filterText.split(";");
-    return options.some(
-      (option) => String(option).toLowerCase() === cellText,
+  const options = Array.isArray(value)
+    ? value
+    : operator === "isAnyOf"
+      ? filterText.split(";")
+      : [value];
+
+  if (operator === "isAnyOf") {
+    return nonEmptyValues.some((entry) =>
+      options.some(
+        (option) => String(option).toLowerCase() === String(entry).toLowerCase(),
+      ),
     );
   }
 
-  if (typeof cellValue === "number") {
+  if (nonEmptyValues.some((entry) => typeof entry === "number")) {
     const numericValue = Number(value);
     if (!Number.isFinite(numericValue)) return true;
-    switch (operator) {
-      case "=":
-      case "equals":
-        return cellValue === numericValue;
-      case "!=":
-        return cellValue !== numericValue;
-      case ">":
-        return cellValue > numericValue;
-      case ">=":
-        return cellValue >= numericValue;
-      case "<":
-        return cellValue < numericValue;
-      case "<=":
-        return cellValue <= numericValue;
-      default:
-        return false;
-    }
+    return nonEmptyValues.some((entry) => {
+      if (typeof entry !== "number") return false;
+      switch (operator) {
+        case "=":
+        case "equals":
+          return entry === numericValue;
+        case "!=":
+          return entry !== numericValue;
+        case ">":
+          return entry > numericValue;
+        case ">=":
+          return entry >= numericValue;
+        case "<":
+          return entry < numericValue;
+        case "<=":
+          return entry <= numericValue;
+        default:
+          return false;
+      }
+    });
   }
 
-  switch (operator) {
-    case "equals":
-    case "=":
-    case "is":
-      return cellText === filterText;
-    case "not":
-    case "!=":
-      return cellText !== filterText;
-    case "startsWith":
-      return cellText.startsWith(filterText);
-    case "endsWith":
-      return cellText.endsWith(filterText);
-    case "contains":
-    default:
-      return cellText.includes(filterText);
+  const dateOperators = new Set([
+    "is",
+    "not",
+    "after",
+    "onOrAfter",
+    "before",
+    "onOrBefore",
+  ]);
+  const dateField = /(date|time|at|on|timestamp|lastLogin)$/i.test(filter.field);
+  const isDateFilter =
+    value instanceof Date ||
+    nonEmptyValues.some((entry) => entry instanceof Date) ||
+    dateField;
+  if (isDateFilter && dateOperators.has(operator)) {
+    const filterDate = value instanceof Date ? value : new Date(String(value));
+    if (Number.isNaN(filterDate.getTime())) return true;
+    const filterDay = filterDate.toISOString().slice(0, 10);
+    return nonEmptyValues.some((entry) => {
+      const date = entry instanceof Date ? entry : new Date(String(entry));
+      if (Number.isNaN(date.getTime())) return false;
+      switch (operator) {
+        case "is":
+          return date.toISOString().slice(0, 10) === filterDay;
+        case "not":
+          return date.toISOString().slice(0, 10) !== filterDay;
+        case "after":
+          return date.getTime() > filterDate.getTime();
+        case "onOrAfter":
+          return date.getTime() >= filterDate.getTime();
+        case "before":
+          return date.getTime() < filterDate.getTime();
+        case "onOrBefore":
+          return date.getTime() <= filterDate.getTime();
+        default:
+          return false;
+      }
+    });
   }
+
+  if (nonEmptyValues.some((entry) => typeof entry === "boolean")) {
+    const booleanValue = value === true || String(value).toLowerCase() === "true";
+    return nonEmptyValues.some((entry) =>
+      operator === "not" || operator === "!=" ? entry !== booleanValue : entry === booleanValue,
+    );
+  }
+
+  const filterTextLower = String(value).toLowerCase();
+  return nonEmptyValues.some((entry) => {
+    const cellText = String(entry).toLowerCase();
+    switch (operator) {
+      case "equals":
+      case "=":
+      case "is":
+        return cellText === filterTextLower;
+      case "not":
+      case "!=":
+        return cellText !== filterTextLower;
+      case "startsWith":
+        return cellText.startsWith(filterTextLower);
+      case "endsWith":
+        return cellText.endsWith(filterTextLower);
+      case "contains":
+      default:
+        return cellText.includes(filterTextLower);
+    }
+  });
+}
+
+function readNestedValue(value: unknown, path: readonly string[]): unknown {
+  if (path.length === 0) return value;
+  if (Array.isArray(value)) {
+    return value
+      .map((entry) => readNestedValue(entry, path))
+      .flatMap((entry) => Array.isArray(entry) ? entry : [entry]);
+  }
+  if (typeof value !== "object" || value === null) return undefined;
+  return readNestedValue(
+    (value as Record<string, unknown>)[path[0]],
+    path.slice(1),
+  );
 }
 
 function applyServerFilters(
@@ -365,7 +461,7 @@ export async function fetchAllServerData(
 
 export function bulkDeleteServerRows(
   request: SuperDataGridBulkDeleteRequest<DemoUser>,
-): Promise<void> {
+): Promise<number[]> {
   return new Promise((resolve) => {
     window.setTimeout(() => {
       const matchingIds = new Set(
@@ -374,16 +470,21 @@ export function bulkDeleteServerRows(
         ),
       );
       const selectionModel: GridRowSelectionModel = request.rowSelectionModel;
-
-      for (const user of largeDataset) {
+      const deletedIds = largeDataset.flatMap((user) => {
+        if (user.id % 25 === 0) return [];
         const selected =
           selectionModel.type === "include"
             ? selectionModel.ids.has(user.id)
             : matchingIds.has(user.id) && !selectionModel.ids.has(user.id);
-        if (selected) user.isDeleted = true;
+        return selected ? [user.id] : [];
+      });
+
+      const idsToDelete = new Set(deletedIds);
+      for (const user of largeDataset) {
+        if (idsToDelete.has(user.id)) user.isDeleted = true;
       }
 
-      resolve();
+      resolve(deletedIds);
     }, 300);
   });
 }

@@ -1,8 +1,35 @@
-# SuperDataGrid
+<p align="center">
+  <img src="assets/super-data-grid-logo.png" alt="SuperDataGrid" width="560" />
+</p>
 
-A small React data grid package inspired by the shared grid in SimpliShelf Admin. It wraps MUI X DataGrid and generates its column definitions from a list of field names.
+<p align="center">
+  <a href="https://github.com/nahushr/SuperDataGrid/actions/workflows/deploy.yml"><img alt="CI" src="https://github.com/nahushr/SuperDataGrid/actions/workflows/deploy.yml/badge.svg?branch=main" /></a>
+  <img alt="React 18+" src="https://img.shields.io/badge/React-18%2B-61DAFB?logo=react&logoColor=111827" />
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-types%20included-3178C6?logo=typescript&logoColor=white" />
+  <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/license-MIT-16a085.svg" /></a>
+</p>
 
-## Use it
+<p align="center">
+  <a href="https://stackblitz.com/github/nahushr/SuperDataGrid?startScript=dev:example&file=examples/src/App.tsx"><img alt="Open the React example in StackBlitz" src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" /></a>
+</p>
+
+## Demo
+
+| Online | Local |
+|---|---|
+| [Open the React example in StackBlitz](https://stackblitz.com/github/nahushr/SuperDataGrid?startScript=dev:example&file=examples/src/App.tsx) | `npm run dev:example` → [localhost:7000](http://localhost:7000) |
+
+The example uses a mock server with 1,000 users and demonstrates server-side filtering, sorting, pagination, selection across pages, saved views, bulk delete, export, built-in cell renderers, and action callbacks. It also displays callback results as JSON above the grid.
+
+## Install and import
+
+SuperDataGrid wraps MUI X DataGrid and generates its column definitions from a list of field names. Install it alongside its UI peer dependencies:
+
+```sh
+npm install super-data-grid @mui/material @mui/x-data-grid @mui/icons-material @emotion/react @emotion/styled
+```
+
+Your application should already include `react` and `react-dom`.
 
 ```tsx
 import SuperDataGrid from "super-data-grid";
@@ -23,7 +50,11 @@ Column names are object keys. Header labels are generated from those names, so `
 
 The grid workspace has an 800px minimum height by default. Override it with `minHeight={900}` (numbers are pixels) or a CSS length such as `minHeight="90vh"`.
 
+Use `beforeTable` to render host-provided content between the grid toolbar and the column headers. The example uses this slot to show the latest action output.
+
 The default page size is 25. Users can choose 10, 25, 50, 100, or 500 rows per page. Click a column header to sort ascending, descending, or clear the sort. Sorting, filtering, and pagination default to client-side behavior and can be switched independently to server-side behavior. For server-side sorting, control `sortModel` and handle `onSortModelChange`, then sort the full result set before slicing it into pages. Headers wrap long labels, cell content stays left-aligned and vertically centered, and long values wrap instead of being clipped.
+
+When a column's raw row value is a JSON object, the Filter dialog and Add/Edit View dialog discover its scalar paths as filter choices, such as `peopleDetails.name`, `peopleDetails.email`, and `address.city`. These paths stay hidden from the visible grid. Server-side handlers receive the dotted field name in `filterModel`, so resolve it against the raw row before applying the selected operator. Custom cell components should render from the raw `value` or `row` passed to them; the filter choices come from that same row data.
 
 ```tsx
 <SuperDataGrid
@@ -182,14 +213,11 @@ The package declares React, MUI Material, MUI X DataGrid, MUI Icons, and Emotion
 
 ## Run the example
 
-The example app consumes this repository through a local `file:` dependency and demonstrates server-side pagination, filtering, row selection, Include Deleted, and bulk soft delete over 1,000 mock users. Ordinary mock requests add 300 ms latency, while page navigation waits three seconds to demonstrate the animated “Fetching details” grid overlay. All-pages exports and Select all fetch matching rows in chunks. Every 25th example row is disabled for selection. Build the package before installing the example so its `dist` entry points exist:
+The example app consumes this repository through a local `file:` dependency and demonstrates server-side pagination, filtering, row selection, Include Deleted, and bulk soft delete over 1,000 mock users. Ordinary mock requests add 300 ms latency, while page navigation waits three seconds to demonstrate the animated “Fetching details” grid overlay. All-pages exports and Select all fetch matching rows in chunks. Every 25th example row is disabled for selection. The example builds the local package before starting Vite:
 
 ```sh
-npm install
-npm run build
-cd examples
-npm install
-npm run dev
+npm ci
+npm run dev:example
 ```
 
 Vite serves the example at [http://localhost:7000](http://localhost:7000).

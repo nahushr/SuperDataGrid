@@ -1,8 +1,24 @@
 {
   "name": "super-data-grid",
   "version": "0.1.0",
-  "description": "A plug-and-play React data grid with columns inferred from field names.",
+  "description": "A plug-and-play React data grid with server-side data, saved views, filters, and custom cells.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nahushr/SuperDataGrid.git"
+  },
+  "homepage": "https://github.com/nahushr/SuperDataGrid#readme",
+  "bugs": {
+    "url": "https://github.com/nahushr/SuperDataGrid/issues"
+  },
+  "keywords": [
+    "react",
+    "data-grid",
+    "data-table",
+    "mui",
+    "server-side-pagination",
+    "typescript"
+  ],
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -16,14 +32,21 @@
     "./style.css": "./dist/style.css"
   },
   "files": [
-    "dist"
+    "dist",
+    "assets"
   ],
   "sideEffects": [
     "**/*.css"
   ],
   "scripts": {
-    "build": "vite build && tsc --emitDeclarationOnly -p tsconfig.build.json"
+    "build": "vite build && tsc --emitDeclarationOnly -p tsconfig.build.json",
+    "dev:example": "npm run build && npm run dev --workspace super-data-grid-example",
+    "build:example": "npm run build --workspace super-data-grid-example",
+    "prepack": "npm run build"
   },
+  "workspaces": [
+    "examples"
+  ],
   "peerDependencies": {
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
@@ -42,7 +65,7 @@
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
     "typescript": "^5.3.3",
-    "vite": "^5.0.8"
+    "vite": "^6.4.3"
   },
   "dependencies": {
     "libphonenumber-js": "^1.13.11",

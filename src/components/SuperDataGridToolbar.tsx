@@ -462,6 +462,11 @@ export default function SuperDataGridToolbar() {
           )}
         </div>
         </div>
+        {gridState.beforeTable != null && (
+          <div className={styles.beforeTableContent}>
+            {gridState.beforeTable}
+          </div>
+        )}
       </GridToolbarContainer>
 
       <SuperDataGridExportScopeDialog

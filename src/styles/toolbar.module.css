@@ -9,6 +9,11 @@
   padding-bottom: 0.5rem;
 }
 
+.beforeTableContent {
+  width: 100%;
+  min-width: 0;
+}
+
 .toolbarRow {
   display: flex;
   align-items: center;

@@ -1,4 +1,4 @@
-import { createContext } from "react";
+import { createContext, type ReactNode } from "react";
 import type {
   GridColDef,
   GridColumnVisibilityModel,
@@ -15,6 +15,7 @@ import type {
 
 export interface SuperDataGridContextValue {
   columns: GridColDef[];
+  beforeTable?: ReactNode;
   rows: GridValidRowModel[];
   density: GridDensity;
   onDensityChange: (density: GridDensity) => void;

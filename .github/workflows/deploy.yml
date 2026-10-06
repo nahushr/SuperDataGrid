@@ -1,0 +1,143 @@
+name: Build, analyze, and publish SuperDataGrid
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: superdatagrid-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build and verify package
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build package
+        run: npm run build
+
+      - name: Build the Vite example
+        run: npm run build:example
+
+      - name: Verify package contents
+        run: npm pack --dry-run
+
+  analyze:
+    name: SonarCloud and Snyk analysis
+    needs: build
+    if: >-
+      github.event_name != 'pull_request' ||
+      (github.event.pull_request.head.repo.full_name == github.repository &&
+      github.actor != 'dependabot[bot]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      HAS_SONAR_TOKEN: ${{ secrets.SONAR_TOKEN != '' }}
+      HAS_SNYK_TOKEN: ${{ secrets.SNYK_TOKEN != '' }}
+    steps:
+      - name: Check out source with full history
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run SonarCloud analysis
+        if: env.HAS_SONAR_TOKEN == 'true'
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: npx --yes sonarqube-scanner@5.0.0 -Dsonar.token="$SONAR_TOKEN"
+
+      - name: Note missing SonarCloud secret
+        if: env.HAS_SONAR_TOKEN != 'true'
+        run: echo "::notice::SonarCloud analysis skipped because SONAR_TOKEN is not configured."
+
+      - name: Set up Snyk CLI
+        if: env.HAS_SNYK_TOKEN == 'true'
+        uses: snyk/actions/setup@806182742461562b67788a64410098c9d9b96adb
+
+      - name: Run Snyk dependency analysis
+        if: env.HAS_SNYK_TOKEN == 'true'
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: snyk test --all-projects --severity-threshold=high
+
+      - name: Run Snyk Code analysis
+        if: env.HAS_SNYK_TOKEN == 'true'
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        run: snyk code test --severity-threshold=high
+
+      - name: Note missing Snyk secret
+        if: env.HAS_SNYK_TOKEN != 'true'
+        run: echo "::notice::Snyk analysis skipped because SNYK_TOKEN is not configured."
+
+  publish:
+    name: Publish to npm
+    needs: analyze
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      HAS_NPM_TOKEN: ${{ secrets.NPM_TOKEN != '' }}
+    steps:
+      - name: Note missing npm publishing secret
+        if: env.HAS_NPM_TOKEN != 'true'
+        run: echo "::notice::npm publishing skipped because NPM_TOKEN is not configured."
+
+      - name: Check out source
+        if: env.HAS_NPM_TOKEN == 'true'
+        uses: actions/checkout@v6
+
+      - name: Set up npm registry authentication
+        if: env.HAS_NPM_TOKEN == 'true'
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      - name: Verify npm publishing identity
+        if: env.HAS_NPM_TOKEN == 'true'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm whoami --registry=https://registry.npmjs.org
+
+      - name: Install dependencies
+        if: env.HAS_NPM_TOKEN == 'true'
+        run: npm ci
+
+      - name: Build package for publishing
+        if: env.HAS_NPM_TOKEN == 'true'
+        run: npm run build
+
+      - name: Publish public npm package
+        if: env.HAS_NPM_TOKEN == 'true'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public --registry=https://registry.npmjs.org

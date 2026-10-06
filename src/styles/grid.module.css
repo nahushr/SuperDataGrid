@@ -112,6 +112,15 @@
   opacity: 0.82 !important;
 }
 
+.gridRoot :global(.MuiDataGrid-columnHeader .MuiDataGrid-sortButton) {
+  background-color: transparent !important;
+  color: #ffffff !important;
+}
+
+.gridRoot :global(.MuiDataGrid-columnHeader .MuiDataGrid-sortButton:hover) {
+  background-color: rgb(255 255 255 / 14%) !important;
+}
+
 .gridRoot :global(.MuiDataGrid-columnHeaderTitleContainer),
 .gridRoot :global(.MuiDataGrid-columnHeaderTitleContainerContent) {
   overflow: visible !important;

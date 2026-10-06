@@ -1,4 +1,4 @@
-import type { ComponentType } from "react";
+import type { ComponentType, ReactNode } from "react";
 import type {
   GridColumnVisibilityModel,
   GridDensity,
@@ -49,6 +49,8 @@ export interface SuperDataGridProps<
   data: readonly Row[];
   /** Minimum height for the grid workspace. Numbers are pixels; defaults to 800px. */
   minHeight?: number | string;
+  /** Optional content rendered after the toolbar and before the table. */
+  beforeTable?: ReactNode;
   /** Controlled row density. Omit to let the grid manage density internally. */
   density?: GridDensity;
   /** Called when the user selects a new row density. */

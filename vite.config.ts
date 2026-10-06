@@ -9,6 +9,7 @@ export default defineConfig({
       name: "SuperDataGrid",
       formats: ["es", "cjs"],
       fileName: (format) => (format === "es" ? "index.js" : "index.cjs"),
+      cssFileName: "style",
     },
     rollupOptions: {
       external: /^(react|react-dom|@emotion\/react|@emotion\/styled|@mui\/icons-material|@mui\/material|@mui\/x-data-grid|libphonenumber-js|xlsx)(\/|$)/,

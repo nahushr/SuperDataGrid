@@ -7,14 +7,15 @@ import {
   DialogTitle,
   TextField,
 } from "@mui/material";
-import type { GridColDef, GridFilterModel } from "@mui/x-data-grid";
+import type { GridFilterModel } from "@mui/x-data-grid";
 import type { SuperDataGridView } from "../types";
+import type { SuperDataGridFilterField } from "../utils/filterFields";
 import SuperDataGridViewFilterBuilder from "./SuperDataGridViewFilterBuilder";
 import styles from "../styles/add-view.module.css";
 
 interface SuperDataGridAddViewDialogProps {
   open: boolean;
-  columns: GridColDef[];
+  columns: SuperDataGridFilterField[];
   initialView: SuperDataGridView | null;
   onClose: () => void;
   onSave: (name: string, notes: string, filterModel: GridFilterModel) => void;

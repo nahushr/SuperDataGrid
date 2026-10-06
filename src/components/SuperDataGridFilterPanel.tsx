@@ -22,10 +22,10 @@ import CloseIcon from "@mui/icons-material/Close";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import {
   GridLogicOperator,
-  type GridColDef,
   type GridFilterItem,
   type GridFilterModel,
 } from "@mui/x-data-grid";
+import type { SuperDataGridFilterField } from "../utils/filterFields";
 import styles from "../styles/filter-panel.module.css";
 
 interface FilterCondition {
@@ -37,7 +37,7 @@ interface FilterCondition {
 
 interface FilterPanelProps {
   open: boolean;
-  columns: GridColDef[];
+  columns: SuperDataGridFilterField[];
   filterModel: GridFilterModel;
   onClose: () => void;
   onApply: (model: GridFilterModel) => void;
@@ -74,7 +74,7 @@ const DATE_OPERATORS = [
 ];
 const BOOLEAN_OPERATORS = [{ value: "is", label: "is" }];
 
-function operatorsFor(column?: GridColDef) {
+function operatorsFor(column?: SuperDataGridFilterField) {
   if (column?.type === "number") return NUMBER_OPERATORS;
   if (column?.type === "boolean") return BOOLEAN_OPERATORS;
   if (column?.type === "date" || column?.type === "dateTime") {
@@ -273,7 +273,7 @@ export default function SuperDataGridFilterPanel({
                   >
                     {columns.map((column) => (
                       <MenuItem key={column.field} value={column.field}>
-                        {column.headerName ?? column.field}
+                        {column.headerName}
                       </MenuItem>
                     ))}
                   </Select>

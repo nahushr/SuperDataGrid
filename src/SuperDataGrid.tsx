@@ -33,6 +33,10 @@ import {
   toDisplayValue,
   toHeaderName,
 } from "./utils/gridData";
+import {
+  createFilterFields,
+  getFilterFieldValue,
+} from "./utils/filterFields";
 import { getCommonCellSearchText } from "./utils/commonCellData";
 import type {
   SuperDataGridBulkDeleteRequest,
@@ -86,6 +90,7 @@ export function SuperDataGrid<
   columnTypes,
   data,
   minHeight,
+  beforeTable,
   density: densityProp,
   onDensityChange,
   sortingMode = "client",
@@ -250,6 +255,57 @@ export function SuperDataGrid<
     [cellComponents, columns, columnTypes, data, onAction],
   );
 
+  const filterFields = useMemo(
+    () => createFilterFields(gridColumns, data, columnTypes),
+    [columnTypes, data, gridColumns],
+  );
+
+  const filterOnlyColumns = useMemo<GridColDef[]>(
+    () =>
+      filterFields
+        .filter((field) => field.parentField != null)
+        .map((field) => ({
+          field: field.field,
+          headerName: field.headerName,
+          description: "Nested data filter field",
+          type: field.type,
+          width: 1,
+          minWidth: 1,
+          maxWidth: 1,
+          sortable: false,
+          filterable: true,
+          hideable: false,
+          disableColumnMenu: true,
+          disableReorder: true,
+          valueGetter: (_value, row) => {
+            const value = getFilterFieldValue(
+              row as Record<string, unknown>,
+              field,
+              columnTypes,
+            );
+            if (field.type !== "date" && field.type !== "dateTime") {
+              return value;
+            }
+            const date = value instanceof Date ? value : new Date(String(value));
+            return value == null || Number.isNaN(date.getTime()) ? null : date;
+          },
+        })),
+    [columnTypes, filterFields],
+  );
+
+  const dataGridColumns = useMemo(
+    () => [...gridColumns, ...filterOnlyColumns],
+    [filterOnlyColumns, gridColumns],
+  );
+
+  const dataGridColumnVisibilityModel = useMemo(
+    () => ({
+      ...columnVisibilityModel,
+      ...Object.fromEntries(filterOnlyColumns.map((column) => [column.field, false])),
+    }),
+    [columnVisibilityModel, filterOnlyColumns],
+  );
+
   const rows = useMemo<GridValidRowModel[]>(
     () =>
       data.map((row, index) => {
@@ -317,12 +373,16 @@ export function SuperDataGrid<
 
   const handleColumnVisibilityModelChange = useCallback(
     (model: GridColumnVisibilityModel) => {
+      const publicFields = new Set(columns);
+      const publicModel = Object.fromEntries(
+        Object.entries(model).filter(([field]) => publicFields.has(field)),
+      );
       if (columnVisibilityModelProp === undefined) {
-        setInternalColumnVisibilityModel(model);
+        setInternalColumnVisibilityModel(publicModel);
       }
-      onColumnVisibilityModelChange?.(model);
+      onColumnVisibilityModelChange?.(publicModel);
     },
-    [columnVisibilityModelProp, onColumnVisibilityModelChange],
+    [columnVisibilityModelProp, columns, onColumnVisibilityModelChange],
   );
 
   const handleFilterPanelOpenChange = useCallback(
@@ -703,6 +763,7 @@ export function SuperDataGrid<
   const contextValue = useMemo(
     () => ({
       columns: gridColumns,
+      beforeTable,
       rows,
       density,
       onDensityChange: handleDensityChange,
@@ -733,6 +794,7 @@ export function SuperDataGrid<
       onToggleViews: () => handleViewsOpenChange(!viewsOpen),
     }),
     [
+      beforeTable,
       columnVisibilityModel,
       handleColumnVisibilityModelChange,
       handleDensityChange,
@@ -809,7 +871,7 @@ export function SuperDataGrid<
           <DataGrid
             className={styles.gridRoot}
             rows={rows}
-            columns={gridColumns}
+            columns={dataGridColumns}
             columnHeaderHeight={getColumnHeaderHeight(gridColumns)}
             density={density}
             sortingMode={sortingMode}
@@ -828,7 +890,7 @@ export function SuperDataGrid<
             onDensityChange={handleDensityChange}
             filterModel={filterModel}
             onFilterModelChange={handleFilterModelChange}
-            columnVisibilityModel={columnVisibilityModel}
+            columnVisibilityModel={dataGridColumnVisibilityModel}
             onColumnVisibilityModelChange={handleColumnVisibilityModelChange}
             pageSizeOptions={PAGE_SIZE_OPTIONS}
             rowSelection={checkboxSelection}
@@ -860,14 +922,14 @@ export function SuperDataGrid<
       </div>
       <SuperDataGridFilterPanel
         open={filterPanelOpen}
-        columns={gridColumns}
+        columns={filterFields}
         filterModel={filterModel}
         onClose={() => handleFilterPanelOpenChange(false)}
         onApply={handleFilterModelChange}
       />
       <SuperDataGridAddViewDialog
         open={addViewOpen}
-        columns={gridColumns}
+        columns={filterFields}
         initialView={editingView}
         onClose={() => handleAddViewOpenChange(false)}
         onSave={handleSaveView}
