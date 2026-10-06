@@ -104,40 +104,44 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    env:
-      HAS_NPM_TOKEN: ${{ secrets.NPM_TOKEN != '' }}
     steps:
-      - name: Note missing npm publishing secret
-        if: env.HAS_NPM_TOKEN != 'true'
-        run: echo "::notice::npm publishing skipped because NPM_TOKEN is not configured."
-
       - name: Check out source
-        if: env.HAS_NPM_TOKEN == 'true'
         uses: actions/checkout@v6
 
       - name: Set up npm registry authentication
-        if: env.HAS_NPM_TOKEN == 'true'
         uses: actions/setup-node@v6
         with:
           node-version: 22
           registry-url: https://registry.npmjs.org
 
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build package for publishing
+        run: npm run build
+
+      - name: Check whether this package version is already published
+        id: published-version
+        shell: bash
+        run: |
+          package_name="$(node -p "require('./package.json').name")"
+          package_version="$(node -p "require('./package.json').version")"
+          if npm view "${package_name}@${package_version}" version --json --registry=https://registry.npmjs.org >/dev/null 2>&1; then
+            echo "already_published=true" >> "$GITHUB_OUTPUT"
+            echo "${package_name}@${package_version} is already published; skipping duplicate publish."
+          else
+            echo "already_published=false" >> "$GITHUB_OUTPUT"
+            echo "${package_name}@${package_version} is not published; publishing this version."
+          fi
+
       - name: Verify npm publishing identity
-        if: env.HAS_NPM_TOKEN == 'true'
+        if: steps.published-version.outputs.already_published != 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm whoami --registry=https://registry.npmjs.org
 
-      - name: Install dependencies
-        if: env.HAS_NPM_TOKEN == 'true'
-        run: npm ci
-
-      - name: Build package for publishing
-        if: env.HAS_NPM_TOKEN == 'true'
-        run: npm run build
-
       - name: Publish public npm package
-        if: env.HAS_NPM_TOKEN == 'true'
+        if: steps.published-version.outputs.already_published != 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --access public --registry=https://registry.npmjs.org
