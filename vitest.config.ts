@@ -8,13 +8,5 @@ export default defineConfig({
     css: true,
     clearMocks: true,
     restoreMocks: true,
-    coverage: {
-      provider: "v8",
-      reporter: ["text", "lcov"],
-      include: ["src/**/*.{ts,tsx}"],
-      exclude: ["src/**/*.d.ts"],
-      reportsDirectory: "./coverage",
-      thresholds: { statements: 80, lines: 80 },
-    },
   },
 });

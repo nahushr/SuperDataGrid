@@ -34,7 +34,7 @@ export default function SuperDataGridViewsSidebar({
   canAdd = true,
   canEdit = true,
   canDelete = true,
-}: SuperDataGridViewsSidebarProps) {
+}: Readonly<SuperDataGridViewsSidebarProps>) {
   return (
     <aside className={styles.viewsSidebar} aria-label="Saved views">
       <div className={styles.sidebarHeader}>

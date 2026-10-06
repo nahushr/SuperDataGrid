@@ -49,7 +49,7 @@ export default function JsonPreviewCell({
   value,
   field,
   options = {},
-}: JsonPreviewCellProps) {
+}: Readonly<JsonPreviewCellProps>) {
   const [open, setOpen] = useState(false);
   const [copyMessage, setCopyMessage] = useState("");
   const id = useId().replace(/:/g, "");

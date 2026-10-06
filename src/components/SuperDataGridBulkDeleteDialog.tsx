@@ -29,7 +29,7 @@ export default function SuperDataGridBulkDeleteDialog({
   error,
   onClose,
   onConfirm,
-}: SuperDataGridBulkDeleteDialogProps) {
+}: Readonly<SuperDataGridBulkDeleteDialogProps>) {
   return (
     <Dialog
       open={open}

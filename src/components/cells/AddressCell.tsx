@@ -12,7 +12,7 @@ interface AddressCellProps {
 export default function AddressCell({
   value,
   emptyText = "—",
-}: AddressCellProps) {
+}: Readonly<AddressCellProps>) {
   const { street, cityLine, name, email, phone } = getAddressParts(value);
 
   if (!street && !cityLine && !name && !email && !phone) {

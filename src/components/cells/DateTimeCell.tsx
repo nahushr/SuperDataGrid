@@ -12,7 +12,7 @@ interface DateTimeCellProps {
 export default function DateTimeCell({
   value,
   options = {},
-}: DateTimeCellProps) {
+}: Readonly<DateTimeCellProps>) {
   const date = parseDateValue(value);
   if (!date) return <span className={styles.emptyValue}>—</span>;
 

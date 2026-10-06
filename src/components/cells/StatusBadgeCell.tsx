@@ -4,6 +4,7 @@ import type {
   SuperDataGridBadgeOptions,
 } from "../../types";
 import { asRecord } from "../../utils/predefinedCellData";
+import { toSafeText } from "../../utils/safeText";
 import styles from "../../styles/predefined-cells.module.css";
 
 const COLOR_CLASSES: Record<SuperDataGridBadgeColor, string> = {
@@ -48,22 +49,20 @@ function isBadgeColor(value: unknown): value is SuperDataGridBadgeColor {
 export default function StatusBadgeCell({
   value,
   options = {},
-}: StatusBadgeCellProps) {
+}: Readonly<StatusBadgeCellProps>) {
   const record = asRecord(value);
   const raw = record?.status ?? record?.value ?? value;
-  const key = raw == null ? "" : String(raw);
+  const key = toSafeText(raw);
   const label = options.labels?.[key] ?? record?.label ?? (key || options.fallbackLabel);
-  const color = isBadgeColor(options.colors?.[key])
-    ? options.colors[key]
-    : isBadgeColor(record?.color)
-      ? record.color
-      : options.fallbackColor ?? "neutral";
+  let color: SuperDataGridBadgeColor = options.fallbackColor ?? "neutral";
+  if (isBadgeColor(record?.color)) color = record.color;
+  if (isBadgeColor(options.colors?.[key])) color = options.colors[key];
   const fontColor = isBadgeColor(options.fontColors?.[key])
     ? options.fontColors[key]
     : options.fallbackFontColor;
   const icon = options.icons?.[key] ?? options.fallbackIcon;
 
-  const displayLabel = String(label ?? options.fallbackLabel ?? "").trim();
+  const displayLabel = toSafeText(label ?? options.fallbackLabel).trim();
   if (!displayLabel) {
     return <span className={styles.emptyValue}>—</span>;
   }

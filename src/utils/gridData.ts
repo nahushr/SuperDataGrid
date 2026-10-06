@@ -3,6 +3,7 @@ import type {
   GridRowId,
 } from "@mui/x-data-grid";
 import type { SuperDataGridRow } from "../types";
+import { toSafeText } from "./safeText";
 
 export function toHeaderName(field: string): string {
   const words = field
@@ -29,7 +30,7 @@ export function toDisplayValue(value: unknown): string {
     return Number.isNaN(value.getTime()) ? "" : value.toLocaleDateString();
   }
   if (typeof value === "number" || typeof value === "boolean") {
-    return String(value);
+    return toSafeText(value);
   }
 
   try {

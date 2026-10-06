@@ -131,7 +131,7 @@
 
 .contactText {
   flex: 1 1 auto;
-  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .auditTimestamp {

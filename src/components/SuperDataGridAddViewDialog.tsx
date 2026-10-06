@@ -29,7 +29,7 @@ export default function SuperDataGridAddViewDialog({
   initialView,
   onClose,
   onSave,
-}: SuperDataGridAddViewDialogProps) {
+}: Readonly<SuperDataGridAddViewDialogProps>) {
   const [name, setName] = useState("");
   const [notes, setNotes] = useState("");
   const [filterModel, setFilterModel] = useState<GridFilterModel>(

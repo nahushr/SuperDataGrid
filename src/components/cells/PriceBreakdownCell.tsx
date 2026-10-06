@@ -83,7 +83,7 @@ export default function PriceBreakdownCell({
   value,
   row,
   options = {},
-}: PriceBreakdownCellProps) {
+}: Readonly<PriceBreakdownCellProps>) {
   const [open, setOpen] = useState(false);
   const dialogId = useId().replace(/:/g, "");
   const record = asRecord(value);
@@ -114,7 +114,7 @@ export default function PriceBreakdownCell({
     return { grandTotal, lines: lines.filter((line) => line.amount != null) };
   }, [options, record]);
 
-  if (!breakdown || breakdown.grandTotal == null) {
+  if (breakdown?.grandTotal == null) {
     return <span className={styles.emptyValue}>—</span>;
   }
 

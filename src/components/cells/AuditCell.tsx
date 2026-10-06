@@ -14,7 +14,7 @@ interface AuditCellProps {
   field: string;
 }
 
-export default function AuditCell({ value, row, field }: AuditCellProps) {
+export default function AuditCell({ value, row, field }: Readonly<AuditCellProps>) {
   const timestamp = formatAuditTimestamp(
     getAuditTimestamp(value, row, field),
   );

@@ -48,7 +48,7 @@ interface ActionsCellProps {
   onAction?: (action: SuperDataGridActionType) => void;
 }
 
-export default function ActionsCell({ value, onAction }: ActionsCellProps) {
+export default function ActionsCell({ value, onAction }: Readonly<ActionsCellProps>) {
   const actions = Array.isArray(value) ? value.filter(isAction) : [];
 
   if (actions.length === 0) {

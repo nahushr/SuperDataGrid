@@ -4,6 +4,7 @@ import {
 } from "libphonenumber-js";
 import type { SuperDataGridColumnType } from "../types";
 import { getProductImages } from "./predefinedCellData";
+import { toSafeText } from "./safeText";
 
 export interface PeopleDetailsParts {
   name: string;
@@ -103,72 +104,92 @@ export function getAuditPeopleDetailsParts(
 ): PeopleDetailsParts {
   const record = toRecord(value);
   const person = record?.user ?? record?.person ?? record?.createdByUserInfo;
-  const inlineParts = isDateValue(person ?? value)
-    ? { name: "", email: "", phone: "" }
-    : getPeopleDetailsParts(person ?? value);
-  if (inlineParts.name || inlineParts.email || inlineParts.phone) {
-    return inlineParts;
+  if (!isDateValue(person ?? value)) {
+    const inlineParts = getPeopleDetailsParts(person ?? value);
+    if (inlineParts.name || inlineParts.email || inlineParts.phone) {
+      return inlineParts;
+    }
   }
 
   const rowRecord = toRecord(row);
   if (rowRecord == null) return { name: "", email: "", phone: "" };
 
   const normalizedField = field.toLowerCase();
-  const peopleKeys =
-    normalizedField.includes("updated") || normalizedField.includes("modified")
-      ? [
-          "updatedByUserInfo",
-          "modifiedByUserInfo",
-          "updatedByUser",
-          "modifiedByUser",
-          "updatedBy",
-          "modifiedBy",
-        ]
-      : normalizedField.includes("created")
-        ? ["createdByUserInfo", "createdByUser", "createdBy", "creator"]
-        : [
-            "createdByUserInfo",
-            "updatedByUserInfo",
-            "modifiedByUserInfo",
-            "createdByUser",
-            "updatedByUser",
-            "modifiedByUser",
-            "userInfo",
-            "user",
-            "createdBy",
-            "updatedBy",
-            "modifiedBy",
-            "actor",
-            "auditUser",
-          ];
+  const auditPerson = findAuditPerson(rowRecord, getAuditPersonKeys(normalizedField));
+  if (auditPerson) return auditPerson;
 
-  for (const key of peopleKeys) {
-    const candidate = rowRecord[key];
+  const actorPrefix = getAuditActorPrefix(normalizedField);
+  return getAuditActorFallback(rowRecord, actorPrefix);
+}
+
+function getAuditPersonKeys(normalizedField: string): readonly string[] {
+  if (normalizedField.includes("updated") || normalizedField.includes("modified")) {
+    return [
+      "updatedByUserInfo",
+      "modifiedByUserInfo",
+      "updatedByUser",
+      "modifiedByUser",
+      "updatedBy",
+      "modifiedBy",
+    ];
+  }
+  if (normalizedField.includes("created")) {
+    return ["createdByUserInfo", "createdByUser", "createdBy", "creator"];
+  }
+  return [
+    "createdByUserInfo",
+    "updatedByUserInfo",
+    "modifiedByUserInfo",
+    "createdByUser",
+    "updatedByUser",
+    "modifiedByUser",
+    "userInfo",
+    "user",
+    "createdBy",
+    "updatedBy",
+    "modifiedBy",
+    "actor",
+    "auditUser",
+  ];
+}
+
+function findAuditPerson(
+  row: Record<string, unknown>,
+  keys: readonly string[],
+): PeopleDetailsParts | null {
+  for (const key of keys) {
+    const candidate = row[key];
     if (typeof candidate === "string" && candidate.includes("@")) {
       return { name: "", email: candidate.trim(), phone: "" };
     }
-
     const parts = getPeopleDetailsParts(candidate);
     if (parts.name || parts.email || parts.phone) return parts;
   }
+  return null;
+}
 
-  const namePrefix =
-    normalizedField.includes("updated") || normalizedField.includes("modified")
-      ? "updated"
-      : "created";
-  const actorFallback =
-    namePrefix === "created" ? rowRecord.createdUser : undefined;
+function getAuditActorPrefix(normalizedField: string): "created" | "updated" {
+  return normalizedField.includes("updated") || normalizedField.includes("modified")
+    ? "updated"
+    : "created";
+}
+
+function getAuditActorFallback(
+  row: Record<string, unknown>,
+  namePrefix: "created" | "updated",
+): PeopleDetailsParts {
+  const actorFallback = namePrefix === "created" ? row.createdUser : undefined;
   const actorText =
     typeof actorFallback === "string" ? actorFallback.trim() : "";
   const actorIsEmail = actorText.includes("@");
   const name =
-    firstText(rowRecord, [
+    firstText(row, [
       `${namePrefix}ByName`,
       `${namePrefix}ByFullName`,
       `${namePrefix}UserName`,
     ]) || (actorText && !actorIsEmail ? actorText : "");
   const email =
-    firstText(rowRecord, [
+    firstText(row, [
       `${namePrefix}ByEmail`,
       `${namePrefix}ByLoginName`,
     ]) || (actorIsEmail ? actorText : "");
@@ -230,104 +251,100 @@ export function getCommonCellSearchText(
   row?: unknown,
   field?: string,
 ): string {
-  if (type === "audit") {
-    const person = getAuditPeopleDetailsParts(value, row, field);
-    const timestamp = formatAuditTimestamp(
-      getAuditTimestamp(value, row, field ?? ""),
-    );
-    return [person.name, person.email, timestamp].filter(Boolean).join(" | ");
+  switch (type) {
+    case "audit":
+      return getAuditSearchText(value, row, field ?? "");
+    case "actions":
+      return Array.isArray(value)
+        ? value.filter((action): action is string => typeof action === "string").join(" | ")
+        : "";
+    case "badge": {
+      const record = toRecord(value);
+      return toSafeText(record?.status ?? record?.value ?? record?.label ?? value);
+    }
+    case "currency": {
+      const record = toRecord(value);
+      return toSafeText(record?.amount ?? record?.value ?? value);
+    }
+    case "date":
+    case "dateTime": {
+      const date = parseAuditDate(value);
+      return date?.toISOString() ?? "";
+    }
+    case "email":
+      return getEmailSearchText(value);
+    case "phone":
+      return getPhoneSearchText(value);
+    case "longText":
+    case "json":
+    case "priceBreakdown":
+      return toSafeText(value);
+    case "image":
+      return getImageSearchText(value);
+    case "peopleDetails":
+      return Object.values(getPeopleDetailsParts(value)).filter(Boolean).join(" | ");
+    case "address":
+      return Object.values(getAddressParts(value)).filter(Boolean).join(" | ");
+    default:
+      return "";
   }
-  if (type === "actions") {
-    return Array.isArray(value)
-      ? value.filter((action): action is string => typeof action === "string").join(" | ")
-      : "";
-  }
+}
 
-  if (type === "badge") {
-    const record = toRecord(value);
-    const status = record?.status ?? record?.value ?? record?.label ?? value;
-    return status == null ? "" : String(status);
-  }
-  if (type === "currency") {
-    const record = toRecord(value);
-    const amount = record?.amount ?? record?.value ?? value;
-    return amount == null ? "" : String(amount);
-  }
-  if (type === "date" || type === "dateTime") {
-    const date = parseAuditDate(value);
-    return date ? date.toISOString() : "";
-  }
-  if (type === "email") {
-    const record = toRecord(value);
-    return firstText(record ?? {}, ["email", "emailAddress", "value"]) ||
-      (typeof value === "string" ? value.trim() : "");
-  }
-  if (type === "phone") {
-    const record = toRecord(value);
-    return firstText(record ?? {}, ["phone", "phoneNumber", "mobile", "value"]) ||
-      (typeof value === "string" || typeof value === "number" ? String(value) : "");
-  }
-  if (type === "longText") {
-    if (typeof value === "string") return value;
-    try {
-      return JSON.stringify(value) ?? "";
-    } catch {
-      return String(value ?? "");
-    }
-  }
-  if (type === "json") {
-    try {
-      return typeof value === "string" ? value : JSON.stringify(value) ?? "";
-    } catch {
-      return String(value ?? "");
-    }
-  }
-  if (type === "image") {
-    return getProductImages(value)
-      .flatMap((image) => [image.label, image.alt, image.url])
-      .filter(Boolean)
-      .join(" | ");
-  }
-  if (type === "priceBreakdown") {
-    try {
-      return JSON.stringify(value) ?? "";
-    } catch {
-      return String(value ?? "");
-    }
-  }
+function getAuditSearchText(value: unknown, row: unknown, field: string): string {
+  const person = getAuditPeopleDetailsParts(value, row, field);
+  const timestamp = formatAuditTimestamp(getAuditTimestamp(value, row, field));
+  return [person.name, person.email, timestamp].filter(Boolean).join(" | ");
+}
 
-  const parts = type === "peopleDetails" ? getPeopleDetailsParts(value) : getAddressParts(value);
-  return Object.values(parts).filter(Boolean).join(" | ");
+function getEmailSearchText(value: unknown): string {
+  const record = toRecord(value);
+  return firstText(record ?? {}, ["email", "emailAddress", "value"]) ||
+    (typeof value === "string" ? value.trim() : "");
+}
+
+function getPhoneSearchText(value: unknown): string {
+  const record = toRecord(value);
+  return firstText(record ?? {}, ["phone", "phoneNumber", "mobile", "value"]) ||
+    (typeof value === "string" || typeof value === "number" ? toSafeText(value) : "");
+}
+
+function getImageSearchText(value: unknown): string {
+  return getProductImages(value)
+    .flatMap((image) => [image.label, image.alt, image.url])
+    .filter(Boolean)
+    .join(" | ");
+}
+
+function validDate(date: Date | null): Date | null {
+  return date != null && !Number.isNaN(date.getTime()) ? date : null;
+}
+
+function dateFromParts(parts: readonly number[]): Date | null {
+  if (parts.length < 3 || !parts.every(Number.isFinite)) return null;
+  const [year, month, day, hour = 0, minute = 0, second = 0] = parts;
+  return validDate(new Date(year, month - 1, day, hour, minute, second));
+}
+
+function parseDateString(value: string): Date | null {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  if (!/^\d{4},\d{1,2},\d{1,2}(?:,.*)?$/.test(trimmed)) {
+    return validDate(new Date(trimmed));
+  }
+  const parts = trimmed.split(",").map((part) => Number(part.trim()));
+  return dateFromParts(parts);
 }
 
 function parseAuditDate(value: unknown): Date | null {
-  let date: Date | null = null;
-  if (value instanceof Date) {
-    date = value;
-  } else if (typeof value === "number" && Number.isFinite(value)) {
-    date = new Date(value);
-  } else if (typeof value === "string" && value.trim()) {
-    const trimmed = value.trim();
-    const jacksonDate = /^\d{4},\d{1,2},\d{1,2}(?:,.*)?$/.test(trimmed);
-    if (jacksonDate) {
-      const parts = trimmed.split(",").map((part) => Number(part.trim()));
-      if (parts.length >= 3 && parts.every(Number.isFinite)) {
-        const [year, month, day, hour = 0, minute = 0, second = 0] = parts;
-        date = new Date(year, month - 1, day, hour, minute, second);
-      }
-    } else {
-      date = new Date(trimmed);
-    }
-  } else if (
-    Array.isArray(value) &&
-    value.length >= 3 &&
-    value.every((part) => typeof part === "number" && Number.isFinite(part))
-  ) {
-    const [year, month, day, hour = 0, minute = 0, second = 0] = value;
-    date = new Date(year, month - 1, day, hour, minute, second);
+  if (value instanceof Date) return validDate(value);
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return validDate(new Date(value));
   }
-
-  return date != null && !Number.isNaN(date.getTime()) ? date : null;
+  if (typeof value === "string") return parseDateString(value);
+  if (Array.isArray(value) && value.every((part) => typeof part === "number")) {
+    return dateFromParts(value as number[]);
+  }
+  return null;
 }
 
 function isDateValue(value: unknown): boolean {
@@ -357,44 +374,53 @@ export function getAuditTimestamp(
 
   const record = toRecord(row);
   if (record == null) return undefined;
-  const normalizedField = field.toLowerCase();
-  const timestampKeys = normalizedField.includes("created")
-    ? ["createdAt", "createdOn", "created", "timestamp", "dateTime"]
-    : normalizedField.includes("updated") || normalizedField.includes("modified")
-      ? [
-          "updatedAt",
-          "modifiedAt",
-          "updatedOn",
-          "modifiedOn",
-          "timestamp",
-          "dateTime",
-        ]
-      : [
-          "createdAt",
-          "createdOn",
-          "created",
-          "updatedAt",
-          "updatedOn",
-          "modifiedAt",
-          "modifiedOn",
-          "timestamp",
-          "timeStamp",
-          "dateTime",
-        ];
+  const timestampKeys = getAuditTimestampKeys(field.toLowerCase());
+  const directTimestamp = findAuditTimestamp(record, timestampKeys);
+  if (directTimestamp != null) return directTimestamp;
+  return findNestedAuditTimestamp(record, timestampKeys);
+}
 
-  for (const key of timestampKeys) {
+function getAuditTimestampKeys(normalizedField: string): readonly string[] {
+  if (normalizedField.includes("created")) {
+    return ["createdAt", "createdOn", "created", "timestamp", "dateTime"];
+  }
+  if (normalizedField.includes("updated") || normalizedField.includes("modified")) {
+    return ["updatedAt", "modifiedAt", "updatedOn", "modifiedOn", "timestamp", "dateTime"];
+  }
+  return [
+    "createdAt",
+    "createdOn",
+    "created",
+    "updatedAt",
+    "updatedOn",
+    "modifiedAt",
+    "modifiedOn",
+    "timestamp",
+    "timeStamp",
+    "dateTime",
+  ];
+}
+
+function findAuditTimestamp(
+  record: Record<string, unknown>,
+  keys: readonly string[],
+): unknown {
+  for (const key of keys) {
     if (isDateValue(record[key])) return record[key];
   }
+  return undefined;
+}
 
-  const nestedRecords = [record.product, record.entity, record.data]
-    .map(toRecord)
-    .filter((nested): nested is Record<string, unknown> => nested != null);
-  for (const nested of nestedRecords) {
-    for (const key of timestampKeys) {
-      if (isDateValue(nested[key])) return nested[key];
-    }
+function findNestedAuditTimestamp(
+  record: Record<string, unknown>,
+  keys: readonly string[],
+): unknown {
+  for (const key of ["product", "entity", "data"] as const) {
+    const nested = toRecord(record[key]);
+    if (nested == null) continue;
+    const timestamp = findAuditTimestamp(nested, keys);
+    if (timestamp != null) return timestamp;
   }
-
   return undefined;
 }
 
@@ -454,9 +480,7 @@ export function getPhoneDisplay(value: string): {
   const country = phone.country ?? "US";
   const digits = phone.nationalNumber.slice(0, 10);
   let formattedDigits = digits;
-  if (digits.length === 10) {
-    formattedDigits = `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
-  } else if (digits.length > 6) {
+  if (digits.length > 6) {
     formattedDigits = `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
   }
 

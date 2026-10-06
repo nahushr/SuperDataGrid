@@ -11,8 +11,6 @@ import type {
   GridSlotsComponent,
   GridSortModel,
   GridValidRowModel,
-} from "@mui/x-data-grid";
-import type {
   GridFeatureMode,
   GridFilterModel,
   GridPaginationModel,

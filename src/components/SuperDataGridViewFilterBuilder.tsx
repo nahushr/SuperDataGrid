@@ -22,6 +22,7 @@ import {
 } from "@mui/x-data-grid";
 import type { SuperDataGridFilterField } from "../utils/filterFields";
 import styles from "../styles/view-filter-builder.module.css";
+import { createUniqueId } from "../utils/uniqueId";
 
 interface FilterCondition {
   id: string;
@@ -88,7 +89,7 @@ function valueToDraft(value: GridFilterItem["value"]): string {
 
 function createCondition(): FilterCondition {
   return {
-    id: `view-filter-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    id: createUniqueId("view-filter"),
     field: "",
     operator: "",
     value: "",
@@ -147,11 +148,113 @@ function toFilterModel(
   return { items, logicOperator };
 }
 
+type UpdateCondition = (id: string, key: keyof FilterCondition, value: string) => void;
+
+interface ViewFilterConditionRowProps {
+  columns: readonly SuperDataGridFilterField[];
+  filter: FilterCondition;
+  index: number;
+  onRemove: (id: string) => void;
+  onUpdate: UpdateCondition;
+}
+
+function conditionInputType(column?: SuperDataGridFilterField): "number" | "date" | "text" {
+  if (column?.type === "number") return "number";
+  if (column?.type === "date" || column?.type === "dateTime") return "date";
+  return "text";
+}
+
+function ViewFilterConditionRow({
+  columns,
+  filter,
+  index,
+  onRemove,
+  onUpdate,
+}: Readonly<ViewFilterConditionRowProps>) {
+  const selectedColumn = columns.find((column) => column.field === filter.field);
+  const operators = operatorsFor(selectedColumn);
+  const showValue = filter.operator !== "" && needsValue(filter.operator);
+  const isDate = selectedColumn?.type === "date" || selectedColumn?.type === "dateTime";
+  let valueControl: React.ReactNode;
+
+  if (showValue && selectedColumn?.type === "boolean") {
+    valueControl = (
+      <FormControl fullWidth size="small">
+        <InputLabel>Value</InputLabel>
+        <Select
+          value={filter.value}
+          label="Value"
+          onChange={(event) => onUpdate(filter.id, "value", event.target.value)}
+        >
+          <MenuItem value="true">True</MenuItem>
+          <MenuItem value="false">False</MenuItem>
+        </Select>
+      </FormControl>
+    );
+  } else if (showValue) {
+    valueControl = (
+      <TextField
+        label="Value"
+        type={conditionInputType(selectedColumn)}
+        value={filter.value}
+        onChange={(event) => onUpdate(filter.id, "value", event.target.value)}
+        size="small"
+        fullWidth
+        InputLabelProps={isDate ? { shrink: true } : undefined}
+        placeholder={filter.operator === "isAnyOf" ? "Separate values with ;" : undefined}
+      />
+    );
+  } else {
+    valueControl = <span className={styles.noValue}>No value needed</span>;
+  }
+
+  return (
+    <React.Fragment>
+      {index > 0 && <Divider className={styles.conditionDivider} />}
+      <div className={styles.conditionRow}>
+        <FormControl fullWidth size="small">
+          <InputLabel>Column</InputLabel>
+          <Select
+            value={filter.field}
+            label="Column"
+            onChange={(event) => onUpdate(filter.id, "field", event.target.value)}
+          >
+            {columns.map((column) => (
+              <MenuItem key={column.field} value={column.field}>{column.headerName}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl fullWidth size="small" disabled={!filter.field}>
+          <InputLabel>Operator</InputLabel>
+          <Select
+            value={filter.operator}
+            label="Operator"
+            onChange={(event) => onUpdate(filter.id, "operator", event.target.value)}
+          >
+            {operators.map((operator) => (
+              <MenuItem key={operator.value} value={operator.value}>{operator.label}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <div className={styles.valueField}>{valueControl}</div>
+        <IconButton
+          className={styles.removeConditionButton}
+          size="small"
+          aria-label={`Remove condition ${index + 1}`}
+          onClick={() => onRemove(filter.id)}
+        >
+          <DeleteOutlineIcon fontSize="small" />
+        </IconButton>
+      </div>
+    </React.Fragment>
+  );
+}
+
 export default function SuperDataGridViewFilterBuilder({
   columns,
   initialModel,
   onChange,
-}: SuperDataGridViewFilterBuilderProps) {
+}: Readonly<SuperDataGridViewFilterBuilderProps>) {
   const filterableColumns = React.useMemo(
     () => columns.filter((column) => column.filterable !== false),
     [columns],
@@ -236,129 +339,16 @@ export default function SuperDataGridViewFilterBuilder({
         </Typography>
       ) : (
         <div className={styles.conditionList}>
-          {filters.map((filter, index) => {
-            const selectedColumn = filterableColumns.find(
-              (column) => column.field === filter.field,
-            );
-            const operators = operatorsFor(selectedColumn);
-            const showValue =
-              filter.operator !== "" && needsValue(filter.operator);
-
-            return (
-              <React.Fragment key={filter.id}>
-                {index > 0 && <Divider className={styles.conditionDivider} />}
-                <div className={styles.conditionRow}>
-                  <FormControl fullWidth size="small">
-                    <InputLabel>Column</InputLabel>
-                    <Select
-                      value={filter.field}
-                      label="Column"
-                      onChange={(event) =>
-                        updateCondition(filter.id, "field", event.target.value)
-                      }
-                    >
-                      {filterableColumns.map((column) => (
-                        <MenuItem key={column.field} value={column.field}>
-                          {column.headerName}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-
-                  <FormControl fullWidth size="small" disabled={!filter.field}>
-                    <InputLabel>Operator</InputLabel>
-                    <Select
-                      value={filter.operator}
-                      label="Operator"
-                      onChange={(event) =>
-                        updateCondition(
-                          filter.id,
-                          "operator",
-                          event.target.value,
-                        )
-                      }
-                    >
-                      {operators.map((operator) => (
-                        <MenuItem key={operator.value} value={operator.value}>
-                          {operator.label}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-
-                  <div className={styles.valueField}>
-                    {showValue && selectedColumn?.type === "boolean" ? (
-                      <FormControl fullWidth size="small">
-                        <InputLabel>Value</InputLabel>
-                        <Select
-                          value={filter.value}
-                          label="Value"
-                          onChange={(event) =>
-                            updateCondition(
-                              filter.id,
-                              "value",
-                              event.target.value,
-                            )
-                          }
-                        >
-                          <MenuItem value="true">True</MenuItem>
-                          <MenuItem value="false">False</MenuItem>
-                        </Select>
-                      </FormControl>
-                    ) : showValue ? (
-                      <TextField
-                        label="Value"
-                        type={
-                          selectedColumn?.type === "number"
-                            ? "number"
-                            : selectedColumn?.type === "date" ||
-                                selectedColumn?.type === "dateTime"
-                              ? "date"
-                              : "text"
-                        }
-                        value={filter.value}
-                        onChange={(event) =>
-                          updateCondition(
-                            filter.id,
-                            "value",
-                            event.target.value,
-                          )
-                        }
-                        size="small"
-                        fullWidth
-                        InputLabelProps={
-                          selectedColumn?.type === "date" ||
-                          selectedColumn?.type === "dateTime"
-                            ? { shrink: true }
-                            : undefined
-                        }
-                        placeholder={
-                          filter.operator === "isAnyOf"
-                            ? "Separate values with ;"
-                            : undefined
-                        }
-                      />
-                    ) : (
-                      <span className={styles.noValue}>No value needed</span>
-                    )}
-                  </div>
-
-                  <IconButton
-                    className={styles.removeConditionButton}
-                    size="small"
-                    aria-label={`Remove condition ${index + 1}`}
-                    onClick={() =>
-                      setFilters((current) =>
-                        current.filter((item) => item.id !== filter.id),
-                      )
-                    }
-                  >
-                    <DeleteOutlineIcon fontSize="small" />
-                  </IconButton>
-                </div>
-              </React.Fragment>
-            );
-          })}
+          {filters.map((filter, index) => (
+            <ViewFilterConditionRow
+              key={filter.id}
+              columns={filterableColumns}
+              filter={filter}
+              index={index}
+              onRemove={(id) => setFilters((current) => current.filter((item) => item.id !== id))}
+              onUpdate={updateCondition}
+            />
+          ))}
         </div>
       )}
     </section>

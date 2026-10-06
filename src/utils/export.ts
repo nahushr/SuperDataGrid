@@ -1,4 +1,5 @@
 import type { SuperDataGridExportFormat } from "../types";
+import { toSafeText } from "./safeText";
 
 export type ExportFormat = SuperDataGridExportFormat;
 
@@ -43,8 +44,7 @@ export function toSqlValue(value: unknown): string {
     return Number.isFinite(value) ? String(value) : "NULL";
   }
 
-  const text =
-    typeof value === "object" ? JSON.stringify(value) ?? "" : String(value);
+  const text = toSafeText(value);
   return `'${text.replace(/'/g, "''")}'`;
 }
 
@@ -53,8 +53,7 @@ function toExportText(value: unknown): string {
   if (value instanceof Date) {
     return Number.isNaN(value.getTime()) ? "" : value.toISOString();
   }
-  if (typeof value === "object") return JSON.stringify(value) ?? "";
-  return String(value);
+  return toSafeText(value);
 }
 
 function toSpreadsheetValue(value: unknown): string | number | boolean | Date | null {
@@ -66,7 +65,7 @@ function toSpreadsheetValue(value: unknown): string | number | boolean | Date | 
   if (typeof value === "number") {
     return Number.isFinite(value) ? value : String(value);
   }
-  return JSON.stringify(value) ?? String(value);
+  return toSafeText(value);
 }
 
 function quoteCsvValue(value: unknown): string {

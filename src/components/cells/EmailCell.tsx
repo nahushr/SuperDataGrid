@@ -9,7 +9,7 @@ interface EmailCellProps {
   options?: SuperDataGridEmailOptions;
 }
 
-export default function EmailCell({ value, options = {} }: EmailCellProps) {
+export default function EmailCell({ value, options = {} }: Readonly<EmailCellProps>) {
   const email = firstText(value, ["email", "emailAddress", "value"]);
   const record = typeof value === "object" && value !== null
     ? (value as Record<string, unknown>)

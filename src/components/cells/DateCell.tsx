@@ -9,7 +9,7 @@ interface DateCellProps {
   options?: SuperDataGridDateOptions;
 }
 
-export default function DateCell({ value, options = {} }: DateCellProps) {
+export default function DateCell({ value, options = {} }: Readonly<DateCellProps>) {
   const date = parseDateValue(value);
   if (!date) return <span className={styles.emptyValue}>—</span>;
 

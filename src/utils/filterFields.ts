@@ -86,13 +86,10 @@ function discoverNestedPaths(
 ): void {
   if (depth >= 5) return;
 
-  const records = values.flatMap((value) =>
-    Array.isArray(value)
-      ? value.filter(isRecord)
-      : isRecord(value)
-        ? [value]
-        : [],
-  );
+  const records = values.flatMap((value) => {
+    if (Array.isArray(value)) return value.filter(isRecord);
+    return isRecord(value) ? [value] : [];
+  });
   const keys = new Set(records.flatMap((record) => Object.keys(record)));
 
   for (const key of keys) {

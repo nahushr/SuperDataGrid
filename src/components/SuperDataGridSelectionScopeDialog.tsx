@@ -35,7 +35,7 @@ export default function SuperDataGridSelectionScopeDialog({
   onClose,
   onSelectCurrentPage,
   onSelectAll,
-}: SuperDataGridSelectionScopeDialogProps) {
+}: Readonly<SuperDataGridSelectionScopeDialogProps>) {
   return (
     <Dialog
       open={open}

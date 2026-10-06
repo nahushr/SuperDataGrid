@@ -27,6 +27,7 @@ import {
 } from "@mui/x-data-grid";
 import type { SuperDataGridFilterField } from "../utils/filterFields";
 import styles from "../styles/filter-panel.module.css";
+import { createUniqueId } from "../utils/uniqueId";
 
 interface FilterCondition {
   id: string;
@@ -104,11 +105,123 @@ function itemToCondition(item: GridFilterItem, index: number): FilterCondition {
 
 function makeEmptyCondition(): FilterCondition {
   return {
-    id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    id: createUniqueId("filter"),
     column: "",
     operator: "",
     value: "",
   };
+}
+
+type UpdateFilter = (id: string, key: keyof FilterCondition, value: string) => void;
+
+interface FilterConditionRowProps {
+  columns: SuperDataGridFilterField[];
+  filter: FilterCondition;
+  filterCount: number;
+  index: number;
+  logicOperator: "and" | "or";
+  onRemove: (id: string) => void;
+  onUpdate: UpdateFilter;
+}
+
+function filterInputType(column?: SuperDataGridFilterField): "number" | "date" | "text" {
+  if (column?.type === "number") return "number";
+  if (column?.type === "date" || column?.type === "dateTime") return "date";
+  return "text";
+}
+
+function FilterConditionRow({
+  columns,
+  filter,
+  filterCount,
+  index,
+  logicOperator,
+  onRemove,
+  onUpdate,
+}: Readonly<FilterConditionRowProps>) {
+  const selectedColumn = columns.find((column) => column.field === filter.column);
+  const operators = operatorsFor(selectedColumn);
+  const showValue = filter.operator !== "" && needsValue(filter.operator);
+  const isDate = selectedColumn?.type === "date" || selectedColumn?.type === "dateTime";
+  let valueControl: React.ReactNode = null;
+
+  if (showValue && selectedColumn?.type === "boolean") {
+    valueControl = (
+      <FormControl fullWidth size="small">
+        <InputLabel>Value</InputLabel>
+        <Select
+          value={filter.value}
+          label="Value"
+          onChange={(event) => onUpdate(filter.id, "value", event.target.value)}
+        >
+          <MenuItem value="true">True</MenuItem>
+          <MenuItem value="false">False</MenuItem>
+        </Select>
+      </FormControl>
+    );
+  } else if (showValue) {
+    valueControl = (
+      <TextField
+        label="Value"
+        type={filterInputType(selectedColumn)}
+        size="small"
+        fullWidth
+        value={filter.value}
+        placeholder={filter.operator === "isAnyOf" ? "Value1;Value2;Value3" : "Filter value"}
+        onChange={(event) => onUpdate(filter.id, "value", event.target.value)}
+        helperText={filter.operator === "isAnyOf" ? "Use semicolon (;) to separate multiple values" : undefined}
+        InputLabelProps={isDate ? { shrink: true } : undefined}
+      />
+    );
+  }
+
+  return (
+    <React.Fragment>
+      {index > 0 && (
+        <Box className={styles.conditionDivider}>
+          <Divider className={styles.dividerLine} />
+          <Chip label={logicOperator.toUpperCase()} size="small" color="primary" variant="outlined" />
+          <Divider className={styles.dividerLine} />
+        </Box>
+      )}
+      <Box className={styles.conditionRow}>
+        <FormControl fullWidth size="small">
+          <InputLabel>Column</InputLabel>
+          <Select
+            value={filter.column}
+            label="Column"
+            onChange={(event) => onUpdate(filter.id, "column", event.target.value)}
+          >
+            {columns.map((column) => (
+              <MenuItem key={column.field} value={column.field}>{column.headerName}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl fullWidth size="small" disabled={!filter.column}>
+          <InputLabel>Operator</InputLabel>
+          <Select
+            value={filter.operator}
+            label="Operator"
+            onChange={(event) => onUpdate(filter.id, "operator", event.target.value)}
+          >
+            {operators.map((operator) => (
+              <MenuItem key={operator.value} value={operator.value}>{operator.label}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <Box className={styles.valueField}>{valueControl}</Box>
+        <IconButton
+          aria-label={`Remove filter ${index + 1}`}
+          color="error"
+          size="small"
+          disabled={filterCount === 1}
+          onClick={() => onRemove(filter.id)}
+        >
+          <DeleteOutlineIcon />
+        </IconButton>
+      </Box>
+    </React.Fragment>
+  );
 }
 
 export default function SuperDataGridFilterPanel({
@@ -117,7 +230,7 @@ export default function SuperDataGridFilterPanel({
   filterModel,
   onClose,
   onApply,
-}: FilterPanelProps) {
+}: Readonly<FilterPanelProps>) {
   const [logicOperator, setLogicOperator] = React.useState<"and" | "or">(
     filterModel.logicOperator === GridLogicOperator.Or ? "or" : "and",
   );
@@ -131,7 +244,7 @@ export default function SuperDataGridFilterPanel({
     );
     setFilters(
       filterModel.items.length > 0
-        ? filterModel.items.map(itemToCondition)
+        ? filterModel.items.map((item, index) => itemToCondition(item, index))
         : [makeEmptyCondition()],
     );
   }, [filterModel, open]);
@@ -239,132 +352,18 @@ export default function SuperDataGridFilterPanel({
           </Box>
         )}
 
-        {filters.map((filter, index) => {
-          const selectedColumn = columns.find(
-            (column) => column.field === filter.column,
-          );
-          const operators = operatorsFor(selectedColumn);
-          const showValue =
-            filter.operator !== "" && needsValue(filter.operator);
-
-          return (
-            <React.Fragment key={filter.id}>
-              {index > 0 && (
-                <Box className={styles.conditionDivider}>
-                  <Divider className={styles.dividerLine} />
-                  <Chip
-                    label={logicOperator.toUpperCase()}
-                    size="small"
-                    color="primary"
-                    variant="outlined"
-                  />
-                  <Divider className={styles.dividerLine} />
-                </Box>
-              )}
-              <Box className={styles.conditionRow}>
-                <FormControl fullWidth size="small">
-                  <InputLabel>Column</InputLabel>
-                  <Select
-                    value={filter.column}
-                    label="Column"
-                    onChange={(event) =>
-                      updateFilter(filter.id, "column", event.target.value)
-                    }
-                  >
-                    {columns.map((column) => (
-                      <MenuItem key={column.field} value={column.field}>
-                        {column.headerName}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
-                <FormControl fullWidth size="small" disabled={!filter.column}>
-                  <InputLabel>Operator</InputLabel>
-                  <Select
-                    value={filter.operator}
-                    label="Operator"
-                    onChange={(event) =>
-                      updateFilter(filter.id, "operator", event.target.value)
-                    }
-                  >
-                    {operators.map((operator) => (
-                      <MenuItem key={operator.value} value={operator.value}>
-                        {operator.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
-                <Box className={styles.valueField}>
-                  {showValue && selectedColumn?.type === "boolean" ? (
-                    <FormControl fullWidth size="small">
-                      <InputLabel>Value</InputLabel>
-                      <Select
-                        value={filter.value}
-                        label="Value"
-                        onChange={(event) =>
-                          updateFilter(filter.id, "value", event.target.value)
-                        }
-                      >
-                        <MenuItem value="true">True</MenuItem>
-                        <MenuItem value="false">False</MenuItem>
-                      </Select>
-                    </FormControl>
-                  ) : showValue ? (
-                    <TextField
-                      label="Value"
-                      type={
-                        selectedColumn?.type === "number"
-                          ? "number"
-                          : selectedColumn?.type === "date" ||
-                              selectedColumn?.type === "dateTime"
-                            ? "date"
-                            : "text"
-                      }
-                      size="small"
-                      fullWidth
-                      value={filter.value}
-                      placeholder={
-                        filter.operator === "isAnyOf"
-                          ? "Value1;Value2;Value3"
-                          : "Filter value"
-                      }
-                      onChange={(event) =>
-                        updateFilter(filter.id, "value", event.target.value)
-                      }
-                      helperText={
-                        filter.operator === "isAnyOf"
-                          ? "Use semicolon (;) to separate multiple values"
-                          : undefined
-                      }
-                      InputLabelProps={
-                        selectedColumn?.type === "date" ||
-                        selectedColumn?.type === "dateTime"
-                          ? { shrink: true }
-                          : undefined
-                      }
-                    />
-                  ) : null}
-                </Box>
-
-                <IconButton
-                  aria-label={`Remove filter ${index + 1}`}
-                  color="error"
-                  size="small"
-                  disabled={filters.length === 1}
-                  onClick={() =>
-                    setFilters((current) =>
-                      current.filter((item) => item.id !== filter.id),
-                    )
-                  }
-                >
-                  <DeleteOutlineIcon />
-                </IconButton>
-              </Box>
-            </React.Fragment>
-          );
-        })}
+        {filters.map((filter, index) => (
+          <FilterConditionRow
+            key={filter.id}
+            columns={columns}
+            filter={filter}
+            filterCount={filters.length}
+            index={index}
+            logicOperator={logicOperator}
+            onRemove={(id) => setFilters((current) => current.filter((item) => item.id !== id))}
+            onUpdate={updateFilter}
+          />
+        ))}
 
         <Button
           startIcon={<AddIcon />}

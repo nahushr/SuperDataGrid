@@ -11,7 +11,7 @@ export default function SuperDataGridNoRowsOverlay() {
   ) ?? false;
 
   return (
-    <div className={styles.overlay} role="status">
+    <output className={styles.overlay}>
       <span aria-hidden="true" className={styles.icon}>
         {hasFilters ? <FilterAltOffOutlinedIcon /> : <InboxOutlinedIcon />}
       </span>
@@ -23,6 +23,6 @@ export default function SuperDataGridNoRowsOverlay() {
           Adjust or clear the filter conditions to see matching records.
         </span>
       )}
-    </div>
+    </output>
   );
 }

@@ -352,7 +352,7 @@
 
 .productImageFallback {
   background: #e8f2ff;
-  color: #1976d2;
+  color: #0b4f9c;
   font-size: 44px;
   font-weight: 700;
 }
@@ -439,7 +439,7 @@
 
 .carouselNav:hover:not(:disabled) {
   background: #e8f2ff;
-  color: #1976d2;
+  color: #0b4f9c;
 }
 
 .carouselNav:disabled {
@@ -533,7 +533,7 @@
   height: 32px;
   border-radius: 10px;
   background: #dbeafe;
-  color: #1976d2;
+  color: #0b4f9c;
 }
 
 .breakdownTriggerContent {

@@ -10,7 +10,7 @@ interface PhoneCellProps {
   options?: SuperDataGridPhoneOptions;
 }
 
-export default function PhoneCell({ value, options = {} }: PhoneCellProps) {
+export default function PhoneCell({ value, options = {} }: Readonly<PhoneCellProps>) {
   const phoneText = firstText(value, ["phone", "phoneNumber", "mobile", "value"]);
   const record = typeof value === "object" && value !== null
     ? (value as Record<string, unknown>)
@@ -20,18 +20,21 @@ export default function PhoneCell({ value, options = {} }: PhoneCellProps) {
 
   let href = `tel:${phoneText}`;
   let display = phoneText;
-  let flagCountryCode = record?.countryCode ?? record?.country ?? options.countryCode;
+  const initialFlagCountryCode = record?.countryCode ?? record?.country ?? options.countryCode;
+  let flagCountryCode = typeof initialFlagCountryCode === "string" ? initialFlagCountryCode : "";
   try {
     const countryCode = options.countryCode?.toUpperCase() as CountryCode | undefined;
     const parsed = parsePhoneNumberFromString(phoneText, countryCode);
     if (parsed) {
       href = `tel:${parsed.number}`;
-      flagCountryCode = parsed.country ?? flagCountryCode ?? countryCode;
-      display = options.format === "original"
-        ? phoneText
-        : options.format === "national"
-          ? parsed.formatNational()
-          : parsed.formatInternational();
+      flagCountryCode = parsed.country ?? flagCountryCode ?? countryCode ?? "";
+      if (options.format === "original") {
+        display = phoneText;
+      } else if (options.format === "national") {
+        display = parsed.formatNational();
+      } else {
+        display = parsed.formatInternational();
+      }
     }
   } catch {
     // Preserve the original value when it is not a valid phone number.
@@ -48,7 +51,7 @@ export default function PhoneCell({ value, options = {} }: PhoneCellProps) {
       {options.showIcon !== false && (
         <PhoneIcon className={styles.contactIcon} aria-hidden="true" />
       )}
-      {flag && <span aria-label={`${flagCountryCode} flag`} className={styles.phoneFlag} role="img">{flag}</span>}
+      {flag && <span aria-label={`${flagCountryCode.toUpperCase()} flag`} className={styles.phoneFlag} role="img">{flag}</span>}
       <span className={styles.contactText}>{explicitLabel || display}</span>
     </a>
   );
@@ -59,6 +62,6 @@ function countryFlag(value: unknown): string {
   const countryCode = value.trim().toUpperCase();
   if (!/^[A-Z]{2}$/.test(countryCode)) return "";
   return String.fromCodePoint(
-    ...[...countryCode].map((letter) => letter.charCodeAt(0) + 127397),
+    ...[...countryCode].map((letter) => (letter.codePointAt(0) ?? 0) + 127397),
   );
 }

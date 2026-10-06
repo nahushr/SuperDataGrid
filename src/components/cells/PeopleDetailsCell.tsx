@@ -43,7 +43,7 @@ export default function PeopleDetailsCell({
   showPhone = true,
   showEmptyFields = false,
   showAvatar = false,
-}: PeopleDetailsCellProps) {
+}: Readonly<PeopleDetailsCellProps>) {
   const { name, email, phone } = getPeopleDetailsParts(value);
   const avatar = getPeopleAvatarParts(value, row);
   const formattedPhone = showPhone && phone ? getPhoneDisplay(phone) : null;

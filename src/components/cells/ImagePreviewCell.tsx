@@ -17,7 +17,7 @@ export default function ImagePreviewCell({
   value,
   field,
   options = {},
-}: ImagePreviewCellProps) {
+}: Readonly<ImagePreviewCellProps>) {
   const [open, setOpen] = useState(false);
   const [failedThumbnailUrl, setFailedThumbnailUrl] = useState("");
   const images = getProductImages(value, options);

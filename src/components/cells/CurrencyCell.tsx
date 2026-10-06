@@ -17,7 +17,7 @@ export default function CurrencyCell({
   value,
   row,
   options = {},
-}: CurrencyCellProps) {
+}: Readonly<CurrencyCellProps>) {
   const amount = getCurrencyAmount(value, options);
   if (amount == null) return <span className={styles.emptyValue}>—</span>;
 

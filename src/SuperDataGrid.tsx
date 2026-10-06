@@ -50,12 +50,15 @@ import {
 } from "./utils/filterFields";
 import { getCommonCellSearchText } from "./utils/commonCellData";
 import { getCurrencyAmount, parseDateValue } from "./utils/predefinedCellData";
+import { createUniqueId } from "./utils/uniqueId";
 import type {
   SuperDataGridBulkDeleteRequest,
+  SuperDataGridColumnOptions,
+  SuperDataGridColumnType,
+  SuperDataGridFilterField,
   SuperDataGridProps,
   SuperDataGridRow,
   SuperDataGridView,
-  SuperDataGridFilterField,
 } from "./types";
 import styles from "./styles/grid.module.css";
 
@@ -109,6 +112,160 @@ function resolveRowId<Row extends SuperDataGridRow>(
   if (isGridRowId(record.id)) return record.id;
   if (isGridRowId(record._id)) return record._id;
   return `super-data-grid-row-${index}`;
+}
+
+function getColumnMinWidth(columnType?: SuperDataGridColumnType): number {
+  switch (columnType) {
+    case "actions": return 280;
+    case "address": return 320;
+    case "peopleDetails":
+    case "audit": return 260;
+    case "dateTime":
+    case "email":
+    case "longText":
+    case "json": return 220;
+    case "phone": return 190;
+    case "image": return 200;
+    case "priceBreakdown": return 235;
+    case "currency":
+    case "date":
+    case "badge": return 150;
+    default: return 140;
+  }
+}
+
+function getDensityClass(density: GridDensity): string {
+  if (density === "compact") return styles.compact;
+  if (density === "comfortable") return styles.comfortable;
+  return "";
+}
+
+function getGridColumnType<Row extends SuperDataGridRow>(
+  field: string,
+  columnType: SuperDataGridColumnType | undefined,
+  data: readonly Row[],
+): GridColDef["type"] {
+  if (columnType === "currency" || columnType === "priceBreakdown") return "number";
+  if (columnType === "date") return "date";
+  if (columnType === "dateTime") return "dateTime";
+  if (columnType) return "string";
+  return inferColumnType(field, data);
+}
+
+function getGridValueGetter(
+  field: string,
+  columnType: SuperDataGridColumnType | undefined,
+  options: SuperDataGridColumnOptions | undefined,
+): GridColDef["valueGetter"] {
+  if (!columnType) return undefined;
+  return (_value, row) => {
+    const rawValue = (row as Record<string, unknown>)[field];
+    if (columnType === "currency") {
+      return getCurrencyAmount(rawValue, options?.currency);
+    }
+    if (columnType === "priceBreakdown") {
+      const record = rawValue && typeof rawValue === "object"
+        ? rawValue as Record<string, unknown>
+        : null;
+      return getCurrencyAmount(
+        record?.grandTotal ?? record?.total,
+        options?.priceBreakdown,
+      );
+    }
+    if (columnType === "date" || columnType === "dateTime") {
+      return parseDateValue(rawValue);
+    }
+    return getCommonCellSearchText(columnType, rawValue, row, field);
+  };
+}
+
+function renderGridCell<Row extends SuperDataGridRow>(
+  field: string,
+  columnType: SuperDataGridColumnType | undefined,
+  options: SuperDataGridColumnOptions | undefined,
+  components: SuperDataGridProps<Row>["cellComponents"],
+  onAction: SuperDataGridProps<Row>["onAction"],
+  value: unknown,
+  row: Row,
+): React.ReactNode {
+  const rawValue = (row as Record<string, unknown>)[field];
+  const CellComponent = components?.[field];
+  if (CellComponent) return <CellComponent field={field} value={rawValue} row={row} />;
+
+  switch (columnType) {
+    case "peopleDetails":
+      return <PeopleDetailsCell value={rawValue} row={row} rowId={(row as GridValidRowModel).id} showAvatar />;
+    case "address":
+      return <AddressCell value={rawValue} />;
+    case "audit":
+      return <AuditCell value={rawValue} row={row} field={field} />;
+    case "badge":
+      return <StatusBadgeCell value={rawValue} options={options?.badge} />;
+    case "currency":
+      return <CurrencyCell value={rawValue} row={row} options={options?.currency} />;
+    case "date":
+      return <DateCell value={rawValue} options={options?.date} />;
+    case "dateTime":
+      return <DateTimeCell value={rawValue} options={options?.dateTime} />;
+    case "email":
+      return <EmailCell value={rawValue} options={options?.email} />;
+    case "phone":
+      return <PhoneCell value={rawValue} options={options?.phone} />;
+    case "longText":
+      return <LongTextCell value={rawValue} options={options?.longText} />;
+    case "json":
+      return <JsonPreviewCell value={rawValue} field={field} options={options?.json} />;
+    case "image":
+      return <ImagePreviewCell value={rawValue} field={field} options={options?.image} />;
+    case "priceBreakdown":
+      return <PriceBreakdownCell value={rawValue} row={row} options={options?.priceBreakdown} />;
+    case "actions":
+      return <ActionsCell value={rawValue} onAction={(action) => onAction?.({ action, field, row })} />;
+    default:
+      return (
+        <span className={styles.cellText}>
+          <span className={styles.cellTextValue}>{toDisplayValue(value)}</span>
+        </span>
+      );
+  }
+}
+
+function createGridColumn<Row extends SuperDataGridRow>(
+  field: string,
+  data: readonly Row[],
+  columnConfiguration: SuperDataGridProps<Row>["columnConfiguration"],
+  columnTypes: SuperDataGridProps<Row>["columnTypes"],
+  columnOptions: SuperDataGridProps<Row>["columnOptions"],
+  cellComponents: SuperDataGridProps<Row>["cellComponents"],
+  onAction: SuperDataGridProps<Row>["onAction"],
+): GridColDef {
+  const columnType = columnTypes?.[field];
+  const options = columnOptions?.[field];
+  const configuration = columnConfiguration?.[field];
+  return {
+    field,
+    headerName: configuration?.headerName ?? toHeaderName(field),
+    description: configuration?.description ?? "Click the column header to sort",
+    sortable: configuration?.sortable ?? true,
+    type: getGridColumnType(field, columnType, data),
+    valueGetter: getGridValueGetter(field, columnType, options),
+    align: configuration?.align ?? "left",
+    headerAlign: configuration?.headerAlign ?? "left",
+    flex: configuration?.flex ?? (columnType ? 1.6 : 1),
+    width: configuration?.width,
+    minWidth: configuration?.minWidth ?? getColumnMinWidth(columnType),
+    maxWidth: configuration?.maxWidth,
+    hideable: configuration?.hideable,
+    renderCell: ({ value, row }) => renderGridCell(
+      field,
+      columnType,
+      options,
+      cellComponents,
+      onAction,
+      value,
+      row as Row,
+    ),
+  };
 }
 
 /**
@@ -185,7 +342,7 @@ export function SuperDataGrid<
   onBulkDelete,
   bulkDeleteLabel = "Bulk delete",
   hideBulkDelete = false,
-}: SuperDataGridProps<Row>) {
+}: Readonly<SuperDataGridProps<Row>>) {
   const [internalDensity, setInternalDensity] =
     useState<GridDensity>("standard");
   const density = densityProp ?? internalDensity;
@@ -226,189 +383,15 @@ export function SuperDataGrid<
 
   const gridColumns = useMemo<GridColDef[]>(
     () =>
-      columns.map((field) => {
-        const columnType = columnTypes?.[field];
-        const minWidth =
-          columnType === "actions"
-            ? 280
-            : columnType === "address"
-              ? 320
-              : columnType === "peopleDetails" || columnType === "audit"
-                ? 260
-                : columnType === "dateTime" || columnType === "email" || columnType === "longText" || columnType === "json"
-                  ? 220
-                : columnType === "phone"
-                    ? 190
-                    : columnType === "image"
-                      ? 200
-                      : columnType === "priceBreakdown"
-                        ? 235
-                        : columnType === "currency" || columnType === "date" || columnType === "badge"
-                      ? 150
-                : 140;
-        const options = columnOptions?.[field];
-        const dataType = columnType === "currency" || columnType === "priceBreakdown"
-          ? "number"
-          : columnType === "date"
-            ? "date"
-            : columnType === "dateTime"
-              ? "dateTime"
-              : columnType
-                ? "string"
-                : inferColumnType(field, data);
-
-        return {
-          field,
-          headerName: columnConfiguration?.[field]?.headerName ?? toHeaderName(field),
-          description: columnConfiguration?.[field]?.description ?? "Click the column header to sort",
-          sortable: columnConfiguration?.[field]?.sortable ?? true,
-          type: dataType,
-          valueGetter: columnType
-            ? (_value, row) => {
-                const rawValue = row[field];
-                if (columnType === "currency") {
-                  return getCurrencyAmount(rawValue, options?.currency);
-                }
-                if (columnType === "priceBreakdown") {
-                  const record =
-                    typeof rawValue === "object" && rawValue !== null
-                      ? (rawValue as Record<string, unknown>)
-                      : null;
-                  return getCurrencyAmount(
-                    record?.grandTotal ?? record?.total,
-                    options?.priceBreakdown,
-                  );
-                }
-                if (columnType === "date" || columnType === "dateTime") {
-                  return parseDateValue(rawValue);
-                }
-                return getCommonCellSearchText(columnType, rawValue, row, field);
-              }
-            : undefined,
-          align: columnConfiguration?.[field]?.align ?? "left",
-          headerAlign: columnConfiguration?.[field]?.headerAlign ?? "left",
-          flex: columnConfiguration?.[field]?.flex ?? (columnType ? 1.6 : 1),
-          width: columnConfiguration?.[field]?.width,
-          minWidth: columnConfiguration?.[field]?.minWidth ?? minWidth,
-          maxWidth: columnConfiguration?.[field]?.maxWidth,
-          hideable: columnConfiguration?.[field]?.hideable,
-          renderCell: ({ value, row }) => {
-            const rawValue = (row as Record<string, unknown>)[field];
-            const CellComponent = cellComponents?.[field];
-            if (CellComponent) {
-              return (
-                <CellComponent
-                  field={field}
-                  value={rawValue}
-                  row={row as Row}
-                />
-              );
-            }
-
-            if (columnType === "peopleDetails") {
-              return (
-                <PeopleDetailsCell
-                  value={rawValue}
-                  row={row}
-                  rowId={row.id}
-                  showAvatar
-                />
-              );
-            }
-
-            if (columnType === "address") {
-              return <AddressCell value={rawValue} />;
-            }
-
-            if (columnType === "audit") {
-              return <AuditCell value={rawValue} row={row} field={field} />;
-            }
-
-            if (columnType === "badge") {
-              return <StatusBadgeCell value={rawValue} options={options?.badge} />;
-            }
-
-            if (columnType === "currency") {
-              return (
-                <CurrencyCell
-                  value={rawValue}
-                  row={row}
-                  options={options?.currency}
-                />
-              );
-            }
-
-            if (columnType === "date") {
-              return <DateCell value={rawValue} options={options?.date} />;
-            }
-
-            if (columnType === "dateTime") {
-              return <DateTimeCell value={rawValue} options={options?.dateTime} />;
-            }
-
-            if (columnType === "email") {
-              return <EmailCell value={rawValue} options={options?.email} />;
-            }
-
-            if (columnType === "phone") {
-              return <PhoneCell value={rawValue} options={options?.phone} />;
-            }
-
-            if (columnType === "longText") {
-              return <LongTextCell value={rawValue} options={options?.longText} />;
-            }
-
-            if (columnType === "json") {
-              return (
-                <JsonPreviewCell
-                  value={rawValue}
-                  field={field}
-                  options={options?.json}
-                />
-              );
-            }
-
-            if (columnType === "image") {
-              return (
-                <ImagePreviewCell
-                  value={rawValue}
-                  field={field}
-                  options={options?.image}
-                />
-              );
-            }
-
-            if (columnType === "priceBreakdown") {
-              return (
-                <PriceBreakdownCell
-                  value={rawValue}
-                  row={row}
-                  options={options?.priceBreakdown}
-                />
-              );
-            }
-
-            if (columnType === "actions") {
-              return (
-                <ActionsCell
-                  value={rawValue}
-                  onAction={(action) =>
-                    onAction?.({ action, field, row: row as Row })
-                  }
-                />
-              );
-            }
-
-            return (
-              <span className={styles.cellText}>
-                <span className={styles.cellTextValue}>
-                  {toDisplayValue(value)}
-                </span>
-              </span>
-            );
-          },
-        };
-      }),
+      columns.map((field) => createGridColumn(
+        field,
+        data,
+        columnConfiguration,
+        columnTypes,
+        columnOptions,
+        cellComponents,
+        onAction,
+      )),
     [cellComponents, columnConfiguration, columns, columnOptions, columnTypes, data, onAction],
   );
 
@@ -846,7 +829,7 @@ export function SuperDataGrid<
     (name: string, notes: string, viewFilterModel: GridFilterModel) => {
       if (!canAddViews) return;
       const view: SuperDataGridView = {
-        id: `view-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        id: createUniqueId("view"),
         name,
         ...(notes ? { notes } : {}),
         filterModel: {
@@ -1010,12 +993,7 @@ export function SuperDataGrid<
     ],
   );
 
-  const densityClass =
-    density === "compact"
-      ? styles.compact
-      : density === "comfortable"
-        ? styles.comfortable
-        : "";
+  const densityClass = getDensityClass(density);
   const workspaceStyle =
     minHeight == null
       ? undefined

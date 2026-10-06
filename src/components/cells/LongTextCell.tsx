@@ -9,7 +9,7 @@ interface LongTextCellProps {
   options?: SuperDataGridLongTextOptions;
 }
 
-export default function LongTextCell({ value, options = {} }: LongTextCellProps) {
+export default function LongTextCell({ value, options = {} }: Readonly<LongTextCellProps>) {
   const text = toDisplayValue(value);
   if (!text) return <span className={styles.emptyValue}>—</span>;
 

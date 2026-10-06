@@ -48,11 +48,12 @@ export function parseDateValue(value: unknown): Date | null {
   const candidate = record
     ? record.date ?? record.dateTime ?? record.timestamp ?? record.value
     : value;
-  const date = candidate instanceof Date
-    ? candidate
-    : typeof candidate === "number" || typeof candidate === "string"
-      ? new Date(candidate)
-      : null;
+  let date: Date | null = null;
+  if (candidate instanceof Date) {
+    date = candidate;
+  } else if (typeof candidate === "number" || typeof candidate === "string") {
+    date = new Date(candidate);
+  }
   return date && !Number.isNaN(date.getTime()) ? date : null;
 }
 
@@ -62,11 +63,12 @@ export function getCurrencyAmount(
 ): number | null {
   const record = asRecord(value);
   const rawAmount = record?.amount ?? record?.value ?? value;
-  const amount = typeof rawAmount === "number"
-    ? rawAmount
-    : typeof rawAmount === "string" && rawAmount.trim()
-      ? Number(rawAmount.replace(/,/g, ""))
-      : Number.NaN;
+  let amount = Number.NaN;
+  if (typeof rawAmount === "number") {
+    amount = rawAmount;
+  } else if (typeof rawAmount === "string" && rawAmount.trim()) {
+    amount = Number(rawAmount.replace(/,/g, ""));
+  }
   if (!Number.isFinite(amount)) return null;
 
   const amountInMinorUnits =
@@ -113,21 +115,23 @@ export function getProductImages(
   options: SuperDataGridImageOptions = {},
 ): Array<SuperDataGridProductImage & { alt: string }> {
   const record = asRecord(value);
-  const source = Array.isArray(value)
-    ? value
-    : Array.isArray(record?.images)
-      ? record.images
-      : null;
+  let source: unknown[] | null = null;
+  if (Array.isArray(value)) {
+    source = value;
+  } else if (Array.isArray(record?.images)) {
+    source = record.images;
+  }
   const result: Array<SuperDataGridProductImage & { alt: string }> = [];
   const seen = new Set<string>();
 
   const append = (candidate: unknown, fallbackLabel: string) => {
     const imageRecord = asRecord(candidate);
-    const url = imageRecord
-      ? firstText(imageRecord, ["url", "src", "imageUrl", "image", "photo"])
-      : typeof candidate === "string"
-        ? candidate.trim()
-        : "";
+    let url = "";
+    if (imageRecord) {
+      url = firstText(imageRecord, ["url", "src", "imageUrl", "image", "photo"]);
+    } else if (typeof candidate === "string") {
+      url = candidate.trim();
+    }
     if (!url || seen.has(url)) return;
     seen.add(url);
     const label = firstText(imageRecord, [options.labelField ?? "label", "label", "name", "title"]) || fallbackLabel;

@@ -13,7 +13,7 @@ export interface ProductImageCarouselProps {
 export default function ProductImageCarousel({
   images,
   fallbackLetter = "P",
-}: ProductImageCarouselProps) {
+}: Readonly<ProductImageCarouselProps>) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [failedImages, setFailedImages] = useState<ReadonlySet<string>>(
     () => new Set(),
@@ -86,26 +86,29 @@ export default function ProductImageCarousel({
       </div>
       {images.length > 1 && (
         <div aria-label="Product image thumbnails" className={styles.carouselThumbnails}>
-          {images.map((image, index) => (
-            <button
-              aria-label={`Show ${image.label || `image ${index + 1}`}`}
-              aria-pressed={index === currentIndex}
-              className={`${styles.carouselThumbnail} ${index === currentIndex ? styles.carouselThumbnailActive : ""}`}
-              key={`${image.url}-${index}`}
-              onClick={(event) => {
-                event.stopPropagation();
-                setCurrentIndex(index);
-              }}
-              type="button"
-            >
-              <img
-                alt=""
-                className={styles.carouselThumbnailImage}
-                onError={() => markFailed(image.url)}
-                src={image.url}
-              />
-            </button>
-          ))}
+          {images.map((image, index) => {
+            const imageLabel = image.label || `image ${index + 1}`;
+            return (
+              <button
+                aria-label={`Show ${imageLabel}`}
+                aria-pressed={index === currentIndex}
+                className={`${styles.carouselThumbnail} ${index === currentIndex ? styles.carouselThumbnailActive : ""}`}
+                key={`${image.url}-${index}`}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setCurrentIndex(index);
+                }}
+                type="button"
+              >
+                <img
+                  alt=""
+                  className={styles.carouselThumbnailImage}
+                  onError={() => markFailed(image.url)}
+                  src={image.url}
+                />
+              </button>
+            );
+          })}
         </div>
       )}
     </div>

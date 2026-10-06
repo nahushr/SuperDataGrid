@@ -25,7 +25,7 @@ export default function SuperDataGridExportScopeDialog({
   onClose,
   onCurrentView,
   onAllData,
-}: SuperDataGridExportScopeDialogProps) {
+}: Readonly<SuperDataGridExportScopeDialogProps>) {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
       <DialogTitle className={styles.title}>Export {formatLabel}</DialogTitle>

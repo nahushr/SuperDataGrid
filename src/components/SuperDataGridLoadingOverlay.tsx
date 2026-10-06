@@ -7,7 +7,7 @@ interface SuperDataGridLoadingOverlayProps {
 
 export default function SuperDataGridLoadingOverlay({
   className,
-}: SuperDataGridLoadingOverlayProps) {
+}: Readonly<SuperDataGridLoadingOverlayProps>) {
   return (
     <div
       className={`${className ?? ""} ${styles.overlay}`.trim()}

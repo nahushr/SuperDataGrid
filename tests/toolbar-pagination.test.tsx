@@ -3,7 +3,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
-  toolbarContainer: vi.fn(),
+  toolbar: vi.fn(),
   apiRef: {
     current: {
       setPage: vi.fn(),
@@ -22,7 +22,7 @@ vi.mock("@mui/x-data-grid", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@mui/x-data-grid")>();
   return {
     ...actual,
-    GridToolbarContainer: mocks.toolbarContainer,
+    Toolbar: mocks.toolbar,
     useGridApiContext: () => mocks.apiRef,
     useGridSelector: (_api: unknown, selector: unknown) => {
       if (selector === actual.gridPaginationModelSelector) return mocks.paginationModel;
@@ -80,7 +80,7 @@ function provideContext(context: SuperDataGridContextValue, children: React.Reac
 }
 
 beforeEach(() => {
-  mocks.toolbarContainer.mockImplementation(({ children, ...props }: React.HTMLAttributes<HTMLDivElement> & { children?: React.ReactNode }) => React.createElement("div", props, children));
+  mocks.toolbar.mockImplementation(({ children, ...props }: React.HTMLAttributes<HTMLDivElement> & { children?: React.ReactNode }) => React.createElement("div", props, children));
   mocks.paginationModel = { page: 0, pageSize: 25 };
   mocks.pageCount = 4;
   mocks.rowCount = 86;

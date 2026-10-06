@@ -43,7 +43,6 @@
     "dev:example": "npm run build && npm run dev --workspace super-data-grid-example",
     "build:example": "npm run build --workspace super-data-grid-example",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage",
     "prepack": "npm run build"
   },
   "workspaces": [
@@ -68,7 +67,6 @@
     "@testing-library/react": "^16.3.3",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
-    "@vitest/coverage-v8": "^5.0.3",
     "jsdom": "^26.1.0",
     "typescript": "^5.3.3",
     "vite": "^6.4.3",
