@@ -10,7 +10,7 @@ import SuperDataGrid, {
   type SuperDataGridAllRowsRequest,
   type SuperDataGridBulkDeleteRequest,
   type SuperDataGridView,
-} from "@nahushr18/super-data-grid";
+} from "@cinecrew/super-data-grid";
 import RoleCell from "./components/RoleCell";
 import DemoActionJsonPanel from "./components/DemoActionJsonPanel";
 import { useDemoSnackbar } from "./components/DemoSnackbarProvider";

@@ -1,5 +1,5 @@
 {
-  "name": "@nahushr18/super-data-grid",
+  "name": "@cinecrew/super-data-grid",
   "version": "0.1.0",
   "description": "A plug-and-play React data grid with server-side data, saved views, filters, and custom cells.",
   "license": "MIT",
