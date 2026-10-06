@@ -26,14 +26,14 @@ The example uses a mock server with 1,000 users and demonstrates server-side fil
 SuperDataGrid wraps MUI X DataGrid and generates its column definitions from a list of field names. Install it alongside its UI peer dependencies:
 
 ```sh
-npm install @cinecrew/super-data-grid @mui/material @mui/x-data-grid @mui/icons-material @emotion/react @emotion/styled
+npm install @simplishelf/super-data-grid @mui/material @mui/x-data-grid @mui/icons-material @emotion/react @emotion/styled
 ```
 
 Your application should already include `react` and `react-dom`.
 
 ```tsx
-import SuperDataGrid from "@cinecrew/super-data-grid";
-import "@cinecrew/super-data-grid/style.css";
+import SuperDataGrid from "@simplishelf/super-data-grid";
+import "@simplishelf/super-data-grid/style.css";
 
 const columns = ["name", "category", "price"];
 const data = [
@@ -80,7 +80,7 @@ When a server-side grid exports, the user can choose the current page or all mat
 Cell content can be replaced with a React component for selected fields:
 
 ```tsx
-import type { SuperDataGridCellProps } from "@cinecrew/super-data-grid";
+import type { SuperDataGridCellProps } from "@simplishelf/super-data-grid";
 
 type ProductRow = { name: string; inStock: boolean };
 
@@ -137,7 +137,7 @@ Use the `actions` type to render the predefined View, Edit, Deactivate, and Shar
 import SuperDataGrid, {
   SUPER_DATA_GRID_ACTIONS,
   type SuperDataGridActionType,
-} from "@cinecrew/super-data-grid";
+} from "@simplishelf/super-data-grid";
 
 type UserRow = { id: number; actions: SuperDataGridActionType[] };
 
@@ -197,7 +197,7 @@ When `checkboxSelection` and `onBulkDelete` are provided, the toolbar adds a red
 Saved views have independent filter conditions, a name, and optional notes. Add and edit open in a modal with a dedicated view filter builder; they do not copy conditions from the main grid filter panel. The component keeps views in local state by default, or the application can control them with `views` and `onViewsChange`. Use `onViewAdded`, `onViewUpdated`, and `onViewDeleted` to observe individual view operations.
 
 ```tsx
-import type { SuperDataGridView } from "@cinecrew/super-data-grid";
+import type { SuperDataGridView } from "@simplishelf/super-data-grid";
 
 const [views, setViews] = useState<SuperDataGridView[]>([]);
 

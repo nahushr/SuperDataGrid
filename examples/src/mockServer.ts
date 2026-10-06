@@ -9,7 +9,7 @@ import {
   SUPER_DATA_GRID_ACTIONS,
   type SuperDataGridActionType,
   type SuperDataGridBulkDeleteRequest,
-} from "@cinecrew/super-data-grid";
+} from "@simplishelf/super-data-grid";
 
 export interface DemoUser {
   id: number;

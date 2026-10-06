@@ -1,5 +1,5 @@
 {
-  "name": "@cinecrew/super-data-grid",
+  "name": "@simplishelf/super-data-grid",
   "version": "0.1.0",
   "description": "A plug-and-play React data grid with server-side data, saved views, filters, and custom cells.",
   "license": "MIT",
