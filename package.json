@@ -1,6 +1,6 @@
 {
   "name": "@simplishelf/super-data-grid",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A plug-and-play React data grid with server-side data, saved views, filters, and custom cells.",
   "license": "MIT",
   "repository": {
@@ -42,6 +42,8 @@
     "build": "vite build && tsc --emitDeclarationOnly -p tsconfig.build.json",
     "dev:example": "npm run build && npm run dev --workspace super-data-grid-example",
     "build:example": "npm run build --workspace super-data-grid-example",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "prepack": "npm run build"
   },
   "workspaces": [
@@ -62,10 +64,15 @@
     "@mui/icons-material": "^5.15.0",
     "@mui/material": "^5.15.0",
     "@mui/x-data-grid": "^8.17.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.3",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
+    "@vitest/coverage-v8": "^5.0.3",
+    "jsdom": "^26.1.0",
     "typescript": "^5.3.3",
-    "vite": "^6.4.3"
+    "vite": "^6.4.3",
+    "vitest": "^5.0.3"
   },
   "dependencies": {
     "libphonenumber-js": "^1.13.11",

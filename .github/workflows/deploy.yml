@@ -68,15 +68,20 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Require SonarCloud credentials for trusted builds
+        if: env.HAS_SONAR_TOKEN != 'true'
+        run: |
+          echo "::error::SONAR_TOKEN is required to enforce the SonarCloud quality gate."
+          exit 1
+
+      - name: Run unit tests with coverage
+        run: npm run test:coverage
+
       - name: Run SonarCloud analysis
         if: env.HAS_SONAR_TOKEN == 'true'
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: npx --yes sonarqube-scanner@5.0.0 -Dsonar.token="$SONAR_TOKEN"
-
-      - name: Note missing SonarCloud secret
-        if: env.HAS_SONAR_TOKEN != 'true'
-        run: echo "::notice::SonarCloud analysis skipped because SONAR_TOKEN is not configured."
+        run: npx --yes sonarqube-scanner@5.0.0 -Dsonar.token="$SONAR_TOKEN" -Dsonar.qualitygate.wait=true -Dsonar.qualitygate.timeout=600
 
       - name: Set up Snyk CLI
         if: env.HAS_SNYK_TOKEN == 'true'

@@ -14,7 +14,12 @@ import { toHeaderName } from "./gridData";
 export type { SuperDataGridFilterField } from "../types";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    !(value instanceof Date) &&
+    !Array.isArray(value)
+  );
 }
 
 function valuesAtPath(value: unknown, path: string[]): unknown[] {
