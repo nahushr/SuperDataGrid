@@ -131,6 +131,72 @@ Use the `audit` type for a SimpliShelf-style audit cell with a person's full nam
 
 The audit cell links the email address, formats the date as `25th Aug 2026, 8:50 PM UTC`, and wraps long text. Audit values remain regular row data; no special cell component is required.
 
+## Predefined cells
+
+Additional built-in cell types cover common values. Configure the renderer with `columnTypes` and pass per-column settings through `columnOptions`:
+
+| Type | Behavior | Per-column options |
+|---|---|---|
+| `badge` | Status or category pill with an app-defined label and named color per value. | `labels`, `colors`, `fallbackLabel`, `fallbackColor` |
+| `currency` | Locale-aware currency formatting; supports row-specific currency codes and integer minor units. | `currency`, `currencyField`, `locale`, `amountInMinorUnits`, `minorUnits` |
+| `date` / `dateTime` | Standalone localized date or date-time formatting with an optional time zone. | `locale`, `timeZone`, `formatOptions` |
+| `email` / `phone` | Clickable mail and telephone links with optional icons; phone values can be formatted. | `showIcon`, and for phones `countryCode` / `format` |
+| `longText` | Short cell preview with the full value in a tooltip. | `maxPreviewLength` |
+| `json` | Compact preview that opens formatted JSON with a copy action. | `maxPreviewLength` |
+| `image` | Clickable thumbnail that opens a larger image preview. Accepts a URL or `{ src, alt, label }`. | `altField`, `labelField`, `thumbnailAlt` |
+
+Badge colors are named, CSS-backed tokens exported as `SUPER_DATA_GRID_BADGE_COLORS`; this keeps app status mappings configurable without arbitrary inline styles. For currency values stored as integer cents, set `amountInMinorUnits: true` and `minorUnits: 2`.
+
+```tsx
+import SuperDataGrid, {
+  SUPER_DATA_GRID_BADGE_COLORS,
+} from "@simplishelf/super-data-grid";
+
+const columns = ["role", "orderTotal", "signupDate", "lastLoginAt", "contactEmail", "contactPhone", "description", "metadata", "productImage"];
+const columnTypes = {
+  role: "badge",
+  orderTotal: "currency",
+  signupDate: "date",
+  lastLoginAt: "dateTime",
+  contactEmail: "email",
+  contactPhone: "phone",
+  description: "longText",
+  metadata: "json",
+  productImage: "image",
+} as const;
+
+<SuperDataGrid
+  columns={columns}
+  data={rows}
+  columnTypes={columnTypes}
+  columnOptions={{
+    role: {
+      badge: {
+        labels: { Admin: "Administrator", User: "User" },
+        colors: {
+          Admin: SUPER_DATA_GRID_BADGE_COLORS.PRIMARY,
+          User: SUPER_DATA_GRID_BADGE_COLORS.NEUTRAL,
+        },
+        fallbackColor: SUPER_DATA_GRID_BADGE_COLORS.WARNING,
+      },
+    },
+    orderTotal: {
+      currency: {
+        currencyField: "currencyCode",
+        locale: "en-US",
+        amountInMinorUnits: true,
+        minorUnits: 2,
+      },
+    },
+    signupDate: { date: { locale: "en-US", timeZone: "UTC" } },
+    lastLoginAt: { dateTime: { locale: "en-US", timeZone: "UTC" } },
+    contactPhone: { phone: { countryCode: "US", format: "international" } },
+  }}
+/>
+```
+
+All built-in types continue to receive and render raw row data. Nested JSON values can also expose their scalar paths in the grid's filter and saved-view builders.
+
 Use the `actions` type to render the predefined View, Edit, Deactivate, and Share actions. Pass the action constants in the order you want; the grid keeps that order and uses each action's matching icon, label, and color. `onAction` receives the action, field name, and row when a button is clicked:
 
 ```tsx

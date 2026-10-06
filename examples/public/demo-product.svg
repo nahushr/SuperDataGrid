@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-labelledby="title">
+  <title id="title">Blue and amber product package illustration</title>
+  <rect width="640" height="480" rx="32" fill="#eaf3fb"/>
+  <circle cx="512" cy="108" r="58" fill="#dbeafe"/>
+  <path d="M0 354c95-51 181-61 278-29 106 35 222 35 362-24v179H0z" fill="#c7e2f7"/>
+  <path d="M191 143h235l35 44v191H179V187z" fill="#0f2a53"/>
+  <path d="M191 143h235v58H191z" fill="#1376d1"/>
+  <path d="M426 143v58h35z" fill="#0b5ead"/>
+  <rect x="218" y="232" width="168" height="18" rx="9" fill="#fff" opacity=".94"/>
+  <rect x="218" y="267" width="126" height="13" rx="6.5" fill="#9ecaf0"/>
+  <rect x="218" y="299" width="148" height="13" rx="6.5" fill="#9ecaf0"/>
+  <rect x="370" y="322" width="50" height="50" rx="12" fill="#f2b532"/>
+  <path d="M395 331v32m-13-16h26" stroke="#0f2a53" stroke-width="6" stroke-linecap="round"/>
+</svg>

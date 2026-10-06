@@ -1,0 +1,213 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  min-height: 28px;
+  padding: 4px 11px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.badgePrimary {
+  background: #1976d2;
+  color: #ffffff;
+}
+
+.badgeInfo {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.badgeSuccess {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badgeWarning {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.badgeError {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.badgePurple {
+  background: #f3e8ff;
+  color: #7e22ce;
+}
+
+.badgeNeutral {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.currency,
+.formattedDate {
+  display: block;
+  width: 100%;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.contactLink {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  color: #1976d2;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.contactLink:hover {
+  color: #125aa0;
+}
+
+.contactIcon {
+  flex: 0 0 20px;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.contactText {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.longText {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  line-height: 1.35;
+}
+
+.jsonPreviewButton {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #334155;
+  cursor: pointer;
+  text-align: left;
+}
+
+.jsonPreviewText {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  color: inherit;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.jsonPreviewButton:hover .jsonPreviewText {
+  color: #1976d2;
+}
+
+.jsonDialogPaper {
+  width: min(680px, calc(100vw - 32px));
+  max-height: min(78vh, 760px);
+}
+
+.jsonDialogContent {
+  overflow: auto;
+}
+
+.jsonBlock {
+  margin: 0;
+  padding: 16px;
+  border-radius: 8px;
+  background: #f1f5f9;
+  color: #0f172a;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.jsonDialogActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 24px 20px;
+}
+
+.copiedMessage {
+  color: #166534;
+  font-size: 13px;
+}
+
+.imageCell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  width: 100%;
+  min-width: 0;
+}
+
+.imageButton {
+  display: block;
+  width: 64px;
+  height: 48px;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #dbe2ea;
+  border-radius: 7px;
+  background: #f8fafc;
+  cursor: zoom-in;
+}
+
+.imageThumbnail {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.imageLabel {
+  width: 100%;
+  overflow-wrap: anywhere;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.imageDialogPaper {
+  max-width: min(900px, calc(100vw - 32px));
+}
+
+.imageDialogContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+}
+
+.imageExpanded {
+  display: block;
+  max-width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+}
+
+.emptyValue {
+  color: #64748b;
+}

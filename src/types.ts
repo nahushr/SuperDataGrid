@@ -21,7 +21,100 @@ export type SuperDataGridColumnType =
   | "peopleDetails"
   | "address"
   | "audit"
-  | "actions";
+  | "actions"
+  | "badge"
+  | "currency"
+  | "date"
+  | "dateTime"
+  | "email"
+  | "phone"
+  | "longText"
+  | "json"
+  | "image";
+
+/** Named badge colors that can be mapped to app-specific statuses. */
+export const SUPER_DATA_GRID_BADGE_COLORS = {
+  PRIMARY: "primary",
+  INFO: "info",
+  SUCCESS: "success",
+  WARNING: "warning",
+  ERROR: "error",
+  PURPLE: "purple",
+  NEUTRAL: "neutral",
+} as const;
+
+export type SuperDataGridBadgeColor =
+  (typeof SUPER_DATA_GRID_BADGE_COLORS)[keyof typeof SUPER_DATA_GRID_BADGE_COLORS];
+
+export interface SuperDataGridBadgeOptions {
+  /** Display labels keyed by the raw status value. */
+  labels?: Readonly<Record<string, string>>;
+  /** Named CSS color tokens keyed by the raw status value. */
+  colors?: Readonly<Record<string, SuperDataGridBadgeColor>>;
+  fallbackLabel?: string;
+  fallbackColor?: SuperDataGridBadgeColor;
+}
+
+export interface SuperDataGridCurrencyOptions {
+  /** Fixed currency code; defaults to USD unless `currencyField` or the cell value supplies one. */
+  currency?: string;
+  /** Row property to read when the currency varies by row. */
+  currencyField?: string;
+  locale?: string;
+  /** Treat the numeric amount as an integer in minor units, such as cents. */
+  amountInMinorUnits?: boolean;
+  /** Number of decimal places in the minor unit; defaults to 2 when enabled. */
+  minorUnits?: number;
+}
+
+export interface SuperDataGridDateOptions {
+  locale?: string;
+  timeZone?: string;
+  /** Overrides the built-in date or date-time defaults. */
+  formatOptions?: Intl.DateTimeFormatOptions;
+}
+
+export interface SuperDataGridEmailOptions {
+  showIcon?: boolean;
+}
+
+export interface SuperDataGridPhoneOptions {
+  showIcon?: boolean;
+  /** Country used to interpret national-format values. */
+  countryCode?: string;
+  format?: "international" | "national" | "original";
+}
+
+export interface SuperDataGridLongTextOptions {
+  /** Maximum characters shown in the cell preview; the full text stays in a tooltip. */
+  maxPreviewLength?: number;
+}
+
+export interface SuperDataGridJsonOptions {
+  /** Maximum characters shown before the user opens the formatted JSON dialog. */
+  maxPreviewLength?: number;
+}
+
+export interface SuperDataGridImageOptions {
+  thumbnailAlt?: string;
+  /** Optional property on an object cell value to use as its alt text. */
+  altField?: string;
+  /** Optional property on an object cell value to use as a caption. */
+  labelField?: string;
+}
+
+/** Per-column settings for predefined cell renderers. */
+export interface SuperDataGridColumnOptions {
+  badge?: SuperDataGridBadgeOptions;
+  currency?: SuperDataGridCurrencyOptions;
+  date?: SuperDataGridDateOptions;
+  dateTime?: SuperDataGridDateOptions;
+  email?: SuperDataGridEmailOptions;
+  phone?: SuperDataGridPhoneOptions;
+  longText?: SuperDataGridLongTextOptions;
+  json?: SuperDataGridJsonOptions;
+  image?: SuperDataGridImageOptions;
+}
 
 /** Predefined row actions with matching labels, icons, and colors. */
 export const SUPER_DATA_GRID_ACTIONS = {
@@ -45,6 +138,8 @@ export interface SuperDataGridProps<
   columns: readonly string[];
   /** Optional built-in renderer for common cells, audit cells, and actions. */
   columnTypes?: Partial<Record<string, SuperDataGridColumnType>>;
+  /** Options for built-in cell renderers, keyed by column field. */
+  columnOptions?: Partial<Record<string, SuperDataGridColumnOptions>>;
   /** Row objects whose keys match the names in `columns`. */
   data: readonly Row[];
   /** Minimum height for the grid workspace. Numbers are pixels; defaults to 800px. */

@@ -2,6 +2,8 @@ import {
   parsePhoneNumberFromString,
   type CountryCode,
 } from "libphonenumber-js";
+import type { SuperDataGridColumnType } from "../types";
+import { getImageParts } from "./predefinedCellData";
 
 export interface PeopleDetailsParts {
   name: string;
@@ -223,7 +225,7 @@ export function getAddressParts(value: unknown): AddressParts {
 }
 
 export function getCommonCellSearchText(
-  type: "peopleDetails" | "address" | "audit" | "actions",
+  type: SuperDataGridColumnType,
   value: unknown,
   row?: unknown,
   field?: string,
@@ -239,6 +241,50 @@ export function getCommonCellSearchText(
     return Array.isArray(value)
       ? value.filter((action): action is string => typeof action === "string").join(" | ")
       : "";
+  }
+
+  if (type === "badge") {
+    const record = toRecord(value);
+    const status = record?.status ?? record?.value ?? record?.label ?? value;
+    return status == null ? "" : String(status);
+  }
+  if (type === "currency") {
+    const record = toRecord(value);
+    const amount = record?.amount ?? record?.value ?? value;
+    return amount == null ? "" : String(amount);
+  }
+  if (type === "date" || type === "dateTime") {
+    const date = parseAuditDate(value);
+    return date ? date.toISOString() : "";
+  }
+  if (type === "email") {
+    const record = toRecord(value);
+    return firstText(record ?? {}, ["email", "emailAddress", "value"]) ||
+      (typeof value === "string" ? value.trim() : "");
+  }
+  if (type === "phone") {
+    const record = toRecord(value);
+    return firstText(record ?? {}, ["phone", "phoneNumber", "mobile", "value"]) ||
+      (typeof value === "string" || typeof value === "number" ? String(value) : "");
+  }
+  if (type === "longText") {
+    if (typeof value === "string") return value;
+    try {
+      return JSON.stringify(value) ?? "";
+    } catch {
+      return String(value ?? "");
+    }
+  }
+  if (type === "json") {
+    try {
+      return typeof value === "string" ? value : JSON.stringify(value) ?? "";
+    } catch {
+      return String(value ?? "");
+    }
+  }
+  if (type === "image") {
+    const image = getImageParts(value);
+    return [image.label, image.alt, image.src].filter(Boolean).join(" | ");
   }
 
   const parts = type === "peopleDetails" ? getPeopleDetailsParts(value) : getAddressParts(value);

@@ -24,7 +24,16 @@ import SuperDataGridSelectionScopeDialog from "./components/SuperDataGridSelecti
 import ActionsCell from "./components/cells/ActionsCell";
 import AddressCell from "./components/cells/AddressCell";
 import AuditCell from "./components/cells/AuditCell";
+import CurrencyCell from "./components/cells/CurrencyCell";
+import DateCell from "./components/cells/DateCell";
+import DateTimeCell from "./components/cells/DateTimeCell";
+import EmailCell from "./components/cells/EmailCell";
+import ImagePreviewCell from "./components/cells/ImagePreviewCell";
+import JsonPreviewCell from "./components/cells/JsonPreviewCell";
+import LongTextCell from "./components/cells/LongTextCell";
 import PeopleDetailsCell from "./components/cells/PeopleDetailsCell";
+import PhoneCell from "./components/cells/PhoneCell";
+import StatusBadgeCell from "./components/cells/StatusBadgeCell";
 import { SuperDataGridContext } from "./context/SuperDataGridContext";
 import {
   getColumnHeaderHeight,
@@ -38,6 +47,7 @@ import {
   getFilterFieldValue,
 } from "./utils/filterFields";
 import { getCommonCellSearchText } from "./utils/commonCellData";
+import { getCurrencyAmount, parseDateValue } from "./utils/predefinedCellData";
 import type {
   SuperDataGridBulkDeleteRequest,
   SuperDataGridProps,
@@ -56,6 +66,16 @@ export type {
   SuperDataGridCellComponent,
   SuperDataGridCellProps,
   SuperDataGridColumnType,
+  SuperDataGridBadgeColor,
+  SuperDataGridBadgeOptions,
+  SuperDataGridColumnOptions,
+  SuperDataGridCurrencyOptions,
+  SuperDataGridDateOptions,
+  SuperDataGridEmailOptions,
+  SuperDataGridImageOptions,
+  SuperDataGridJsonOptions,
+  SuperDataGridLongTextOptions,
+  SuperDataGridPhoneOptions,
   SuperDataGridExportFormat,
   SuperDataGridExportRequest,
   SuperDataGridExportScope,
@@ -63,7 +83,10 @@ export type {
   SuperDataGridRow,
   SuperDataGridView,
 } from "./types";
-export { SUPER_DATA_GRID_ACTIONS } from "./types";
+export {
+  SUPER_DATA_GRID_ACTIONS,
+  SUPER_DATA_GRID_BADGE_COLORS,
+} from "./types";
 export { SUPER_DATA_GRID_AVATAR_COLORS } from "./utils/avatar";
 
 function resolveRowId<Row extends SuperDataGridRow>(
@@ -88,6 +111,7 @@ export function SuperDataGrid<
 >({
   columns,
   columnTypes,
+  columnOptions,
   data,
   minHeight,
   beforeTable,
@@ -183,17 +207,41 @@ export function SuperDataGrid<
               ? 320
               : columnType === "peopleDetails" || columnType === "audit"
                 ? 260
+                : columnType === "dateTime" || columnType === "email" || columnType === "longText" || columnType === "json"
+                  ? 220
+                  : columnType === "phone"
+                    ? 190
+                    : columnType === "currency" || columnType === "date" || columnType === "image" || columnType === "badge"
+                      ? 150
                 : 140;
+        const options = columnOptions?.[field];
+        const dataType = columnType === "currency"
+          ? "number"
+          : columnType === "date"
+            ? "date"
+            : columnType === "dateTime"
+              ? "dateTime"
+              : columnType
+                ? "string"
+                : inferColumnType(field, data);
 
         return {
           field,
           headerName: toHeaderName(field),
           description: "Click the column header to sort",
           sortable: true,
-          type: columnType ? "string" : inferColumnType(field, data),
+          type: dataType,
           valueGetter: columnType
-            ? (_value, row) =>
-                getCommonCellSearchText(columnType, row[field], row, field)
+            ? (_value, row) => {
+                const rawValue = row[field];
+                if (columnType === "currency") {
+                  return getCurrencyAmount(rawValue, options?.currency);
+                }
+                if (columnType === "date" || columnType === "dateTime") {
+                  return parseDateValue(rawValue);
+                }
+                return getCommonCellSearchText(columnType, rawValue, row, field);
+              }
             : undefined,
           align: "left",
           headerAlign: "left",
@@ -231,6 +279,60 @@ export function SuperDataGrid<
               return <AuditCell value={rawValue} row={row} field={field} />;
             }
 
+            if (columnType === "badge") {
+              return <StatusBadgeCell value={rawValue} options={options?.badge} />;
+            }
+
+            if (columnType === "currency") {
+              return (
+                <CurrencyCell
+                  value={rawValue}
+                  row={row}
+                  options={options?.currency}
+                />
+              );
+            }
+
+            if (columnType === "date") {
+              return <DateCell value={rawValue} options={options?.date} />;
+            }
+
+            if (columnType === "dateTime") {
+              return <DateTimeCell value={rawValue} options={options?.dateTime} />;
+            }
+
+            if (columnType === "email") {
+              return <EmailCell value={rawValue} options={options?.email} />;
+            }
+
+            if (columnType === "phone") {
+              return <PhoneCell value={rawValue} options={options?.phone} />;
+            }
+
+            if (columnType === "longText") {
+              return <LongTextCell value={rawValue} options={options?.longText} />;
+            }
+
+            if (columnType === "json") {
+              return (
+                <JsonPreviewCell
+                  value={rawValue}
+                  field={field}
+                  options={options?.json}
+                />
+              );
+            }
+
+            if (columnType === "image") {
+              return (
+                <ImagePreviewCell
+                  value={rawValue}
+                  field={field}
+                  options={options?.image}
+                />
+              );
+            }
+
             if (columnType === "actions") {
               return (
                 <ActionsCell
@@ -252,7 +354,7 @@ export function SuperDataGrid<
           },
         };
       }),
-    [cellComponents, columns, columnTypes, data, onAction],
+    [cellComponents, columns, columnOptions, columnTypes, data, onAction],
   );
 
   const filterFields = useMemo(

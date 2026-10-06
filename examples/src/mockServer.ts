@@ -39,6 +39,20 @@ export interface DemoUser {
     isPrimary: boolean;
   };
   role: "Admin" | "User";
+  orderTotal: number;
+  currencyCode: string;
+  signupDate: string;
+  lastLoginAt: string;
+  contactEmail: string;
+  contactPhone: string;
+  description: string;
+  metadata: {
+    source: string;
+    plan: string;
+    invoice: { number: string; paid: boolean };
+    tags: string[];
+  };
+  productImage: { src: string; alt: string; label: string };
   actions: SuperDataGridActionType[];
   createdAt: string;
   createdByUserInfo: {
@@ -123,6 +137,29 @@ export const largeDataset: DemoUser[] = Array.from(
         isPrimary: true,
       },
       role: index % 2 === 0 ? "Admin" : "User",
+      orderTotal: 1299 + ((index * 137) % 42000),
+      currencyCode: "USD",
+      signupDate: new Date(Date.UTC(2022, index % 12, (index % 27) + 1)).toISOString(),
+      lastLoginAt: new Date(
+        Date.UTC(2026, 7, 25, 20, 50 - (index % 50), 0),
+      ).toISOString(),
+      contactEmail: email,
+      contactPhone: phone,
+      description: `Account ${index + 1} is a ${index % 2 === 0 ? "premium administrator" : "standard user"} profile created for the SuperDataGrid demo. This longer sample text demonstrates a compact cell preview with the complete value available from its tooltip.`,
+      metadata: {
+        source: index % 2 === 0 ? "admin-console" : "self-service",
+        plan: index % 3 === 0 ? "enterprise" : "standard",
+        invoice: {
+          number: `INV-${String(index + 1).padStart(5, "0")}`,
+          paid: index % 4 !== 0,
+        },
+        tags: index % 2 === 0 ? ["verified", "priority"] : ["verified"],
+      },
+      productImage: {
+        src: "/demo-product.svg",
+        alt: "Blue and amber product package illustration",
+        label: `Package ${String((index % 12) + 1).padStart(2, "0")}`,
+      },
       actions: [
         SUPER_DATA_GRID_ACTIONS.VIEW,
         SUPER_DATA_GRID_ACTIONS.EDIT,
@@ -169,6 +206,9 @@ function matchesFilter(user: DemoUser, filter: GridFilterItem): boolean {
         : auditPath === "timestamp"
           ? user.createdAt
           : readNestedValue(user.createdByUserInfo, nestedPath);
+  } else if (filter.field === "orderTotal") {
+    // The table displays the stored cents as a major-unit currency amount.
+    cellValue = user.orderTotal / 100;
   } else {
     cellValue =
       filter.field === "peopleDetails"

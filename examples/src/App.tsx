@@ -9,9 +9,9 @@ import SuperDataGrid, {
   type SuperDataGridAllDataRequest,
   type SuperDataGridAllRowsRequest,
   type SuperDataGridBulkDeleteRequest,
+  type SuperDataGridColumnOptions,
   type SuperDataGridView,
 } from "@simplishelf/super-data-grid";
-import RoleCell from "./components/RoleCell";
 import DemoActionJsonPanel from "./components/DemoActionJsonPanel";
 import { useDemoSnackbar } from "./components/DemoSnackbarProvider";
 import {
@@ -25,18 +25,80 @@ import {
 
 const columns = [
   "id",
+  "role",
+  "orderTotal",
+  "signupDate",
+  "lastLoginAt",
+  "contactEmail",
+  "contactPhone",
+  "description",
+  "metadata",
+  "productImage",
   "peopleDetails",
   "address",
   "createdAt",
-  "role",
   "actions",
 ];
 const columnTypes = {
   peopleDetails: "peopleDetails",
   address: "address",
   createdAt: "audit",
+  role: "badge",
+  orderTotal: "currency",
+  signupDate: "date",
+  lastLoginAt: "dateTime",
+  contactEmail: "email",
+  contactPhone: "phone",
+  description: "longText",
+  metadata: "json",
+  productImage: "image",
   actions: "actions",
 } as const;
+const columnOptions = {
+  role: {
+    badge: {
+      labels: { Admin: "Admin", User: "User" },
+      colors: { Admin: "primary", User: "neutral" },
+      fallbackLabel: "Unknown",
+      fallbackColor: "warning",
+    },
+  },
+  orderTotal: {
+    currency: {
+      currencyField: "currencyCode",
+      locale: "en-US",
+      amountInMinorUnits: true,
+      minorUnits: 2,
+    },
+  },
+  signupDate: {
+    date: {
+      locale: "en-US",
+      timeZone: "UTC",
+      formatOptions: { dateStyle: "medium" },
+    },
+  },
+  lastLoginAt: {
+    dateTime: {
+      locale: "en-US",
+      timeZone: "UTC",
+      formatOptions: { dateStyle: "medium", timeStyle: "short" },
+    },
+  },
+  contactEmail: { email: { showIcon: true } },
+  contactPhone: {
+    phone: { showIcon: true, countryCode: "ES", format: "international" },
+  },
+  description: { longText: { maxPreviewLength: 110 } },
+  metadata: { json: { maxPreviewLength: 82 } },
+  productImage: {
+    image: {
+      altField: "alt",
+      labelField: "label",
+      thumbnailAlt: "Product package preview",
+    },
+  },
+} satisfies Partial<Record<string, SuperDataGridColumnOptions>>;
 
 const initialViews: SuperDataGridView[] = [
   {
@@ -208,8 +270,9 @@ export default function App() {
             Browse 1,000 mock users with server-side filtering and pagination.
             Save filters as views, export matching data, and select rows across
             server pages. People details and address columns use the built-in
-            SimpliShelf-style renderers. The audit column combines the creator
-            and timestamp from each row. Deleted users are hidden by default,
+            SimpliShelf-style renderers. Badge, currency, date/time, contact,
+            long-text, JSON, and image cells demonstrate the other reusable
+            renderers. Deleted users are hidden by default,
             and every 25th row is disabled for selection as an example. The
             action column uses the predefined View, Edit, Deactivate, and Share
             buttons.
@@ -222,6 +285,7 @@ export default function App() {
         <SuperDataGrid
           columns={columns}
           columnTypes={columnTypes}
+          columnOptions={columnOptions}
           data={data}
           beforeTable={<DemoActionJsonPanel value={actionJson} />}
           minHeight={900}
@@ -261,7 +325,6 @@ export default function App() {
             setActionJson(`${actionLabel}, selected for IDs [${row.id}]`);
             notify(`${actionLabel} action selected for ${row.name}`);
           }}
-          cellComponents={{ role: RoleCell }}
           checkboxSelection
           selectionLabel="users"
           isRowSelectable={({ row }) => row.id % 25 !== 0}
