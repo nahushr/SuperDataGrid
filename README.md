@@ -137,25 +137,28 @@ Additional built-in cell types cover common values. Configure the renderer with 
 
 | Type | Behavior | Per-column options |
 |---|---|---|
-| `badge` | Status or category pill with an app-defined label and named color per value. | `labels`, `colors`, `fallbackLabel`, `fallbackColor` |
-| `currency` | Locale-aware currency formatting; supports row-specific currency codes and integer minor units. | `currency`, `currencyField`, `locale`, `amountInMinorUnits`, `minorUnits` |
-| `date` / `dateTime` | Standalone localized date or date-time formatting with an optional time zone. | `locale`, `timeZone`, `formatOptions` |
-| `email` / `phone` | Clickable mail and telephone links with optional icons; phone values can be formatted. | `showIcon`, and for phones `countryCode` / `format` |
+| `badge` | Status or category pill with per-value label, background, text color, and optional React icon. | `labels`, `colors`, `fontColors`, `icons`, `fallbackLabel`, `fallbackColor` |
+| `currency` | Grouped, locale-aware currency display with a prominent total; supports row-specific currency codes and integer minor units. | `currency`, `currencyField`, `locale`, `amountInMinorUnits`, `minorUnits`, `showIcon` |
+| `date` / `dateTime` | Localized date or date-time with a calendar icon and optional time zone. | `locale`, `timeZone`, `formatOptions`, `showIcon` |
+| `email` / `phone` | Clickable mail and telephone links with optional icons; phone values include a country flag when the country can be resolved. | `showIcon`, `showFlag`, and for phones `countryCode` / `format` |
 | `longText` | Short cell preview with the full value in a tooltip. | `maxPreviewLength` |
 | `json` | Compact preview that opens formatted JSON with a copy action. | `maxPreviewLength` |
-| `image` | Clickable thumbnail that opens a larger image preview. Accepts a URL or `{ src, alt, label }`. | `altField`, `labelField`, `thumbnailAlt` |
+| `image` | Product image tile that opens the SimpliShelf-style carousel with arrows, count, and thumbnails. Accepts a URL, an array of `{ url, label }`, an `{ images: [...] }` object, or SimpliShelf product image fields. | `altField`, `labelField`, `thumbnailAlt`, `fallbackLetter` |
+| `priceBreakdown` | Purchase-order total with a detailed dialog for subtotal, discount, packaging, shipping, fees, tax, and total. | Currency options plus `title` and `labels` |
 
-Badge colors are named, CSS-backed tokens exported as `SUPER_DATA_GRID_BADGE_COLORS`; this keeps app status mappings configurable without arbitrary inline styles. For currency values stored as integer cents, set `amountInMinorUnits: true` and `minorUnits: 2`.
+Badge colors are named, CSS-backed tokens exported as `SUPER_DATA_GRID_BADGE_COLORS`; independently select the text color and pass React icons per status. The palette supports primary, info, success, warning, error, purple, neutral, teal, cyan, indigo, orange, and slate. For currency values stored as integer cents, set `amountInMinorUnits: true` and `minorUnits: 2`.
 
 ```tsx
 import SuperDataGrid, {
   SUPER_DATA_GRID_BADGE_COLORS,
 } from "@simplishelf/super-data-grid";
+import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 
 const columns = ["role", "orderTotal", "signupDate", "lastLoginAt", "contactEmail", "contactPhone", "description", "metadata", "productImage"];
 const columnTypes = {
   role: "badge",
-  orderTotal: "currency",
+  orderTotal: "priceBreakdown",
   signupDate: "date",
   lastLoginAt: "dateTime",
   contactEmail: "email",
@@ -174,15 +177,22 @@ const columnTypes = {
       badge: {
         labels: { Admin: "Administrator", User: "User" },
         colors: {
-          Admin: SUPER_DATA_GRID_BADGE_COLORS.PRIMARY,
+          Admin: SUPER_DATA_GRID_BADGE_COLORS.INDIGO,
           User: SUPER_DATA_GRID_BADGE_COLORS.NEUTRAL,
+        },
+        fontColors: {
+          Admin: SUPER_DATA_GRID_BADGE_COLORS.INDIGO,
+          User: SUPER_DATA_GRID_BADGE_COLORS.SLATE,
+        },
+        icons: {
+          Admin: <AdminPanelSettingsOutlinedIcon />,
+          User: <PersonOutlineIcon />,
         },
         fallbackColor: SUPER_DATA_GRID_BADGE_COLORS.WARNING,
       },
     },
     orderTotal: {
-      currency: {
-        currencyField: "currencyCode",
+      priceBreakdown: {
         locale: "en-US",
         amountInMinorUnits: true,
         minorUnits: 2,
@@ -190,10 +200,35 @@ const columnTypes = {
     },
     signupDate: { date: { locale: "en-US", timeZone: "UTC" } },
     lastLoginAt: { dateTime: { locale: "en-US", timeZone: "UTC" } },
-    contactPhone: { phone: { countryCode: "US", format: "international" } },
+    contactPhone: { phone: { countryCode: "US", format: "international", showFlag: true } },
   }}
 />
 ```
+
+For the `priceBreakdown` type, pass a purchase-order summary object in the `orderTotal` field. The grid shows the grand total in that same cell and opens the complete subtotal, discount, packaging, shipping, fees, tax, and total breakdown when clicked. `productImage` accepts multiple product images; it prefers a label containing “Main” for the tile and opens the full carousel when selected.
+
+```ts
+const order = {
+  currency: "USD",
+  productsSubtotal: 125000,
+  totalDiscount: 5000,
+  packagingFee: 1500,
+  totalShipping: 4000,
+  serviceFee: 300,
+  subtotal: 125800,
+  gstPercentage: 18,
+  gstAmount: 22644,
+  grandTotal: 148444,
+};
+
+const productImages = [
+  { url: "/images/main.jpg", label: "Main" },
+  { url: "/images/front.jpg", label: "Front" },
+  { url: "/images/details.jpg", label: "Details" },
+];
+```
+
+Use `amountInMinorUnits: true` for values stored as cents/paise; without it, amounts are treated as major units. `SUPER_DATA_GRID_PRODUCT_IMAGE_FIELDS` exports the recognized SimpliShelf product image field names and labels.
 
 All built-in types continue to receive and render raw row data. Nested JSON values can also expose their scalar paths in the grid's filter and saved-view builders.
 

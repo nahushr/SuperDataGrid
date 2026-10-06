@@ -20,11 +20,13 @@ export default function PhoneCell({ value, options = {} }: PhoneCellProps) {
 
   let href = `tel:${phoneText}`;
   let display = phoneText;
+  let flagCountryCode = record?.countryCode ?? record?.country ?? options.countryCode;
   try {
     const countryCode = options.countryCode?.toUpperCase() as CountryCode | undefined;
     const parsed = parsePhoneNumberFromString(phoneText, countryCode);
     if (parsed) {
       href = `tel:${parsed.number}`;
+      flagCountryCode = parsed.country ?? flagCountryCode ?? countryCode;
       display = options.format === "original"
         ? phoneText
         : options.format === "national"
@@ -34,6 +36,7 @@ export default function PhoneCell({ value, options = {} }: PhoneCellProps) {
   } catch {
     // Preserve the original value when it is not a valid phone number.
   }
+  const flag = options.showFlag === false ? "" : countryFlag(flagCountryCode);
 
   return (
     <a
@@ -45,7 +48,17 @@ export default function PhoneCell({ value, options = {} }: PhoneCellProps) {
       {options.showIcon !== false && (
         <PhoneIcon className={styles.contactIcon} aria-hidden="true" />
       )}
+      {flag && <span aria-label={`${flagCountryCode} flag`} className={styles.phoneFlag} role="img">{flag}</span>}
       <span className={styles.contactText}>{explicitLabel || display}</span>
     </a>
+  );
+}
+
+function countryFlag(value: unknown): string {
+  if (typeof value !== "string") return "";
+  const countryCode = value.trim().toUpperCase();
+  if (!/^[A-Z]{2}$/.test(countryCode)) return "";
+  return String.fromCodePoint(
+    ...[...countryCode].map((letter) => letter.charCodeAt(0) + 127397),
   );
 }

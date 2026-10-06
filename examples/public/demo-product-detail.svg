@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-labelledby="title">
+  <title id="title">Detail view of the sample product package</title>
+  <rect width="640" height="480" rx="32" fill="#fff6e7"/>
+  <circle cx="520" cy="105" r="66" fill="#ffe3a6"/>
+  <path d="M0 356c96-54 198-63 294-25 112 43 222 36 346-24v173H0z" fill="#ffe6b9"/>
+  <path d="M189 130h238l34 42v210H176V172z" fill="#70461b"/>
+  <path d="M189 130h238v57H189z" fill="#d68a25"/>
+  <path d="M427 130v57h34z" fill="#a66719"/>
+  <rect x="214" y="218" width="178" height="18" rx="9" fill="#fff8ed"/>
+  <rect x="214" y="254" width="130" height="13" rx="6.5" fill="#ecc27e"/>
+  <rect x="214" y="284" width="152" height="13" rx="6.5" fill="#ecc27e"/>
+  <path d="M391 316l19 20-19 20-19-20z" fill="#f1b832"/>
+</svg>

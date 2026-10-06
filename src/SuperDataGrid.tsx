@@ -17,6 +17,7 @@ import SuperDataGridPagination, {
   PAGE_SIZE_OPTIONS,
 } from "./components/SuperDataGridPagination";
 import SuperDataGridLoadingOverlay from "./components/SuperDataGridLoadingOverlay";
+import SuperDataGridNoRowsOverlay from "./components/SuperDataGridNoRowsOverlay";
 import SuperDataGridAddViewDialog from "./components/SuperDataGridAddViewDialog";
 import SuperDataGridToolbar from "./components/SuperDataGridToolbar";
 import SuperDataGridViewsSidebar from "./components/SuperDataGridViewsSidebar";
@@ -31,6 +32,7 @@ import EmailCell from "./components/cells/EmailCell";
 import ImagePreviewCell from "./components/cells/ImagePreviewCell";
 import JsonPreviewCell from "./components/cells/JsonPreviewCell";
 import LongTextCell from "./components/cells/LongTextCell";
+import PriceBreakdownCell from "./components/cells/PriceBreakdownCell";
 import PeopleDetailsCell from "./components/cells/PeopleDetailsCell";
 import PhoneCell from "./components/cells/PhoneCell";
 import StatusBadgeCell from "./components/cells/StatusBadgeCell";
@@ -53,6 +55,7 @@ import type {
   SuperDataGridProps,
   SuperDataGridRow,
   SuperDataGridView,
+  SuperDataGridFilterField,
 } from "./types";
 import styles from "./styles/grid.module.css";
 
@@ -66,6 +69,7 @@ export type {
   SuperDataGridCellComponent,
   SuperDataGridCellProps,
   SuperDataGridColumnType,
+  SuperDataGridColumnConfiguration,
   SuperDataGridBadgeColor,
   SuperDataGridBadgeOptions,
   SuperDataGridColumnOptions,
@@ -76,9 +80,14 @@ export type {
   SuperDataGridJsonOptions,
   SuperDataGridLongTextOptions,
   SuperDataGridPhoneOptions,
+  SuperDataGridPriceBreakdown,
+  SuperDataGridPriceBreakdownOptions,
+  SuperDataGridPriceBreakdownLine,
+  SuperDataGridProductImage,
   SuperDataGridExportFormat,
   SuperDataGridExportRequest,
   SuperDataGridExportScope,
+  SuperDataGridFilterField,
   SuperDataGridProps,
   SuperDataGridRow,
   SuperDataGridView,
@@ -88,6 +97,7 @@ export {
   SUPER_DATA_GRID_BADGE_COLORS,
 } from "./types";
 export { SUPER_DATA_GRID_AVATAR_COLORS } from "./utils/avatar";
+export { SUPER_DATA_GRID_PRODUCT_IMAGE_FIELDS } from "./utils/predefinedCellData";
 
 function resolveRowId<Row extends SuperDataGridRow>(
   row: Row,
@@ -110,10 +120,21 @@ export function SuperDataGrid<
   Row extends SuperDataGridRow = GridValidRowModel,
 >({
   columns,
+  columnConfiguration,
   columnTypes,
   columnOptions,
+  filterFields: suppliedFilterFields,
   data,
   minHeight,
+  columnGroupingModel,
+  rowHeight,
+  getRowHeight,
+  getEstimatedRowHeight,
+  getRowClassName,
+  pageSizeOptions = PAGE_SIZE_OPTIONS,
+  hideFooter = false,
+  hideToolbar = false,
+  dataGridSlots,
   beforeTable,
   density: densityProp,
   onDensityChange,
@@ -136,6 +157,10 @@ export function SuperDataGrid<
   cellComponents,
   onAction,
   views: viewsProp,
+  hideViews = false,
+  canAddViews = true,
+  canEditViews = true,
+  canDeleteViews = true,
   onViewsChange,
   onViewAdded,
   onViewUpdated,
@@ -148,6 +173,7 @@ export function SuperDataGrid<
   loading = false,
   checkboxSelection = false,
   rowSelectionModel: rowSelectionModelProp,
+  disableRowSelectionExcludeModel = false,
   onRowSelectionModelChange,
   isRowSelectable,
   getRowId,
@@ -157,6 +183,7 @@ export function SuperDataGrid<
   onIncludeDeletedChange,
   hideIncludeDeleted = false,
   onBulkDelete,
+  bulkDeleteLabel = "Bulk delete",
   hideBulkDelete = false,
 }: SuperDataGridProps<Row>) {
   const [internalDensity, setInternalDensity] =
@@ -170,6 +197,7 @@ export function SuperDataGrid<
   const [internalPaginationModel, setInternalPaginationModel] =
     useState<GridPaginationModel>({ page: 0, pageSize: 25 });
   const [filterPanelOpen, setFilterPanelOpen] = useState(false);
+  const knownFilterFieldsRef = React.useRef<SuperDataGridFilterField[]>([]);
   const [addViewOpen, setAddViewOpen] = useState(false);
   const [editingView, setEditingView] = useState<SuperDataGridView | null>(null);
   const [viewsOpen, setViewsOpen] = useState(true);
@@ -209,13 +237,17 @@ export function SuperDataGrid<
                 ? 260
                 : columnType === "dateTime" || columnType === "email" || columnType === "longText" || columnType === "json"
                   ? 220
-                  : columnType === "phone"
+                : columnType === "phone"
                     ? 190
-                    : columnType === "currency" || columnType === "date" || columnType === "image" || columnType === "badge"
+                    : columnType === "image"
+                      ? 200
+                      : columnType === "priceBreakdown"
+                        ? 235
+                        : columnType === "currency" || columnType === "date" || columnType === "badge"
                       ? 150
                 : 140;
         const options = columnOptions?.[field];
-        const dataType = columnType === "currency"
+        const dataType = columnType === "currency" || columnType === "priceBreakdown"
           ? "number"
           : columnType === "date"
             ? "date"
@@ -227,9 +259,9 @@ export function SuperDataGrid<
 
         return {
           field,
-          headerName: toHeaderName(field),
-          description: "Click the column header to sort",
-          sortable: true,
+          headerName: columnConfiguration?.[field]?.headerName ?? toHeaderName(field),
+          description: columnConfiguration?.[field]?.description ?? "Click the column header to sort",
+          sortable: columnConfiguration?.[field]?.sortable ?? true,
           type: dataType,
           valueGetter: columnType
             ? (_value, row) => {
@@ -237,16 +269,29 @@ export function SuperDataGrid<
                 if (columnType === "currency") {
                   return getCurrencyAmount(rawValue, options?.currency);
                 }
+                if (columnType === "priceBreakdown") {
+                  const record =
+                    typeof rawValue === "object" && rawValue !== null
+                      ? (rawValue as Record<string, unknown>)
+                      : null;
+                  return getCurrencyAmount(
+                    record?.grandTotal ?? record?.total,
+                    options?.priceBreakdown,
+                  );
+                }
                 if (columnType === "date" || columnType === "dateTime") {
                   return parseDateValue(rawValue);
                 }
                 return getCommonCellSearchText(columnType, rawValue, row, field);
               }
             : undefined,
-          align: "left",
-          headerAlign: "left",
-          flex: columnType ? 1.6 : 1,
-          minWidth,
+          align: columnConfiguration?.[field]?.align ?? "left",
+          headerAlign: columnConfiguration?.[field]?.headerAlign ?? "left",
+          flex: columnConfiguration?.[field]?.flex ?? (columnType ? 1.6 : 1),
+          width: columnConfiguration?.[field]?.width,
+          minWidth: columnConfiguration?.[field]?.minWidth ?? minWidth,
+          maxWidth: columnConfiguration?.[field]?.maxWidth,
+          hideable: columnConfiguration?.[field]?.hideable,
           renderCell: ({ value, row }) => {
             const rawValue = (row as Record<string, unknown>)[field];
             const CellComponent = cellComponents?.[field];
@@ -333,6 +378,16 @@ export function SuperDataGrid<
               );
             }
 
+            if (columnType === "priceBreakdown") {
+              return (
+                <PriceBreakdownCell
+                  value={rawValue}
+                  row={row}
+                  options={options?.priceBreakdown}
+                />
+              );
+            }
+
             if (columnType === "actions") {
               return (
                 <ActionsCell
@@ -354,12 +409,29 @@ export function SuperDataGrid<
           },
         };
       }),
-    [cellComponents, columns, columnOptions, columnTypes, data, onAction],
+    [cellComponents, columnConfiguration, columns, columnOptions, columnTypes, data, onAction],
   );
 
   const filterFields = useMemo(
-    () => createFilterFields(gridColumns, data, columnTypes),
-    [columnTypes, data, gridColumns],
+    () => {
+      const discovered = createFilterFields(gridColumns, data, columnTypes);
+      const validParentFields = new Set(gridColumns.map((column) => column.field));
+      const preservedNestedFields = knownFilterFieldsRef.current.filter(
+        (field) =>
+          field.parentField != null && validParentFields.has(field.parentField),
+      );
+      const combined = [
+        ...discovered,
+        ...preservedNestedFields,
+        ...(suppliedFilterFields ?? []),
+      ].filter(
+        (field, index, fields) =>
+          fields.findIndex((candidate) => candidate.field === field.field) === index,
+      );
+      knownFilterFieldsRef.current = combined;
+      return combined;
+    },
+    [columnTypes, data, gridColumns, suppliedFilterFields],
   );
 
   const filterOnlyColumns = useMemo<GridColDef[]>(
@@ -772,6 +844,7 @@ export function SuperDataGrid<
 
   const handleAddView = useCallback(
     (name: string, notes: string, viewFilterModel: GridFilterModel) => {
+      if (!canAddViews) return;
       const view: SuperDataGridView = {
         id: `view-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         name,
@@ -789,6 +862,7 @@ export function SuperDataGrid<
     },
     [
       handleAddViewOpenChange,
+      canAddViews,
       handleViewsChange,
       onViewAdded,
       selectView,
@@ -798,7 +872,7 @@ export function SuperDataGrid<
 
   const handleUpdateView = useCallback(
     (name: string, notes: string, viewFilterModel: GridFilterModel) => {
-      if (!editingView) return;
+      if (!editingView || !canEditViews) return;
       const updatedView: SuperDataGridView = {
         ...editingView,
         name,
@@ -818,6 +892,7 @@ export function SuperDataGrid<
     },
     [
       editingView,
+      canEditViews,
       handleAddViewOpenChange,
       handleViewsChange,
       onViewUpdated,
@@ -840,11 +915,12 @@ export function SuperDataGrid<
 
   const handleDeleteView = useCallback(
     (view: SuperDataGridView) => {
+      if (!canDeleteViews) return;
       handleViewsChange(views.filter((item) => item.id !== view.id));
       onViewDeleted?.(view);
       if (selectedViewId === view.id) selectView(null);
     },
-    [handleViewsChange, onViewDeleted, selectView, selectedViewId, views],
+    [canDeleteViews, handleViewsChange, onViewDeleted, selectView, selectedViewId, views],
   );
 
   useEffect(() => {
@@ -873,11 +949,13 @@ export function SuperDataGrid<
       filterMode,
       paginationMode,
       paginationModel: resolvedPaginationModel,
+      pageSizeOptions,
       getAllData,
       onExport,
       views,
       selectedViewId,
       viewsOpen,
+      hideViews,
       checkboxSelection,
       includeDeleted,
       selectionLabel,
@@ -885,6 +963,7 @@ export function SuperDataGrid<
         onIncludeDeletedChange != null && !hideIncludeDeleted,
       onIncludeDeletedChange,
       selectionCount,
+      bulkDeleteLabel,
       canBulkDelete:
         checkboxSelection && onBulkDelete != null && !hideBulkDelete,
       onBulkDelete: confirmBulkDelete,
@@ -913,10 +992,13 @@ export function SuperDataGrid<
       gridColumns,
       paginationMode,
       resolvedPaginationModel,
+      pageSizeOptions,
       rows,
       selectedViewId,
+      hideViews,
       checkboxSelection,
       selectionCount,
+      bulkDeleteLabel,
       includeDeleted,
       selectionLabel,
       onIncludeDeletedChange,
@@ -947,7 +1029,7 @@ export function SuperDataGrid<
       className={`${styles.gridWorkspace} ${densityClass}`}
       style={workspaceStyle}
     >
-      <div
+      {!hideViews && <div
         className={`${styles.viewsSidebarSlot} ${
           viewsOpen ? "" : styles.viewsSidebarSlotClosed
         }`}
@@ -962,19 +1044,25 @@ export function SuperDataGrid<
           }}
           onSelect={selectView}
           onEdit={(view) => {
+            if (!canEditViews) return;
             setEditingView(view);
             handleAddViewOpenChange(true);
           }}
           onDelete={handleDeleteView}
+          canAdd={canAddViews}
+          canEdit={canEditViews}
+          canDelete={canDeleteViews}
         />
-      </div>
+      </div>}
       <div className={styles.gridFrame}>
         <SuperDataGridContext.Provider value={contextValue}>
           <DataGrid
             className={styles.gridRoot}
             rows={rows}
             columns={dataGridColumns}
+            columnGroupingModel={columnGroupingModel}
             columnHeaderHeight={getColumnHeaderHeight(gridColumns)}
+            rowHeight={rowHeight}
             density={density}
             sortingMode={sortingMode}
             sortModel={sortModel}
@@ -987,15 +1075,18 @@ export function SuperDataGrid<
               paginationMode === "server" ? rowCount ?? data.length : undefined
             }
             loading={loading}
-            getRowHeight={() => "auto"}
-            getEstimatedRowHeight={() => 76}
+            getRowHeight={getRowHeight ?? (() => "auto")}
+            getEstimatedRowHeight={getEstimatedRowHeight ?? (() => 76)}
+            hideFooter={hideFooter}
+            showToolbar={!hideToolbar}
             onDensityChange={handleDensityChange}
             filterModel={filterModel}
             onFilterModelChange={handleFilterModelChange}
             columnVisibilityModel={dataGridColumnVisibilityModel}
             onColumnVisibilityModelChange={handleColumnVisibilityModelChange}
-            pageSizeOptions={PAGE_SIZE_OPTIONS}
+            pageSizeOptions={pageSizeOptions}
             rowSelection={checkboxSelection}
+            disableRowSelectionExcludeModel={disableRowSelectionExcludeModel}
             disableRowSelectionOnClick
             checkboxSelection={checkboxSelection}
             rowSelectionModel={
@@ -1010,15 +1101,16 @@ export function SuperDataGrid<
             }
             disableColumnMenu
             disableColumnResize
-            showToolbar
             slots={{
-              toolbar: SuperDataGridToolbar,
+              toolbar: hideToolbar ? undefined : SuperDataGridToolbar,
               pagination: SuperDataGridPagination,
-              loadingOverlay: SuperDataGridLoadingOverlay,
+              loadingOverlay:
+                dataGridSlots?.loadingOverlay ?? SuperDataGridLoadingOverlay,
+              noRowsOverlay: dataGridSlots?.noRowsOverlay ?? SuperDataGridNoRowsOverlay,
             }}
-            getRowClassName={({ indexRelativeToCurrentPage }) =>
+            getRowClassName={getRowClassName ?? (({ indexRelativeToCurrentPage }) =>
               indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
-            }
+            )}
           />
         </SuperDataGridContext.Provider>
       </div>

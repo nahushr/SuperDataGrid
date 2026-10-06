@@ -1,5 +1,9 @@
 import type { GridColDef } from "@mui/x-data-grid";
-import type { SuperDataGridColumnType, SuperDataGridRow } from "../types";
+import type {
+  SuperDataGridColumnType,
+  SuperDataGridFilterField,
+  SuperDataGridRow,
+} from "../types";
 import {
   getAuditPeopleDetailsParts,
   getAuditTimestamp,
@@ -7,14 +11,7 @@ import {
 } from "./commonCellData";
 import { toHeaderName } from "./gridData";
 
-export interface SuperDataGridFilterField {
-  field: string;
-  headerName: string;
-  type?: GridColDef["type"];
-  filterable?: boolean;
-  parentField?: string;
-  nestedPath?: string;
-}
+export type { SuperDataGridFilterField } from "../types";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);

@@ -39,8 +39,17 @@ export interface DemoUser {
     isPrimary: boolean;
   };
   role: "Admin" | "User";
-  orderTotal: number;
-  currencyCode: string;
+  orderTotal: {
+    grossSubtotal: number;
+    totalDiscount: number;
+    subtotal: number;
+    totalPackagingCost: number;
+    totalShippingCost: number;
+    serviceFee: number;
+    gstAmount: number;
+    grandTotal: number;
+    currency: string;
+  };
   signupDate: string;
   lastLoginAt: string;
   contactEmail: string;
@@ -52,7 +61,7 @@ export interface DemoUser {
     invoice: { number: string; paid: boolean };
     tags: string[];
   };
-  productImage: { src: string; alt: string; label: string };
+  productImage: Array<{ url: string; label: string }>;
   actions: SuperDataGridActionType[];
   createdAt: string;
   createdByUserInfo: {
@@ -109,6 +118,18 @@ export const largeDataset: DemoUser[] = Array.from(
     const email = `user${index + 1}@example.com`;
     const phone = `+34943482${String(9000 + index).slice(-4)}`;
 
+    const grossSubtotal = 129999 + ((index * 137) % 4_200_000);
+    const totalDiscount = index % 3 === 0 ? 2500 + ((index * 43) % 24000) : 0;
+    const subtotal = grossSubtotal - totalDiscount;
+    const totalPackagingCost = 1499;
+    const totalShippingCost = 3999 + (index % 8) * 250;
+    const serviceFee = 299;
+    const subtotalBeforeTax = subtotal + totalPackagingCost + totalShippingCost + serviceFee;
+    const gstAmount = Math.round(
+      subtotalBeforeTax * 0.18,
+    );
+    const grandTotal = subtotalBeforeTax + gstAmount;
+
     return {
       id: index + 1,
       name: fullName,
@@ -137,8 +158,17 @@ export const largeDataset: DemoUser[] = Array.from(
         isPrimary: true,
       },
       role: index % 2 === 0 ? "Admin" : "User",
-      orderTotal: 1299 + ((index * 137) % 42000),
-      currencyCode: "USD",
+      orderTotal: {
+        grossSubtotal,
+        totalDiscount,
+        subtotal: subtotalBeforeTax,
+        totalPackagingCost,
+        totalShippingCost,
+        serviceFee,
+        gstAmount,
+        grandTotal,
+        currency: "USD",
+      },
       signupDate: new Date(Date.UTC(2022, index % 12, (index % 27) + 1)).toISOString(),
       lastLoginAt: new Date(
         Date.UTC(2026, 7, 25, 20, 50 - (index % 50), 0),
@@ -155,11 +185,11 @@ export const largeDataset: DemoUser[] = Array.from(
         },
         tags: index % 2 === 0 ? ["verified", "priority"] : ["verified"],
       },
-      productImage: {
-        src: "/demo-product.svg",
-        alt: "Blue and amber product package illustration",
-        label: `Package ${String((index % 12) + 1).padStart(2, "0")}`,
-      },
+      productImage: [
+        { url: "/demo-product.svg", label: "Main" },
+        { url: "/demo-product-front.svg", label: "Front" },
+        { url: "/demo-product-detail.svg", label: "Details" },
+      ],
       actions: [
         SUPER_DATA_GRID_ACTIONS.VIEW,
         SUPER_DATA_GRID_ACTIONS.EDIT,
@@ -206,9 +236,14 @@ function matchesFilter(user: DemoUser, filter: GridFilterItem): boolean {
         : auditPath === "timestamp"
           ? user.createdAt
           : readNestedValue(user.createdByUserInfo, nestedPath);
+  } else if (column === "orderTotal" && nestedPath.length > 0) {
+    cellValue = readNestedValue(user.orderTotal, nestedPath);
+    if (nestedPath.join(".") === "grandTotal" && typeof cellValue === "number") {
+      cellValue /= 100;
+    }
   } else if (filter.field === "orderTotal") {
     // The table displays the stored cents as a major-unit currency amount.
-    cellValue = user.orderTotal / 100;
+    cellValue = user.orderTotal.grandTotal / 100;
   } else {
     cellValue =
       filter.field === "peopleDetails"
@@ -384,6 +419,7 @@ function applyServerFilters(
 }
 
 function getSortValue(user: DemoUser, field: string): unknown {
+  if (field === "orderTotal") return user.orderTotal.grandTotal;
   if (field === "peopleDetails") return user.name;
   if (field === "address") {
     return [

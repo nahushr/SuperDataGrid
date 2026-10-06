@@ -1,4 +1,5 @@
 import React from "react";
+import PaymentsOutlinedIcon from "@mui/icons-material/PaymentsOutlined";
 import type { SuperDataGridCurrencyOptions } from "../../types";
 import {
   getCurrencyAmount,
@@ -25,20 +26,35 @@ export default function CurrencyCell({
     const formatOptions: Intl.NumberFormatOptions = {
       style: "currency",
       currency,
+      useGrouping: true,
     };
     if (options.minorUnits != null) {
       formatOptions.minimumFractionDigits = options.minorUnits;
       formatOptions.maximumFractionDigits = options.minorUnits;
     }
     return (
-      <span className={styles.currency}>
+      <span className={styles.currencyCard}>
+        {options.showIcon !== false && (
+          <span aria-hidden="true" className={styles.currencyIcon}>
+            <PaymentsOutlinedIcon />
+          </span>
+        )}
+        <span className={styles.currencyAmount}>
         {new Intl.NumberFormat(options.locale, formatOptions).format(amount)}
+        </span>
       </span>
     );
   } catch {
     return (
-      <span className={styles.currency}>
+      <span className={styles.currencyCard}>
+        {options.showIcon !== false && (
+          <span aria-hidden="true" className={styles.currencyIcon}>
+            <PaymentsOutlinedIcon />
+          </span>
+        )}
+        <span className={styles.currencyAmount}>
         {amount.toLocaleString(options.locale)}
+        </span>
       </span>
     );
   }

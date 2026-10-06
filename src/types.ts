@@ -1,9 +1,14 @@
 import type { ComponentType, ReactNode } from "react";
 import type {
+  GridColDef,
+  GridColumnGroupingModel,
   GridColumnVisibilityModel,
   GridDensity,
+  GridRowClassNameParams,
   GridRowId,
+  GridRowHeightParams,
   GridRowSelectionModel,
+  GridSlotsComponent,
   GridSortModel,
   GridValidRowModel,
 } from "@mui/x-data-grid";
@@ -30,7 +35,8 @@ export type SuperDataGridColumnType =
   | "phone"
   | "longText"
   | "json"
-  | "image";
+  | "image"
+  | "priceBreakdown";
 
 /** Named badge colors that can be mapped to app-specific statuses. */
 export const SUPER_DATA_GRID_BADGE_COLORS = {
@@ -41,6 +47,11 @@ export const SUPER_DATA_GRID_BADGE_COLORS = {
   ERROR: "error",
   PURPLE: "purple",
   NEUTRAL: "neutral",
+  TEAL: "teal",
+  CYAN: "cyan",
+  INDIGO: "indigo",
+  ORANGE: "orange",
+  SLATE: "slate",
 } as const;
 
 export type SuperDataGridBadgeColor =
@@ -51,8 +62,14 @@ export interface SuperDataGridBadgeOptions {
   labels?: Readonly<Record<string, string>>;
   /** Named CSS color tokens keyed by the raw status value. */
   colors?: Readonly<Record<string, SuperDataGridBadgeColor>>;
+  /** Independent text color tokens keyed by the raw status value. */
+  fontColors?: Readonly<Record<string, SuperDataGridBadgeColor>>;
+  /** Optional React icons keyed by the raw status value. */
+  icons?: Readonly<Record<string, ReactNode>>;
+  fallbackIcon?: ReactNode;
   fallbackLabel?: string;
   fallbackColor?: SuperDataGridBadgeColor;
+  fallbackFontColor?: SuperDataGridBadgeColor;
 }
 
 export interface SuperDataGridCurrencyOptions {
@@ -65,11 +82,14 @@ export interface SuperDataGridCurrencyOptions {
   amountInMinorUnits?: boolean;
   /** Number of decimal places in the minor unit; defaults to 2 when enabled. */
   minorUnits?: number;
+  showIcon?: boolean;
 }
 
 export interface SuperDataGridDateOptions {
   locale?: string;
   timeZone?: string;
+  /** Show the built-in calendar icon before the formatted date. Defaults to true. */
+  showIcon?: boolean;
   /** Overrides the built-in date or date-time defaults. */
   formatOptions?: Intl.DateTimeFormatOptions;
 }
@@ -80,6 +100,7 @@ export interface SuperDataGridEmailOptions {
 
 export interface SuperDataGridPhoneOptions {
   showIcon?: boolean;
+  showFlag?: boolean;
   /** Country used to interpret national-format values. */
   countryCode?: string;
   format?: "international" | "national" | "original";
@@ -101,6 +122,59 @@ export interface SuperDataGridImageOptions {
   altField?: string;
   /** Optional property on an object cell value to use as a caption. */
   labelField?: string;
+  /** Letter shown in the square fallback tile when the image list is empty. */
+  fallbackLetter?: string;
+}
+
+export interface SuperDataGridProductImage {
+  url: string;
+  label?: string;
+  alt?: string;
+}
+
+/** Common purchase-order totals accepted by the `priceBreakdown` cell type. */
+export interface SuperDataGridPriceBreakdown {
+  currency?: string;
+  currencyCode?: string;
+  grossSubtotal?: number;
+  productsSubtotal?: number;
+  productSubtotal?: number;
+  totalDiscount?: number;
+  discount?: number;
+  subtotal?: number;
+  subtotalBeforeTax?: number;
+  packagingFee?: number;
+  totalPackagingCost?: number;
+  totalPackagingFee?: number;
+  shipping?: number;
+  shippingFee?: number;
+  totalShipping?: number;
+  totalShippingCost?: number;
+  totalShippingFee?: number;
+  serviceFee?: number;
+  gstPercentage?: number;
+  gstAmount?: number;
+  tax?: number;
+  taxAmount?: number;
+  grandTotal?: number;
+  total?: number;
+}
+
+export type SuperDataGridPriceBreakdownLine =
+  | "productsSubtotal"
+  | "discount"
+  | "subtotal"
+  | "packaging"
+  | "shipping"
+  | "serviceFee"
+  | "tax"
+  | "grandTotal";
+
+export interface SuperDataGridPriceBreakdownOptions
+  extends SuperDataGridCurrencyOptions {
+  title?: string;
+  /** Override line-item labels in the purchase-order breakdown dialog. */
+  labels?: Readonly<Partial<Record<SuperDataGridPriceBreakdownLine, string>>>;
 }
 
 /** Per-column settings for predefined cell renderers. */
@@ -114,6 +188,31 @@ export interface SuperDataGridColumnOptions {
   longText?: SuperDataGridLongTextOptions;
   json?: SuperDataGridJsonOptions;
   image?: SuperDataGridImageOptions;
+  priceBreakdown?: SuperDataGridPriceBreakdownOptions;
+}
+
+/** Optional layout metadata when a field needs a custom label or width. */
+export interface SuperDataGridColumnConfiguration {
+  headerName?: string;
+  description?: string;
+  width?: number;
+  minWidth?: number;
+  maxWidth?: number;
+  flex?: number;
+  align?: "left" | "center" | "right";
+  headerAlign?: "left" | "center" | "right";
+  sortable?: boolean;
+  hideable?: boolean;
+}
+
+/** A filterable row field, including nested values not shown as grid columns. */
+export interface SuperDataGridFilterField {
+  field: string;
+  headerName: string;
+  type?: GridColDef["type"];
+  filterable?: boolean;
+  parentField?: string;
+  nestedPath?: string;
 }
 
 /** Predefined row actions with matching labels, icons, and colors. */
@@ -136,14 +235,36 @@ export interface SuperDataGridProps<
 > {
   /** Object keys to show as columns, in display order. */
   columns: readonly string[];
+  /** Optional labels and sizing for generated columns. */
+  columnConfiguration?: Partial<Record<string, SuperDataGridColumnConfiguration>>;
   /** Optional built-in renderer for common cells, audit cells, and actions. */
   columnTypes?: Partial<Record<string, SuperDataGridColumnType>>;
   /** Options for built-in cell renderers, keyed by column field. */
   columnOptions?: Partial<Record<string, SuperDataGridColumnOptions>>;
+  /** Extra filter fields, including stable fields absent from the current page. */
+  filterFields?: readonly SuperDataGridFilterField[];
   /** Row objects whose keys match the names in `columns`. */
   data: readonly Row[];
   /** Minimum height for the grid workspace. Numbers are pixels; defaults to 800px. */
   minHeight?: number | string;
+  /** Optional MUI column groups for related fields. */
+  columnGroupingModel?: GridColumnGroupingModel;
+  /** Fixed row height when `getRowHeight` is not provided. */
+  rowHeight?: number;
+  /** Dynamic row height resolver for host-rendered cells. */
+  getRowHeight?: (params: GridRowHeightParams) => number | "auto" | null | undefined;
+  /** Approximation used while automatic row heights are being measured. */
+  getEstimatedRowHeight?: (params: GridRowHeightParams) => number;
+  /** Host row classes, for example to mark soft-deleted records. */
+  getRowClassName?: (params: GridRowClassNameParams) => string;
+  /** Supported page-size choices; defaults to 10, 25, 50, 100, and 500. */
+  pageSizeOptions?: number[];
+  /** Hide the pagination footer for embedded and selection grids. */
+  hideFooter?: boolean;
+  /** Hide the package toolbar for compact embedded grids. */
+  hideToolbar?: boolean;
+  /** Optional host-provided empty and loading overlays. */
+  dataGridSlots?: Partial<Pick<GridSlotsComponent, "noRowsOverlay" | "loadingOverlay">>;
   /** Optional content rendered after the toolbar and before the table. */
   beforeTable?: ReactNode;
   /** Controlled row density. Omit to let the grid manage density internally. */
@@ -195,6 +316,14 @@ export interface SuperDataGridProps<
   onAction?: (request: SuperDataGridActionRequest<Row>) => void;
   /** Saved filter views. Omit to keep views in this grid instance's state. */
   views?: readonly SuperDataGridView[];
+  /** Hide the saved-views sidebar and its toolbar button for embedded grids. */
+  hideViews?: boolean;
+  /** Whether the host user can create saved views. Defaults to true. */
+  canAddViews?: boolean;
+  /** Whether the host user can edit saved views. Defaults to true. */
+  canEditViews?: boolean;
+  /** Whether the host user can delete saved views. Defaults to true. */
+  canDeleteViews?: boolean;
   /** Receives updates when a view is added, edited, or removed. */
   onViewsChange?: (views: SuperDataGridView[]) => void;
   /** Called after a saved view is added. */
@@ -219,6 +348,8 @@ export interface SuperDataGridProps<
   checkboxSelection?: boolean;
   /** Controlled selection model. Omit to let the grid manage selection internally. */
   rowSelectionModel?: GridRowSelectionModel;
+  /** Keep selected IDs in include mode for hosts that store explicit selections. */
+  disableRowSelectionExcludeModel?: boolean;
   /** Receives changes to the selected row IDs. */
   onRowSelectionModelChange?: (model: GridRowSelectionModel) => void;
   /** Return false to disable selection for a row. */
@@ -241,6 +372,8 @@ export interface SuperDataGridProps<
   onBulkDelete?: (
     request: SuperDataGridBulkDeleteRequest<Row>,
   ) => void | Promise<void>;
+  /** Label for the host's bulk operation button; defaults to "Bulk delete". */
+  bulkDeleteLabel?: string;
   /** Hide the Bulk delete button, even when `onBulkDelete` is provided. */
   hideBulkDelete?: boolean;
 }

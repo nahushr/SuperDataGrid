@@ -15,10 +15,12 @@ import {
   useGridSelector,
 } from "@mui/x-data-grid";
 import styles from "../styles/pagination.module.css";
+import { SuperDataGridContext } from "../context/SuperDataGridContext";
 
 export const PAGE_SIZE_OPTIONS = [10, 25, 50, 100, 500];
 
 export default function SuperDataGridPagination() {
+  const gridState = React.useContext(SuperDataGridContext);
   const compactPagination = useMediaQuery("(max-width: 700px)");
   const apiRef = useGridApiContext();
   const paginationModel = useGridSelector(apiRef, gridPaginationModelSelector);
@@ -46,7 +48,10 @@ export default function SuperDataGridPagination() {
           inputProps={{ "aria-label": "Rows per page" }}
           className={styles.pageSizeSelect}
         >
-          {PAGE_SIZE_OPTIONS.map((pageSize) => (
+          {(gridState?.pageSizeOptions.length
+            ? gridState.pageSizeOptions
+            : PAGE_SIZE_OPTIONS
+          ).map((pageSize) => (
             <MenuItem key={pageSize} value={pageSize}>
               {pageSize}
             </MenuItem>

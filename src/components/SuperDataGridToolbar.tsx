@@ -259,18 +259,20 @@ export default function SuperDataGridToolbar() {
       <GridToolbarContainer className={styles.toolbar}>
         <div className={styles.toolbarRow}>
         <div className={styles.actions}>
-          <Tooltip title="Show or hide saved views">
-            <Button
-              size="small"
-              variant={gridState.viewsOpen ? "contained" : "outlined"}
-              startIcon={<ViewSidebarIcon />}
-              className={styles.toolbarButton}
-              aria-pressed={gridState.viewsOpen}
-              onClick={gridState.onToggleViews}
-            >
-              Views
-            </Button>
-          </Tooltip>
+          {!gridState.hideViews && (
+            <Tooltip title="Show or hide saved views">
+              <Button
+                size="small"
+                variant={gridState.viewsOpen ? "contained" : "outlined"}
+                startIcon={<ViewSidebarIcon />}
+                className={styles.toolbarButton}
+                aria-pressed={gridState.viewsOpen}
+                onClick={gridState.onToggleViews}
+              >
+                Views
+              </Button>
+            </Tooltip>
+          )}
           {gridState.checkboxSelection && gridState.selectionCount > 0 && (
             <Tooltip title={`Clear ${gridState.selectionCount} selected rows`}>
               <Button
@@ -439,7 +441,7 @@ export default function SuperDataGridToolbar() {
                   disabled={gridState.selectionCount === 0 || isDeleting}
                   onClick={() => void deleteSelectedRows()}
                 >
-                  {isDeleting ? "Deleting" : "Bulk delete"}
+                  {isDeleting ? "Working" : gridState.bulkDeleteLabel}
                   {gridState.selectionCount > 0 ? ` (${gridState.selectionCount})` : ""}
                 </Button>
               </span>

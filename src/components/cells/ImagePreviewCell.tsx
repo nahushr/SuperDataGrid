@@ -1,9 +1,9 @@
-import React, { useId, useState } from "react";
+import React, { useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
 import type { SuperDataGridImageOptions } from "../../types";
-import { getImageParts } from "../../utils/predefinedCellData";
+import { getProductImages } from "../../utils/predefinedCellData";
+import ProductImageCarousel from "./ProductImageCarousel";
 import styles from "../../styles/predefined-cells.module.css";
 
 interface ImagePreviewCellProps {
@@ -12,41 +12,55 @@ interface ImagePreviewCellProps {
   options?: SuperDataGridImageOptions;
 }
 
+/** Product-grid tile which opens the complete image carousel on click. */
 export default function ImagePreviewCell({
   value,
   field,
   options = {},
 }: ImagePreviewCellProps) {
   const [open, setOpen] = useState(false);
-  const id = useId().replace(/:/g, "");
-  const columnName = field ?? "image";
-  const image = getImageParts(value, options);
-  if (!image.src) return <span className={styles.emptyValue}>—</span>;
+  const [failedThumbnailUrl, setFailedThumbnailUrl] = useState("");
+  const images = getProductImages(value, options);
+  const mainImage =
+    images.find((image) => image.label?.toLowerCase().includes("main")) ??
+    images[0];
+  const fallbackLetter = options.fallbackLetter?.slice(0, 1) || "P";
+  const title = mainImage?.label || field || "Product images";
 
-  const title = image.label || image.alt || columnName;
   return (
     <div className={styles.imageCell}>
       <button
-        aria-label={`Open image preview for ${title}`}
-        className={styles.imageButton}
+        aria-label={mainImage ? `View ${images.length} product images` : "Product has no image"}
+        className={`${styles.productImageTile} ${mainImage ? styles.productImageTileActive : ""}`}
+        disabled={!mainImage}
         onClick={(event) => {
           event.stopPropagation();
-          setOpen(true);
+          if (mainImage) setOpen(true);
         }}
         type="button"
       >
-        <img alt={image.alt} className={styles.imageThumbnail} src={image.src} />
+        {mainImage && failedThumbnailUrl !== mainImage.url ? (
+          <img
+            alt={mainImage.alt}
+            className={styles.productImageThumbnail}
+            onError={() => setFailedThumbnailUrl(mainImage.url)}
+            src={mainImage.url}
+          />
+        ) : (
+          <span className={styles.productImageFallback}>{fallbackLetter}</span>
+        )}
       </button>
-      {image.label && <span className={styles.imageLabel}>{image.label}</span>}
+      {mainImage?.label && (
+        <span className={styles.productImageLabel}>{mainImage.label}</span>
+      )}
       <Dialog
-        aria-labelledby={`${id}-title`}
+        aria-label={`Image gallery: ${title}`}
         onClose={() => setOpen(false)}
         open={open}
-        PaperProps={{ className: styles.imageDialogPaper }}
+        PaperProps={{ className: styles.productImageDialogPaper }}
       >
-        <DialogTitle id={`${id}-title`}>{title}</DialogTitle>
-        <DialogContent className={styles.imageDialogContent}>
-          <img alt={image.alt} className={styles.imageExpanded} src={image.src} />
+        <DialogContent className={styles.productImageDialogContent}>
+          <ProductImageCarousel images={images} fallbackLetter={fallbackLetter} />
         </DialogContent>
       </Dialog>
     </div>

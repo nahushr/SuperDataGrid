@@ -3,7 +3,7 @@ import {
   type CountryCode,
 } from "libphonenumber-js";
 import type { SuperDataGridColumnType } from "../types";
-import { getImageParts } from "./predefinedCellData";
+import { getProductImages } from "./predefinedCellData";
 
 export interface PeopleDetailsParts {
   name: string;
@@ -283,8 +283,17 @@ export function getCommonCellSearchText(
     }
   }
   if (type === "image") {
-    const image = getImageParts(value);
-    return [image.label, image.alt, image.src].filter(Boolean).join(" | ");
+    return getProductImages(value)
+      .flatMap((image) => [image.label, image.alt, image.url])
+      .filter(Boolean)
+      .join(" | ");
+  }
+  if (type === "priceBreakdown") {
+    try {
+      return JSON.stringify(value) ?? "";
+    } catch {
+      return String(value ?? "");
+    }
   }
 
   const parts = type === "peopleDetails" ? getPeopleDetailsParts(value) : getAddressParts(value);

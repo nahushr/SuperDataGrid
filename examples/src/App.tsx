@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import {
   GridLogicOperator,
   type GridFilterModel,
@@ -11,6 +13,7 @@ import SuperDataGrid, {
   type SuperDataGridBulkDeleteRequest,
   type SuperDataGridColumnOptions,
   type SuperDataGridView,
+  SUPER_DATA_GRID_BADGE_COLORS,
 } from "@simplishelf/super-data-grid";
 import DemoActionJsonPanel from "./components/DemoActionJsonPanel";
 import { useDemoSnackbar } from "./components/DemoSnackbarProvider";
@@ -44,7 +47,7 @@ const columnTypes = {
   address: "address",
   createdAt: "audit",
   role: "badge",
-  orderTotal: "currency",
+  orderTotal: "priceBreakdown",
   signupDate: "date",
   lastLoginAt: "dateTime",
   contactEmail: "email",
@@ -58,14 +61,24 @@ const columnOptions = {
   role: {
     badge: {
       labels: { Admin: "Admin", User: "User" },
-      colors: { Admin: "primary", User: "neutral" },
+      colors: {
+        Admin: SUPER_DATA_GRID_BADGE_COLORS.INDIGO,
+        User: SUPER_DATA_GRID_BADGE_COLORS.NEUTRAL,
+      },
+      fontColors: {
+        Admin: SUPER_DATA_GRID_BADGE_COLORS.INDIGO,
+        User: SUPER_DATA_GRID_BADGE_COLORS.SLATE,
+      },
+      icons: {
+        Admin: <AdminPanelSettingsOutlinedIcon />,
+        User: <PersonOutlineIcon />,
+      },
       fallbackLabel: "Unknown",
       fallbackColor: "warning",
     },
   },
   orderTotal: {
-    currency: {
-      currencyField: "currencyCode",
+    priceBreakdown: {
       locale: "en-US",
       amountInMinorUnits: true,
       minorUnits: 2,
@@ -87,7 +100,7 @@ const columnOptions = {
   },
   contactEmail: { email: { showIcon: true } },
   contactPhone: {
-    phone: { showIcon: true, countryCode: "ES", format: "international" },
+    phone: { showIcon: true, showFlag: true, countryCode: "ES", format: "international" },
   },
   description: { longText: { maxPreviewLength: 110 } },
   metadata: { json: { maxPreviewLength: 82 } },
@@ -96,6 +109,7 @@ const columnOptions = {
       altField: "alt",
       labelField: "label",
       thumbnailAlt: "Product package preview",
+      fallbackLetter: "P",
     },
   },
 } satisfies Partial<Record<string, SuperDataGridColumnOptions>>;

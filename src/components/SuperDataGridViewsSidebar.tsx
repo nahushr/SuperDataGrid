@@ -13,6 +13,9 @@ interface SuperDataGridViewsSidebarProps {
   onSelect: (view: SuperDataGridView | null) => void;
   onEdit: (view: SuperDataGridView) => void;
   onDelete: (view: SuperDataGridView) => void;
+  canAdd?: boolean;
+  canEdit?: boolean;
+  canDelete?: boolean;
 }
 
 function getConditionCount(view: SuperDataGridView): number {
@@ -28,21 +31,26 @@ export default function SuperDataGridViewsSidebar({
   onSelect,
   onEdit,
   onDelete,
+  canAdd = true,
+  canEdit = true,
+  canDelete = true,
 }: SuperDataGridViewsSidebarProps) {
   return (
     <aside className={styles.viewsSidebar} aria-label="Saved views">
       <div className={styles.sidebarHeader}>
         <Typography className={styles.sidebarTitle}>Views</Typography>
-        <Tooltip title="Add view">
-          <IconButton
-            size="small"
-            color="primary"
-            aria-label="Add view"
-            onClick={onAdd}
-          >
-            <AddIcon fontSize="small" />
-          </IconButton>
-        </Tooltip>
+        {canAdd && (
+          <Tooltip title="Add view">
+            <IconButton
+              size="small"
+              color="primary"
+              aria-label="Add view"
+              onClick={onAdd}
+            >
+              <AddIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        )}
       </div>
 
       <div className={styles.viewList}>
@@ -85,7 +93,8 @@ export default function SuperDataGridViewsSidebar({
                   )}
                 </span>
               </Button>
-              <div className={styles.viewActions}>
+              {(canEdit || canDelete) && <div className={styles.viewActions}>
+                {canEdit && (
                 <Tooltip title={`Edit ${view.name}`}>
                   <IconButton
                     size="small"
@@ -96,6 +105,8 @@ export default function SuperDataGridViewsSidebar({
                     <EditOutlinedIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
+                )}
+                {canDelete && (
                 <Tooltip title={`Delete ${view.name}`}>
                   <IconButton
                     size="small"
@@ -106,7 +117,8 @@ export default function SuperDataGridViewsSidebar({
                     <DeleteOutlineIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
-              </div>
+                )}
+              </div>}
             </div>
           );
         })}

@@ -57,11 +57,11 @@
   height: 100%;
   border: none !important;
   outline: none !important;
-  color: #0f172a;
-  background-color: #ffffff;
-  --DataGrid-containerBackground: #ffffff;
-  --DataGrid-pinnedBackground: #ffffff;
-  --DataGrid-rowBorderColor: #e2e8f0;
+  color: var(--app-text, #0f172a);
+  background-color: var(--app-surface, #ffffff);
+  --DataGrid-containerBackground: var(--app-surface, #ffffff);
+  --DataGrid-pinnedBackground: var(--app-surface, #ffffff);
+  --DataGrid-rowBorderColor: var(--app-divider, #e2e8f0);
 }
 
 .gridRoot :global(.MuiDataGrid-main),
@@ -81,7 +81,7 @@
 
 .gridRoot :global(.MuiDataGrid-columnHeaders),
 .gridRoot :global(.MuiDataGrid-columnHeader) {
-  background-color: #267e81 !important;
+  background-color: var(--app-grid-header, #267e81) !important;
   border-bottom: none !important;
   color: #ffffff !important;
 }
@@ -149,7 +149,7 @@
   justify-content: flex-start !important;
   overflow: visible !important;
   border-bottom: none !important;
-  color: #0f172a !important;
+  color: var(--app-text, #0f172a) !important;
   text-align: left !important;
   text-overflow: clip !important;
   white-space: normal !important;
@@ -201,15 +201,25 @@
 }
 
 .gridRoot :global(.MuiDataGrid-row.even) {
-  background-color: #f8fbfb !important;
+  background-color: var(--app-grid-row-even, #f8fbfb) !important;
 }
 
 .gridRoot :global(.MuiDataGrid-row.odd) {
-  background-color: #ffffff !important;
+  background-color: var(--app-grid-row-odd, #ffffff) !important;
 }
 
 .gridRoot :global(.MuiDataGrid-row:hover) {
-  background-color: rgb(15 23 42 / 4%) !important;
+  background-color: var(--app-hover, rgb(15 23 42 / 4%)) !important;
+}
+
+.gridRoot :global(.MuiDataGrid-row.Mui-selected),
+.gridRoot :global(.MuiDataGrid-row.Mui-selected:hover) {
+  background-color: var(--app-selected, rgb(38 126 129 / 12%)) !important;
+  color: var(--app-text, #0f172a) !important;
+}
+
+.gridRoot :global(.MuiDataGrid-row.deleted) {
+  background-color: var(--app-grid-row-deleted, rgb(100 116 139 / 9%)) !important;
 }
 
 .gridRoot :global(.MuiDataGrid-footerContainer) {
@@ -219,26 +229,26 @@
   box-sizing: border-box;
   overflow: visible;
   border-top: none !important;
-  color: #0f172a;
-  background-color: #ffffff;
+  color: var(--app-text, #0f172a);
+  background-color: var(--app-surface, #ffffff);
 }
 
 .gridRoot :global(.MuiTablePagination-root),
 .gridRoot :global(.MuiTablePagination-selectLabel),
 .gridRoot :global(.MuiTablePagination-displayedRows) {
-  color: #475569;
+  color: var(--app-text-secondary, #475569);
 }
 
 .gridRoot :global(.MuiTablePagination-selectIcon) {
-  color: #64748b;
+  color: var(--app-text-muted, #64748b);
 }
 
 .gridRoot :global(.MuiTablePagination-actions) {
-  color: #0f172a;
+  color: var(--app-text, #0f172a);
 }
 
 .gridRoot :global(.MuiDataGrid-overlay) {
-  color: #0f172a;
+  color: var(--app-text, #0f172a);
 }
 
 .gridRoot :global(.MuiDataGrid-columnHeader:focus),

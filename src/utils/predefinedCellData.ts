@@ -1,4 +1,23 @@
-import type { SuperDataGridCurrencyOptions } from "../types";
+import type {
+  SuperDataGridCurrencyOptions,
+  SuperDataGridImageOptions,
+  SuperDataGridProductImage,
+} from "../types";
+
+export const SUPER_DATA_GRID_PRODUCT_IMAGE_FIELDS = [
+  { field: "mainImageUrl", label: "Main" },
+  { field: "topImageUrl", label: "Top" },
+  { field: "bottomImageUrl", label: "Bottom" },
+  { field: "frontImageUrl", label: "Front" },
+  { field: "backImageUrl", label: "Back" },
+  { field: "rightImageUrl", label: "Right" },
+  { field: "leftImageUrl", label: "Left" },
+  { field: "detailsImageUrl", label: "Details" },
+  { field: "defectImageUrl", label: "Defect" },
+  { field: "additionalImage1Url", label: "Additional 1" },
+  { field: "additionalImage2Url", label: "Additional 2" },
+  { field: "additionalImage3Url", label: "Additional 3" },
+] as const;
 
 export function asRecord(value: unknown): Record<string, unknown> | null {
   return typeof value === "object" && value !== null && !Array.isArray(value)
@@ -69,7 +88,7 @@ export function getCurrencyCode(
   const rowCurrency = options.currencyField
     ? rowRecord?.[options.currencyField]
     : undefined;
-  const currency = record?.currency ?? rowCurrency ?? options.currency ?? "USD";
+  const currency = record?.currency ?? record?.currencyCode ?? rowCurrency ?? options.currency ?? "USD";
   return typeof currency === "string" && currency.trim()
     ? currency.trim().toUpperCase()
     : "USD";
@@ -77,15 +96,55 @@ export function getCurrencyCode(
 
 export function getImageParts(
   value: unknown,
-  options: { altField?: string; labelField?: string; thumbnailAlt?: string } = {},
+  options: SuperDataGridImageOptions = {},
 ): { src: string; alt: string; label: string } {
+  const first = getProductImages(value, options)[0];
+  return first
+    ? { src: first.url, alt: first.alt, label: first.label ?? "" }
+    : {
+        src: "",
+        alt: options.thumbnailAlt || "Image preview",
+        label: "",
+      };
+}
+
+export function getProductImages(
+  value: unknown,
+  options: SuperDataGridImageOptions = {},
+): Array<SuperDataGridProductImage & { alt: string }> {
   const record = asRecord(value);
-  const src = firstText(record, ["src", "url", "imageUrl", "image", "photo"]);
-  const alt = firstText(record, [options.altField ?? "alt", "alt", "title"]);
-  const label = firstText(record, [options.labelField ?? "label", "name", "title"]);
-  return {
-    src: record ? src : typeof value === "string" ? value.trim() : "",
-    alt: alt || label || options.thumbnailAlt || "Image preview",
-    label,
+  const source = Array.isArray(value)
+    ? value
+    : Array.isArray(record?.images)
+      ? record.images
+      : null;
+  const result: Array<SuperDataGridProductImage & { alt: string }> = [];
+  const seen = new Set<string>();
+
+  const append = (candidate: unknown, fallbackLabel: string) => {
+    const imageRecord = asRecord(candidate);
+    const url = imageRecord
+      ? firstText(imageRecord, ["url", "src", "imageUrl", "image", "photo"])
+      : typeof candidate === "string"
+        ? candidate.trim()
+        : "";
+    if (!url || seen.has(url)) return;
+    seen.add(url);
+    const label = firstText(imageRecord, [options.labelField ?? "label", "label", "name", "title"]) || fallbackLabel;
+    const alt = firstText(imageRecord, [options.altField ?? "alt", "alt", "title"]) || label || options.thumbnailAlt || "Product image";
+    result.push({ url, label, alt });
   };
+
+  if (source) {
+    source.forEach((candidate, index) => append(candidate, `Image ${index + 1}`));
+  } else if (record) {
+    SUPER_DATA_GRID_PRODUCT_IMAGE_FIELDS.forEach(({ field, label }) => {
+      append(record[field], label);
+    });
+    if (result.length === 0) append(record, "Image");
+  } else {
+    append(value, "Image");
+  }
+
+  return result;
 }

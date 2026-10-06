@@ -3,6 +3,7 @@ export {
   SUPER_DATA_GRID_ACTIONS,
   SUPER_DATA_GRID_AVATAR_COLORS,
   SUPER_DATA_GRID_BADGE_COLORS,
+  SUPER_DATA_GRID_PRODUCT_IMAGE_FIELDS,
 } from "./SuperDataGrid";
 export { default as StatusBadgeCell } from "./components/cells/StatusBadgeCell";
 export { default as CurrencyCell } from "./components/cells/CurrencyCell";
@@ -13,6 +14,8 @@ export { default as PhoneCell } from "./components/cells/PhoneCell";
 export { default as LongTextCell } from "./components/cells/LongTextCell";
 export { default as JsonPreviewCell } from "./components/cells/JsonPreviewCell";
 export { default as ImagePreviewCell } from "./components/cells/ImagePreviewCell";
+export { default as ProductImageCarousel } from "./components/cells/ProductImageCarousel";
+export { default as PriceBreakdownCell } from "./components/cells/PriceBreakdownCell";
 export type {
   SuperDataGridExportFormat,
   SuperDataGridExportRequest,
@@ -26,6 +29,7 @@ export type {
   SuperDataGridCellComponent,
   SuperDataGridCellProps,
   SuperDataGridColumnType,
+  SuperDataGridColumnConfiguration,
   SuperDataGridBadgeColor,
   SuperDataGridBadgeOptions,
   SuperDataGridColumnOptions,
@@ -36,7 +40,13 @@ export type {
   SuperDataGridJsonOptions,
   SuperDataGridLongTextOptions,
   SuperDataGridPhoneOptions,
+  SuperDataGridPriceBreakdown,
+  SuperDataGridPriceBreakdownOptions,
+  SuperDataGridPriceBreakdownLine,
+  SuperDataGridProductImage,
   SuperDataGridProps,
+  SuperDataGridFilterField,
   SuperDataGridRow,
   SuperDataGridView,
 } from "./SuperDataGrid";
+export type { ProductImageCarouselProps } from "./components/cells/ProductImageCarousel";
