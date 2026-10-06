@@ -126,9 +126,14 @@ jobs:
         run: |
           package_name="$(node -p "require('./package.json').name")"
           package_version="$(node -p "require('./package.json').version")"
-          if npm view "${package_name}@${package_version}" version --json --registry=https://registry.npmjs.org >/dev/null 2>&1; then
+          package_manifest="$(mktemp)"
+          package_url="https://unpkg.com/${package_name}@${package_version}/package.json"
+          if npm view "${package_name}@${package_version}" version --json --prefer-online --registry=https://registry.npmjs.org >/dev/null 2>&1; then
             echo "already_published=true" >> "$GITHUB_OUTPUT"
             echo "${package_name}@${package_version} is already published; skipping duplicate publish."
+          elif curl --fail --silent --show-error --location --retry 8 --retry-delay 5 --max-time 30 "$package_url" --output "$package_manifest" && node -e 'const fs = require("node:fs"); const pkg = JSON.parse(fs.readFileSync(process.argv[1], "utf8")); process.exit(pkg.name === process.argv[2] && pkg.version === process.argv[3] ? 0 : 1)' "$package_manifest" "$package_name" "$package_version"; then
+            echo "already_published=true" >> "$GITHUB_OUTPUT"
+            echo "${package_name}@${package_version} is live on npm's CDN; skipping duplicate publish."
           else
             echo "already_published=false" >> "$GITHUB_OUTPUT"
             echo "${package_name}@${package_version} is not published; publishing this version."
@@ -149,13 +154,20 @@ jobs:
       # One-time migration cleanup: remove the accidental personal-scope package
       # after the replacement package is confirmed in the Cinecrew organization.
       - name: Remove mistaken personal-scope package
+        if: "${{ startsWith(github.event.head_commit.message, 'ci(npm): confirm scope migration') }}"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         shell: bash
         run: |
           target_name="$(node -p "require('./package.json').name")"
           target_version="$(node -p "require('./package.json').version")"
-          if ! npm view "${target_name}@${target_version}" version --json --registry=https://registry.npmjs.org >/dev/null 2>&1; then
+          package_manifest="$(mktemp)"
+          package_url="https://unpkg.com/${target_name}@${target_version}/package.json"
+          if npm view "${target_name}@${target_version}" version --json --prefer-online --registry=https://registry.npmjs.org >/dev/null 2>&1; then
+            echo "Confirmed ${target_name}@${target_version} on the npm registry."
+          elif curl --fail --silent --show-error --location --retry 8 --retry-delay 5 --max-time 30 "$package_url" --output "$package_manifest" && node -e 'const fs = require("node:fs"); const pkg = JSON.parse(fs.readFileSync(process.argv[1], "utf8")); process.exit(pkg.name === process.argv[2] && pkg.version === process.argv[3] ? 0 : 1)' "$package_manifest" "$target_name" "$target_version"; then
+            echo "Confirmed ${target_name}@${target_version} on npm's CDN."
+          else
             echo "The Cinecrew package is not available yet; preserving the personal-scope package."
             exit 1
           fi
