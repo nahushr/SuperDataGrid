@@ -209,7 +209,7 @@ const [views, setViews] = useState<SuperDataGridView[]>([]);
 />
 ```
 
-The package declares React, MUI Material, MUI X DataGrid, MUI Icons, and Emotion as peer dependencies. Consumers should have those packages in their app. SheetJS is installed as a runtime dependency for XLSX downloads. The grid provides filtering, column visibility, density controls, and export for XLSX, CSV, JSON, and SQL. Exports include visible columns; SQL files contain `INSERT` statements for `super_data_grid`.
+The package declares React, MUI Material, MUI X DataGrid, MUI Icons, and Emotion as peer dependencies. Consumers should have those packages in their app. `write-excel-file` is installed as a runtime dependency for XLSX downloads. The grid provides filtering, column visibility, density controls, and export for XLSX, CSV, JSON, and SQL. Exports include visible columns; SQL files contain `INSERT` statements for `super_data_grid`.
 
 ## Run the example
 

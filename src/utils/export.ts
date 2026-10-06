@@ -7,14 +7,8 @@ export interface ExportColumn {
   headerName?: string;
 }
 
-export function downloadTextFile(
-  content: string,
-  fileName: string,
-  mimeType: string,
-) {
-  const objectUrl = URL.createObjectURL(
-    new Blob([content], { type: mimeType }),
-  );
+function downloadBlobFile(blob: Blob, fileName: string) {
+  const objectUrl = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = objectUrl;
   link.download = fileName;
@@ -23,6 +17,14 @@ export function downloadTextFile(
   link.click();
   link.remove();
   window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+}
+
+export function downloadTextFile(
+  content: string,
+  fileName: string,
+  mimeType: string,
+) {
+  downloadBlobFile(new Blob([content], { type: mimeType }), fileName);
 }
 
 export function quoteSqlIdentifier(identifier: string): string {
@@ -55,6 +57,18 @@ function toExportText(value: unknown): string {
   return String(value);
 }
 
+function toSpreadsheetValue(value: unknown): string | number | boolean | Date | null {
+  if (value == null) return null;
+  if (value instanceof Date) {
+    return Number.isNaN(value.getTime()) ? null : value;
+  }
+  if (typeof value === "string" || typeof value === "boolean") return value;
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : String(value);
+  }
+  return JSON.stringify(value) ?? String(value);
+}
+
 function quoteCsvValue(value: unknown): string {
   const text = toExportText(value);
   return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
@@ -70,24 +84,28 @@ export async function exportGridData(
   if (signal?.aborted) return;
 
   if (format === "xlsx") {
-    const XLSX = await import("xlsx");
+    const { default: writeExcelFile } = await import("write-excel-file/browser");
     if (signal?.aborted) return;
-    const fields = columns.map((column) => column.field);
-    const worksheet = XLSX.utils.json_to_sheet([...rows], { header: fields });
-    XLSX.utils.sheet_add_aoa(
-      worksheet,
-      [columns.map((column) => column.headerName ?? column.field)],
-      { origin: "A1" },
-    );
-    worksheet["!cols"] = columns.map((column) => ({
-      wch: Math.min(
-        40,
-        Math.max(12, (column.headerName ?? column.field).length + 2),
+    const sheetData = [
+      columns.map((column) => ({
+        value: column.headerName ?? column.field,
+        fontWeight: "bold" as const,
+      })),
+      ...rows.map((row) =>
+        columns.map((column) => toSpreadsheetValue(row[column.field])),
       ),
-    }));
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Data");
-    XLSX.writeFile(workbook, `${fileName}.xlsx`);
+    ];
+    const workbook = await writeExcelFile(sheetData, {
+      sheet: "Data",
+      columns: columns.map((column) => ({
+        width: Math.min(
+          40,
+          Math.max(12, (column.headerName ?? column.field).length + 2),
+        ),
+      })),
+    }).toBlob();
+    if (signal?.aborted) return;
+    downloadBlobFile(workbook, `${fileName}.xlsx`);
     return;
   }
 

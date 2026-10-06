@@ -69,6 +69,6 @@
   },
   "dependencies": {
     "libphonenumber-js": "^1.13.11",
-    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
+    "write-excel-file": "^4.1.1"
   }
 }
