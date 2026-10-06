@@ -37,7 +37,7 @@ describe("grid data helpers", () => {
     expect(toDisplayValue({ id: 1 })).toBe('{"id":1}');
     const cyclic: Record<string, unknown> = {};
     cyclic.self = cyclic;
-    expect(toDisplayValue(cyclic)).toBe("[object Object]");
+    expect(toDisplayValue(cyclic)).toBe("[Unserializable value]");
   });
 
   it("infers booleans, numbers, and named dates but leaves ambiguous values as text", () => {
