@@ -25,7 +25,7 @@ export default function ProductImageCarousel({
     return (
       <div className={styles.carouselEmpty}>
         <span className={styles.carouselEmptyMonogram}>{fallbackLetter}</span>
-        <span>No product images to show</span>
+        <span>No product images</span>
       </div>
     );
   }
@@ -68,7 +68,7 @@ export default function ProductImageCarousel({
       tabIndex={0}
     >
       <div className={styles.carouselToolbar}>
-        <div aria-live="polite" className={styles.carouselInfo}>
+        <div aria-live="polite" className={styles.carouselInfo} role="status">
           <span className={styles.carouselCounter}>
             {String(currentIndex + 1).padStart(2, "0")}
             <span className={styles.carouselCounterDivider}>/</span>

@@ -119,14 +119,14 @@ describe("grid cell renderers", () => {
   it("opens a product image gallery and supports carousel navigation and fallbacks", async () => {
     const images = [{ url: "front.jpg", label: "Front" }, { url: "back.jpg", label: "Back" }];
     const { rerender } = render(<ProductImageCarousel images={images} />);
-    expect(screen.getByText("1/2")).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("01/02");
     fireEvent.click(screen.getByRole("button", { name: "Next product image" }));
-    expect(screen.getByText("Back")).toBeInTheDocument();
+    expect(screen.getAllByText("Back")).toHaveLength(2);
     fireEvent.click(screen.getByRole("button", { name: "Previous product image" }));
     fireEvent.click(screen.getByRole("button", { name: "Show Back" }));
     expect(screen.getByRole("button", { name: "Show Back" })).toHaveAttribute("aria-pressed", "true");
     fireEvent.error(screen.getByAltText("Back"));
-    expect(screen.getByText("P")).toBeInTheDocument();
+    expect(screen.getAllByText("P")).toHaveLength(2);
     rerender(<ProductImageCarousel images={[]} fallbackLetter="X" />);
     expect(screen.getByText("No product images")).toBeInTheDocument();
 
@@ -134,7 +134,7 @@ describe("grid cell renderers", () => {
     fireEvent.click(screen.getByRole("button", { name: "View 2 product images" }));
     expect(await screen.findByRole("dialog")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Next product image" }));
-    expect(screen.getByText("Back")).toBeInTheDocument();
+    expect(screen.getAllByText("Back")).toHaveLength(2);
   });
 
   it("opens a purchase price breakdown with derived totals and a grand-total fallback", () => {
