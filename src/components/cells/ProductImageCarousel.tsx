@@ -45,7 +45,7 @@ export default function ProductImageCarousel({
     selectNext();
   };
   const handleKeyboardNavigation = (
-    event: React.KeyboardEvent<HTMLDivElement>,
+    event: React.KeyboardEvent<HTMLButtonElement>,
   ) => {
     if (images.length < 2) return;
     if (event.key === "ArrowLeft") {
@@ -62,11 +62,7 @@ export default function ProductImageCarousel({
   const currentLabel = currentImage.label || `Image ${currentIndex + 1}`;
 
   return (
-    <div
-      className={styles.carousel}
-      onKeyDown={handleKeyboardNavigation}
-      tabIndex={0}
-    >
+    <div className={styles.carousel}>
       <div className={styles.carouselToolbar}>
         <div aria-live="polite" className={styles.carouselInfo} role="status">
           <span className={styles.carouselCounter}>
@@ -104,6 +100,7 @@ export default function ProductImageCarousel({
           className={`${styles.carouselNav} ${styles.carouselNavPrevious}`}
           disabled={images.length < 2}
           onClick={showPrevious}
+          onKeyDown={handleKeyboardNavigation}
           type="button"
         >
           <ChevronLeftIcon />
@@ -113,6 +110,7 @@ export default function ProductImageCarousel({
           className={`${styles.carouselNav} ${styles.carouselNavNext}`}
           disabled={images.length < 2}
           onClick={showNext}
+          onKeyDown={handleKeyboardNavigation}
           type="button"
         >
           <ChevronRightIcon />
@@ -133,6 +131,7 @@ export default function ProductImageCarousel({
                   event.stopPropagation();
                   setSelectedIndex(index);
                 }}
+                onKeyDown={handleKeyboardNavigation}
                 type="button"
               >
                 {failedImages.has(image.url) ? (

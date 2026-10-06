@@ -292,7 +292,6 @@
 }
 
 .productImageCard:focus-visible,
-.carousel:focus-visible,
 .carouselThumbnail:focus-visible {
   outline: 3px solid rgb(37 99 235 / 55%);
   outline-offset: 2px;

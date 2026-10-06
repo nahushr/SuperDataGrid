@@ -61,12 +61,18 @@ export default function ImagePreviewCell({
     images.find((image) => image.label?.toLowerCase().includes("main")) ??
     images[0];
   const fallbackLetter = options.fallbackLetter?.slice(0, 1) || "P";
-  const title = getRowTitle(row, options.titleField) || formatFieldName(field);
+  const rowTitle = getRowTitle(row, options.titleField);
+  const title = rowTitle || formatFieldName(field);
+  let imageButtonLabel = "Product has no image";
+  if (mainImage) {
+    imageButtonLabel = `View ${images.length} product images`;
+    if (rowTitle) imageButtonLabel += ` for ${rowTitle}`;
+  }
 
   return (
     <div className={styles.productImageCell}>
       <button
-        aria-label={mainImage ? `View ${images.length} product images${row ? ` for ${title}` : ""}` : "Product has no image"}
+        aria-label={imageButtonLabel}
         className={styles.productImageCard}
         disabled={!mainImage}
         onClick={(event) => {
