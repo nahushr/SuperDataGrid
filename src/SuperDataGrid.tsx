@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useId, useMemo, useState } from "react";
 import {
   DataGrid,
   GridLogicOperator,
@@ -15,6 +15,8 @@ import {
   type GridValidRowModel,
   useGridApiRef,
 } from "@mui/x-data-grid";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import SuperDataGridFilterPanel from "./components/SuperDataGridFilterPanel";
 import SuperDataGridPagination, {
   PAGE_SIZE_OPTIONS,
@@ -461,6 +463,7 @@ export function SuperDataGrid<
   hideBulkDelete = false,
 }: Readonly<SuperDataGridProps<Row>>) {
   const apiRef = useGridApiRef();
+  const viewsSidebarId = useId();
   const [internalDensity, setInternalDensity] =
     useState<GridDensity>("standard");
   const density = densityProp ?? internalDensity;
@@ -1162,31 +1165,64 @@ export function SuperDataGrid<
       className={`${styles.gridWorkspace} ${densityClass}`}
       style={workspaceStyle}
     >
-      {!hideViews && <div
-        className={`${styles.viewsSidebarSlot} ${
-          viewsOpen ? "" : styles.viewsSidebarSlotClosed
-        }`}
-        aria-hidden={!viewsOpen}
-      >
-        <SuperDataGridViewsSidebar
-          views={views}
-          selectedViewId={selectedViewId}
-          onAdd={() => {
-            setEditingView(null);
-            handleAddViewOpenChange(true);
-          }}
-          onSelect={selectView}
-          onEdit={(view) => {
-            if (!canEditViews) return;
-            setEditingView(view);
-            handleAddViewOpenChange(true);
-          }}
-          onDelete={handleDeleteView}
-          canAdd={canAddViews}
-          canEdit={canEditViews}
-          canDelete={canDeleteViews}
-        />
-      </div>}
+      {!hideViews && (
+        <div
+          className={`${styles.viewsSidebarRegion} ${
+            viewsOpen ? "" : styles.viewsSidebarRegionClosed
+          }`}
+        >
+          <div
+            className={styles.viewsSidebarViewport}
+            aria-hidden={!viewsOpen}
+          >
+            <div
+              id={viewsSidebarId}
+              className={`${styles.viewsSidebarSlot} ${
+                viewsOpen ? "" : styles.viewsSidebarSlotClosed
+              }`}
+            >
+              <SuperDataGridViewsSidebar
+                views={views}
+                selectedViewId={selectedViewId}
+                onAdd={() => {
+                  setEditingView(null);
+                  handleAddViewOpenChange(true);
+                }}
+                onSelect={selectView}
+                onEdit={(view) => {
+                  if (!canEditViews) return;
+                  setEditingView(view);
+                  handleAddViewOpenChange(true);
+                }}
+                onDelete={handleDeleteView}
+                canAdd={canAddViews}
+                canEdit={canEditViews}
+                canDelete={canDeleteViews}
+              />
+            </div>
+          </div>
+          <button
+            type="button"
+            className={`${styles.viewsSidebarToggle} ${
+              viewsOpen
+                ? styles.viewsSidebarToggleOpen
+                : styles.viewsSidebarToggleClosed
+            }`}
+            aria-label={viewsOpen ? "Close saved views" : "Open saved views"}
+            aria-expanded={viewsOpen}
+            aria-controls={viewsSidebarId}
+            title={viewsOpen ? "Close saved views" : "Open saved views"}
+            onClick={() => handleViewsOpenChange(!viewsOpen)}
+          >
+            {viewsOpen ? (
+              <ChevronLeftIcon fontSize="small" />
+            ) : (
+              <ChevronRightIcon fontSize="small" />
+            )}
+            <span className={styles.viewsSidebarToggleLabel}>Views</span>
+          </button>
+        </div>
+      )}
       <div className={styles.gridFrame}>
         <SuperDataGridContext.Provider value={contextValue}>
           <DataGrid
