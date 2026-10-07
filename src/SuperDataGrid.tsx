@@ -252,7 +252,10 @@ function createGridColumn<Row extends SuperDataGridRow>(
     valueGetter: getGridValueGetter(field, columnType, options),
     align: configuration?.align ?? "left",
     headerAlign: configuration?.headerAlign ?? "left",
-    flex: configuration?.flex ?? (columnType ? 1.6 : 1),
+    // Leave unconstrained columns out of flex sizing so MUI's content-based
+    // autosize can measure their rendered headers and cells after they mount.
+    // Consumers can still opt into proportional sizing with `flex`.
+    flex: configuration?.flex,
     width: configuration?.width,
     minWidth: configuration?.minWidth ?? getColumnMinWidth(columnType),
     maxWidth: configuration?.maxWidth,

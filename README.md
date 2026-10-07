@@ -50,7 +50,7 @@ Column names are object keys. Header labels are generated from those names, so `
 
 The grid workspace has an 800px minimum height by default. Override it with `minHeight={900}` (numbers are pixels) or a CSS length such as `minHeight="90vh"`. Set `height` to size the workspace itself, for example `height="calc(100vh - 64px)"` for a grid below a fixed 64px app bar.
 
-Columns without an explicit `width` or `flex` are measured from their rendered headers and cells after data loads. Set `width` for a fixed size or `flex` for proportional sizing; `minWidth` and `maxWidth` continue to constrain the measured width.
+Columns without an explicit `width` or `flex` are measured from their rendered headers and cells after data loads. Set `width` for a fixed size or `flex` for proportional sizing; `minWidth` and `maxWidth` continue to constrain the measured width. Unconfigured columns use content-based sizing by default.
 
 Use `beforeTable` to render host-provided content between the grid toolbar and the column headers. The example uses this slot to show the latest action output.
 Use `toolbarActions` for host buttons that belong on the right side of the main toolbar, before the built-in bulk-delete and Include Deleted controls.
