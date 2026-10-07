@@ -271,6 +271,8 @@ export interface SuperDataGridProps<
   beforeTable?: ReactNode;
   /** Optional host actions rendered at the right side of the main toolbar. */
   toolbarActions?: ReactNode;
+  /** Reset host-managed grid preferences to their configured defaults. */
+  onResetToDefault?: () => void | Promise<void>;
   /** Controlled row density. Omit to let the grid manage density internally. */
   density?: GridDensity;
   /** Called when the user selects a new row density. */

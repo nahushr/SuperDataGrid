@@ -351,6 +351,7 @@ export function SuperDataGrid<
   dataGridSlots,
   beforeTable,
   toolbarActions,
+  onResetToDefault,
   density: densityProp,
   onDensityChange,
   sortingMode = "client",
@@ -995,6 +996,7 @@ export function SuperDataGrid<
       columns: gridColumns,
       beforeTable,
       toolbarActions,
+      onResetToDefault,
       rows,
       density,
       onDensityChange: handleDensityChange,
@@ -1030,6 +1032,7 @@ export function SuperDataGrid<
     [
       beforeTable,
       toolbarActions,
+      onResetToDefault,
       columnVisibilityModel,
       handleColumnVisibilityModelChange,
       handleDensityChange,

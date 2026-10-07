@@ -19,6 +19,7 @@ import DensityMediumIcon from "@mui/icons-material/DensityMedium";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import FilterListIcon from "@mui/icons-material/FilterList";
+import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import ViewSidebarIcon from "@mui/icons-material/ViewSidebar";
 import ViewColumnIcon from "@mui/icons-material/ViewColumn";
 import {
@@ -414,6 +415,19 @@ export default function SuperDataGridToolbar() {
               </MenuItem>
             ))}
           </Menu>
+          {gridState.onResetToDefault != null && (
+            <Button
+              size="small"
+              variant="outlined"
+              color="warning"
+              startIcon={<RestartAltIcon />}
+              className={styles.toolbarButton}
+              onClick={() => void gridState.onResetToDefault?.()}
+              data-testid="super-data-grid-reset-default-button"
+            >
+              Reset to default
+            </Button>
+          )}
         </div>
         <div className={styles.trailingActions}>
           {gridState.toolbarActions != null && (
