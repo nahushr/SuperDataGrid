@@ -364,10 +364,14 @@ function getAutoSizeDataKey<Row extends SuperDataGridRow>(
     const record = row as Record<string, unknown>;
     const rowId = record.id ?? record._id ?? record.userId ?? index;
     const fieldLengths = Object.keys(record)
-      .sort()
+      .sort((left, right) => left.localeCompare(right))
       .map((field) => `${field}:${getAutoSizeValueLength(record[field])}`)
       .join(",");
-    return `${String(rowId)}:${fieldLengths}`;
+    const stableRowId =
+      typeof rowId === "string" || typeof rowId === "number"
+        ? `${typeof rowId}:${rowId}`
+        : `index:${index}`;
+    return `${stableRowId}:${fieldLengths}`;
   }).join("\u0000");
 }
 
