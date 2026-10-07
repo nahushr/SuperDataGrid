@@ -269,6 +269,58 @@ function createGridColumn<Row extends SuperDataGridRow>(
   };
 }
 
+type GridWorkspaceStyle = React.CSSProperties & {
+  "--super-data-grid-min-height"?: string;
+  "--super-data-grid-height"?: string;
+};
+
+function getGridWorkspaceStyle(
+  minHeight: number | string | undefined,
+  height: number | string | undefined,
+): GridWorkspaceStyle | undefined {
+  if (minHeight == null && height == null) return undefined;
+
+  return {
+    ...(minHeight == null
+      ? {}
+      : {
+          "--super-data-grid-min-height":
+            typeof minHeight === "number" ? `${minHeight}px` : minHeight,
+        }),
+    ...(height == null
+      ? {}
+      : {
+          "--super-data-grid-height":
+            typeof height === "number" ? `${height}px` : height,
+        }),
+  };
+}
+
+function useAutoSizeColumns(
+  apiRef: ReturnType<typeof useGridApiRef>,
+  columnFields: readonly string[],
+  loading: boolean,
+  rows: readonly GridValidRowModel[],
+): void {
+  useEffect(() => {
+    if (loading || columnFields.length === 0) return undefined;
+
+    const frame = window.requestAnimationFrame(() => {
+      const api = apiRef.current;
+      if (api == null) return;
+
+      void api.autosizeColumns({
+        columns: [...columnFields],
+        includeHeaders: true,
+        includeOutliers: true,
+        disableColumnVirtualization: true,
+      });
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [apiRef, columnFields, loading, rows]);
+}
+
 /**
  * A plug-and-play MUI data grid styled after SimpliShelf's shared grid.
  * Pass column field names and object rows; the component creates column
@@ -497,23 +549,7 @@ export function SuperDataGrid<
     [data, getRowId, gridColumns],
   );
 
-  useEffect(() => {
-    if (loading || autoSizeColumnFields.length === 0) return undefined;
-
-    const frame = window.requestAnimationFrame(() => {
-      const api = apiRef.current;
-      if (api == null) return;
-
-      void api.autosizeColumns({
-        columns: autoSizeColumnFields,
-        includeHeaders: true,
-        includeOutliers: true,
-        disableColumnVirtualization: true,
-      });
-    });
-
-    return () => window.cancelAnimationFrame(frame);
-  }, [apiRef, autoSizeColumnFields, loading, rows]);
+  useAutoSizeColumns(apiRef, autoSizeColumnFields, loading, rows);
 
   const filterModel = filterModelProp ?? internalFilterModel;
   const sortModel = sortModelProp ?? internalSortModel;
@@ -1026,23 +1062,7 @@ export function SuperDataGrid<
   );
 
   const densityClass = getDensityClass(density);
-  const workspaceStyle =
-    minHeight == null && height == null
-      ? undefined
-      : ({
-          ...(minHeight == null
-            ? {}
-            : {
-                "--super-data-grid-min-height":
-                  typeof minHeight === "number" ? `${minHeight}px` : minHeight,
-              }),
-          ...(height == null
-            ? {}
-            : {
-                "--super-data-grid-height":
-                  typeof height === "number" ? `${height}px` : height,
-              }),
-        } as React.CSSProperties);
+  const workspaceStyle = getGridWorkspaceStyle(minHeight, height);
 
   return (
     <div

@@ -417,7 +417,7 @@ export default function SuperDataGridToolbar() {
         </div>
         <div className={styles.trailingActions}>
           {gridState.toolbarActions != null && (
-            <div className={styles.toolbarActions} role="group" aria-label="Page actions">
+            <div className={styles.toolbarActions}>
               {gridState.toolbarActions}
             </div>
           )}
