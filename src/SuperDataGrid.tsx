@@ -305,13 +305,18 @@ function useAutoSizeColumns(
   loading: boolean,
   dataKey: string,
 ): void {
+  const lastAutoSizeKey = React.useRef<string | null>(null);
+
   useEffect(() => {
     if (loading || columnFieldsKey.length === 0) return undefined;
+    const autoSizeKey = `${columnFieldsKey}\u0001${dataKey}`;
+    if (lastAutoSizeKey.current === autoSizeKey) return undefined;
 
     const frame = window.requestAnimationFrame(() => {
       const api = apiRef.current;
       if (api == null) return;
 
+      lastAutoSizeKey.current = autoSizeKey;
       void api.autosizeColumns({
         columns: columnFieldsKey.split("\u0000"),
         includeHeaders: true,
@@ -321,7 +326,49 @@ function useAutoSizeColumns(
     });
 
     return () => window.cancelAnimationFrame(frame);
-  }, [apiRef, columnFieldsKey, dataKey, loading]);
+  }, [apiRef, columnFieldsKey, dataKey, lastAutoSizeKey, loading]);
+}
+
+function getAutoSizeValueLength(value: unknown, depth = 0): number {
+  if (value == null) return 0;
+  if (typeof value === "string") return value.length;
+  if (typeof value === "number" || typeof value === "boolean") {
+    return String(value).length;
+  }
+  if (depth >= 4 && typeof value === "object") {
+    return Object.keys(value).length;
+  }
+  if (Array.isArray(value)) {
+    return value.reduce(
+      (length, item) => length + getAutoSizeValueLength(item, depth + 1),
+      0,
+    );
+  }
+  if (typeof value === "object") {
+    return Object.entries(value as Record<string, unknown>).reduce(
+      (length, [key, item]) =>
+        length + key.length + getAutoSizeValueLength(item, depth + 1),
+      0,
+    );
+  }
+  return 0;
+}
+
+function getAutoSizeDataKey<Row extends SuperDataGridRow>(
+  data: readonly Row[],
+): string {
+  return data.map((row, index) => {
+    if (row == null || typeof row !== "object") {
+      return `${index}:${getAutoSizeValueLength(row)}`;
+    }
+    const record = row as Record<string, unknown>;
+    const rowId = record.id ?? record._id ?? record.userId ?? index;
+    const fieldLengths = Object.keys(record)
+      .sort()
+      .map((field) => `${field}:${getAutoSizeValueLength(record[field])}`)
+      .join(",");
+    return `${String(rowId)}:${fieldLengths}`;
+  }).join("\u0000");
 }
 
 /**
@@ -523,22 +570,8 @@ export function SuperDataGrid<
     [columnConfiguration, columns],
   );
   const autoSizeColumnFieldsKey = autoSizeColumnFields.join("\u0000");
-  const autoSizeRowIdentities = React.useRef(new WeakMap<object, number>());
-  const nextAutoSizeRowIdentity = React.useRef(0);
   const autoSizeDataKey = useMemo(
-    () => data.map((row) => {
-      if (row == null || typeof row !== "object") {
-        return `${typeof row}:${String(row)}`;
-      }
-      const record = row as object;
-      let identity = autoSizeRowIdentities.current.get(record);
-      if (identity == null) {
-        identity = nextAutoSizeRowIdentity.current + 1;
-        nextAutoSizeRowIdentity.current = identity;
-        autoSizeRowIdentities.current.set(record, identity);
-      }
-      return `row:${identity}`;
-    }).join("\u0000"),
+    () => getAutoSizeDataKey(data),
     [data],
   );
 
