@@ -124,7 +124,7 @@ function getColumnMinWidth(columnType?: SuperDataGridColumnType): number {
     case "email":
     case "longText":
     case "json": return 220;
-    case "phone": return 190;
+    case "phone": return 240;
     case "image": return 240;
     case "priceBreakdown": return 235;
     case "currency":

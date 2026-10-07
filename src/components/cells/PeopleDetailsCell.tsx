@@ -91,13 +91,13 @@ export default function PeopleDetailsCell({
         ))}
       {formattedPhone && (
         <a
-          className={styles.contactLink}
+          className={`${styles.contactLink} ${styles.phoneContactLink}`}
           href={formattedPhone.href || undefined}
           onClick={(event) => event.stopPropagation()}
           title={`Call ${formattedPhone.display}`}
         >
           <PhoneIcon className={styles.contactIcon} aria-hidden="true" />
-          <span className={styles.contactText}>{formattedPhone.display}</span>
+          <span className={styles.phoneContactText}>{formattedPhone.display}</span>
         </a>
       )}
     </div>

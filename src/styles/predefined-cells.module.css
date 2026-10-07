@@ -182,6 +182,18 @@
   line-height: 1;
 }
 
+.phoneContactLink {
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.phoneContactText {
+  flex: 0 0 auto;
+  min-width: max-content;
+  overflow-wrap: normal;
+  white-space: nowrap;
+}
+
 .contactText {
   min-width: 0;
   overflow-wrap: anywhere;

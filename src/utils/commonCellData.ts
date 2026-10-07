@@ -479,13 +479,16 @@ export function getPhoneDisplay(value: string): {
 
   const country = phone.country ?? "US";
   const digits = phone.nationalNumber.slice(0, 10);
-  let formattedDigits = digits;
-  if (digits.length > 6) {
-    formattedDigits = `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
-  }
+  const formattedDigits = formatMaskedPhoneNumber(digits) ?? digits;
 
   return {
     display: `${countryFlag(country)} +${phone.countryCallingCode} ${formattedDigits}`,
     href: `tel:${phone.number}`,
   };
+}
+
+export function formatMaskedPhoneNumber(value: string): string | undefined {
+  const digits = value.replace(/\D/g, "");
+  if (digits.length !== 9 && digits.length !== 10) return undefined;
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
 }

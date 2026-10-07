@@ -2,6 +2,7 @@ import React from "react";
 import PhoneIcon from "@mui/icons-material/Phone";
 import { parsePhoneNumberFromString, type CountryCode } from "libphonenumber-js";
 import type { SuperDataGridPhoneOptions } from "../../types";
+import { formatMaskedPhoneNumber } from "../../utils/commonCellData";
 import { firstText } from "../../utils/predefinedCellData";
 import styles from "../../styles/predefined-cells.module.css";
 
@@ -31,9 +32,12 @@ export default function PhoneCell({ value, options = {} }: Readonly<PhoneCellPro
       if (options.format === "original") {
         display = phoneText;
       } else if (options.format === "national") {
-        display = parsed.formatNational();
+        display = formatMaskedPhoneNumber(parsed.nationalNumber) ?? parsed.formatNational();
       } else {
-        display = parsed.formatInternational();
+        const maskedNationalNumber = formatMaskedPhoneNumber(parsed.nationalNumber);
+        display = maskedNationalNumber
+          ? `+${parsed.countryCallingCode} ${maskedNationalNumber}`
+          : parsed.formatInternational();
       }
     }
   } catch {
@@ -43,7 +47,7 @@ export default function PhoneCell({ value, options = {} }: Readonly<PhoneCellPro
 
   return (
     <a
-      className={styles.contactLink}
+      className={`${styles.contactLink} ${styles.phoneContactLink}`}
       href={href}
       onClick={(event) => event.stopPropagation()}
       title={`Call ${display}`}
@@ -52,7 +56,7 @@ export default function PhoneCell({ value, options = {} }: Readonly<PhoneCellPro
         <PhoneIcon className={styles.contactIcon} aria-hidden="true" />
       )}
       {flag && <span aria-label={`${flagCountryCode.toUpperCase()} flag`} className={styles.phoneFlag} role="img">{flag}</span>}
-      <span className={styles.contactText}>{explicitLabel || display}</span>
+      <span className={styles.phoneContactText}>{explicitLabel || display}</span>
     </a>
   );
 }

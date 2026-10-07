@@ -1,8 +1,13 @@
 .toolbar {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   justify-content: space-between;
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  width: 100%;
   gap: 0.25rem;
   overflow: visible;
   padding-top: 0.75rem;
@@ -15,6 +20,8 @@
 }
 
 .toolbarRow {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;

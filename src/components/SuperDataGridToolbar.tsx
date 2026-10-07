@@ -22,7 +22,6 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import ViewSidebarIcon from "@mui/icons-material/ViewSidebar";
 import ViewColumnIcon from "@mui/icons-material/ViewColumn";
 import {
-  Toolbar,
   gridFilteredSortedRowIdsSelector,
   gridPaginatedVisibleSortedGridRowIdsSelector,
   useGridApiContext,
@@ -256,7 +255,7 @@ export default function SuperDataGridToolbar() {
 
   return (
     <>
-      <Toolbar className={styles.toolbar}>
+      <div className={styles.toolbar} role="toolbar" aria-label="Data grid actions">
         <div className={styles.toolbarRow}>
         <div className={styles.actions}>
           {!gridState.hideViews && (
@@ -469,7 +468,7 @@ export default function SuperDataGridToolbar() {
             {gridState.beforeTable}
           </div>
         )}
-      </Toolbar>
+      </div>
 
       <SuperDataGridExportScopeDialog
         open={scopeDialogOpen}

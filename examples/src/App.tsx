@@ -42,6 +42,9 @@ const columns = [
   "createdAt",
   "actions",
 ];
+const columnConfiguration = {
+  productImage: { headerName: "Product" },
+};
 const columnTypes = {
   peopleDetails: "peopleDetails",
   address: "address",
@@ -299,6 +302,7 @@ export default function App() {
       <section className="grid-section" aria-label="Server-side user data grid">
         <SuperDataGrid
           columns={columns}
+          columnConfiguration={columnConfiguration}
           columnTypes={columnTypes}
           columnOptions={columnOptions}
           data={data}

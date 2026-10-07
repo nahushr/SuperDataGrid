@@ -134,6 +134,19 @@
   overflow-wrap: anywhere;
 }
 
+.phoneContactLink {
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.phoneContactText {
+  flex: 0 0 auto;
+  min-width: max-content;
+  max-width: none;
+  overflow-wrap: normal;
+  white-space: nowrap;
+}
+
 .auditTimestamp {
   align-items: flex-start;
   color: #64748b;
