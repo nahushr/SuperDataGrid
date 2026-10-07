@@ -301,19 +301,19 @@ function getGridWorkspaceStyle(
 
 function useAutoSizeColumns(
   apiRef: ReturnType<typeof useGridApiRef>,
-  columnFields: readonly string[],
+  columnFieldsKey: string,
   loading: boolean,
-  rows: readonly GridValidRowModel[],
+  dataKey: string,
 ): void {
   useEffect(() => {
-    if (loading || columnFields.length === 0) return undefined;
+    if (loading || columnFieldsKey.length === 0) return undefined;
 
     const frame = window.requestAnimationFrame(() => {
       const api = apiRef.current;
       if (api == null) return;
 
       void api.autosizeColumns({
-        columns: [...columnFields],
+        columns: columnFieldsKey.split("\u0000"),
         includeHeaders: true,
         includeOutliers: true,
         disableColumnVirtualization: true,
@@ -321,7 +321,7 @@ function useAutoSizeColumns(
     });
 
     return () => window.cancelAnimationFrame(frame);
-  }, [apiRef, columnFields, loading, rows]);
+  }, [apiRef, columnFieldsKey, dataKey, loading]);
 }
 
 /**
@@ -522,6 +522,25 @@ export function SuperDataGrid<
     }),
     [columnConfiguration, columns],
   );
+  const autoSizeColumnFieldsKey = autoSizeColumnFields.join("\u0000");
+  const autoSizeRowIdentities = React.useRef(new WeakMap<object, number>());
+  const nextAutoSizeRowIdentity = React.useRef(0);
+  const autoSizeDataKey = useMemo(
+    () => data.map((row) => {
+      if (row == null || typeof row !== "object") {
+        return `${typeof row}:${String(row)}`;
+      }
+      const record = row as object;
+      let identity = autoSizeRowIdentities.current.get(record);
+      if (identity == null) {
+        identity = nextAutoSizeRowIdentity.current + 1;
+        nextAutoSizeRowIdentity.current = identity;
+        autoSizeRowIdentities.current.set(record, identity);
+      }
+      return `row:${identity}`;
+    }).join("\u0000"),
+    [data],
+  );
 
   const dataGridColumnVisibilityModel = useMemo(
     () => ({
@@ -553,7 +572,12 @@ export function SuperDataGrid<
     [data, getRowId, gridColumns],
   );
 
-  useAutoSizeColumns(apiRef, autoSizeColumnFields, loading, rows);
+  useAutoSizeColumns(
+    apiRef,
+    autoSizeColumnFieldsKey,
+    loading,
+    autoSizeDataKey,
+  );
 
   const filterModel = filterModelProp ?? internalFilterModel;
   const sortModel = sortModelProp ?? internalSortModel;
