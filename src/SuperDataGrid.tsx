@@ -11,6 +11,7 @@ import {
   type GridRowSelectionModel,
   type GridSortModel,
   type GridValidRowModel,
+  useGridApiRef,
 } from "@mui/x-data-grid";
 import SuperDataGridFilterPanel from "./components/SuperDataGridFilterPanel";
 import SuperDataGridPagination, {
@@ -283,6 +284,7 @@ export function SuperDataGrid<
   filterFields: suppliedFilterFields,
   data,
   minHeight,
+  height,
   columnGroupingModel,
   rowHeight,
   getRowHeight,
@@ -293,6 +295,7 @@ export function SuperDataGrid<
   hideToolbar = false,
   dataGridSlots,
   beforeTable,
+  toolbarActions,
   density: densityProp,
   onDensityChange,
   sortingMode = "client",
@@ -343,6 +346,7 @@ export function SuperDataGrid<
   bulkDeleteLabel = "Bulk delete",
   hideBulkDelete = false,
 }: Readonly<SuperDataGridProps<Row>>) {
+  const apiRef = useGridApiRef();
   const [internalDensity, setInternalDensity] =
     useState<GridDensity>("standard");
   const density = densityProp ?? internalDensity;
@@ -455,6 +459,14 @@ export function SuperDataGrid<
     [filterOnlyColumns, gridColumns],
   );
 
+  const autoSizeColumnFields = useMemo(
+    () => columns.filter((field) => {
+      const configuration = columnConfiguration?.[field];
+      return configuration?.width == null && configuration?.flex == null;
+    }),
+    [columnConfiguration, columns],
+  );
+
   const dataGridColumnVisibilityModel = useMemo(
     () => ({
       ...columnVisibilityModel,
@@ -484,6 +496,24 @@ export function SuperDataGrid<
       }),
     [data, getRowId, gridColumns],
   );
+
+  useEffect(() => {
+    if (loading || autoSizeColumnFields.length === 0) return undefined;
+
+    const frame = window.requestAnimationFrame(() => {
+      const api = apiRef.current;
+      if (api == null) return;
+
+      void api.autosizeColumns({
+        columns: autoSizeColumnFields,
+        includeHeaders: true,
+        includeOutliers: true,
+        disableColumnVirtualization: true,
+      });
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [apiRef, autoSizeColumnFields, loading, rows]);
 
   const filterModel = filterModelProp ?? internalFilterModel;
   const sortModel = sortModelProp ?? internalSortModel;
@@ -925,6 +955,7 @@ export function SuperDataGrid<
     () => ({
       columns: gridColumns,
       beforeTable,
+      toolbarActions,
       rows,
       density,
       onDensityChange: handleDensityChange,
@@ -959,6 +990,7 @@ export function SuperDataGrid<
     }),
     [
       beforeTable,
+      toolbarActions,
       columnVisibilityModel,
       handleColumnVisibilityModelChange,
       handleDensityChange,
@@ -995,11 +1027,21 @@ export function SuperDataGrid<
 
   const densityClass = getDensityClass(density);
   const workspaceStyle =
-    minHeight == null
+    minHeight == null && height == null
       ? undefined
       : ({
-          "--super-data-grid-min-height":
-            typeof minHeight === "number" ? `${minHeight}px` : minHeight,
+          ...(minHeight == null
+            ? {}
+            : {
+                "--super-data-grid-min-height":
+                  typeof minHeight === "number" ? `${minHeight}px` : minHeight,
+              }),
+          ...(height == null
+            ? {}
+            : {
+                "--super-data-grid-height":
+                  typeof height === "number" ? `${height}px` : height,
+              }),
         } as React.CSSProperties);
 
   return (
@@ -1035,6 +1077,7 @@ export function SuperDataGrid<
       <div className={styles.gridFrame}>
         <SuperDataGridContext.Provider value={contextValue}>
           <DataGrid
+            apiRef={apiRef}
             className={styles.gridRoot}
             rows={rows}
             columns={dataGridColumns}

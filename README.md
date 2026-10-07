@@ -48,9 +48,12 @@ export function Products() {
 
 Column names are object keys. Header labels are generated from those names, so `productName` displays as “Product Name” and `created_at` displays as “Created at”. Rows can provide an `id` or `_id`; the component assigns a positional ID when neither is present.
 
-The grid workspace has an 800px minimum height by default. Override it with `minHeight={900}` (numbers are pixels) or a CSS length such as `minHeight="90vh"`.
+The grid workspace has an 800px minimum height by default. Override it with `minHeight={900}` (numbers are pixels) or a CSS length such as `minHeight="90vh"`. Set `height` to size the workspace itself, for example `height="calc(100vh - 64px)"` for a grid below a fixed 64px app bar.
+
+Columns without an explicit `width` or `flex` are measured from their rendered headers and cells after data loads. Set `width` for a fixed size or `flex` for proportional sizing; `minWidth` and `maxWidth` continue to constrain the measured width.
 
 Use `beforeTable` to render host-provided content between the grid toolbar and the column headers. The example uses this slot to show the latest action output.
+Use `toolbarActions` for host buttons that belong on the right side of the main toolbar, before the built-in bulk-delete and Include Deleted controls.
 
 The default page size is 25. Users can choose 10, 25, 50, 100, or 500 rows per page. Click a column header to sort ascending, descending, or clear the sort. Sorting, filtering, and pagination default to client-side behavior and can be switched independently to server-side behavior. For server-side sorting, control `sortModel` and handle `onSortModelChange`, then sort the full result set before slicing it into pages. Headers wrap long labels, cell content stays left-aligned and vertically centered, and long values wrap instead of being clipped.
 

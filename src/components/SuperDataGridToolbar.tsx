@@ -416,6 +416,11 @@ export default function SuperDataGridToolbar() {
           </Menu>
         </div>
         <div className={styles.trailingActions}>
+          {gridState.toolbarActions != null && (
+            <div className={styles.toolbarActions} role="group" aria-label="Page actions">
+              {gridState.toolbarActions}
+            </div>
+          )}
           {gridState.canBulkDelete && (
             <Tooltip
               title={

@@ -51,6 +51,14 @@
   gap: 0.5rem;
 }
 
+.toolbarActions {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
 .includeDeletedLabel {
   margin: 0 0 0 0.25rem !important;
   color: #475569;

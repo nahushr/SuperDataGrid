@@ -247,6 +247,8 @@ export interface SuperDataGridProps<
   data: readonly Row[];
   /** Minimum height for the grid workspace. Numbers are pixels; defaults to 800px. */
   minHeight?: number | string;
+  /** Workspace height. Numbers are pixels; omit to use the responsive default. */
+  height?: number | string;
   /** Optional MUI column groups for related fields. */
   columnGroupingModel?: GridColumnGroupingModel;
   /** Fixed row height when `getRowHeight` is not provided. */
@@ -267,6 +269,8 @@ export interface SuperDataGridProps<
   dataGridSlots?: Partial<Pick<GridSlotsComponent, "noRowsOverlay" | "loadingOverlay">>;
   /** Optional content rendered after the toolbar and before the table. */
   beforeTable?: ReactNode;
+  /** Optional host actions rendered at the right side of the main toolbar. */
+  toolbarActions?: ReactNode;
   /** Controlled row density. Omit to let the grid manage density internally. */
   density?: GridDensity;
   /** Called when the user selects a new row density. */

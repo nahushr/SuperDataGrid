@@ -16,6 +16,7 @@ import type {
 export interface SuperDataGridContextValue {
   columns: GridColDef[];
   beforeTable?: ReactNode;
+  toolbarActions?: ReactNode;
   rows: GridValidRowModel[];
   density: GridDensity;
   onDensityChange: (density: GridDensity) => void;
