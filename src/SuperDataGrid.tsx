@@ -7,7 +7,9 @@ import {
   type GridDensity,
   type GridFilterModel,
   type GridPaginationModel,
+  type GridRowClassNameParams,
   type GridRowId,
+  type GridRowParams,
   type GridRowSelectionModel,
   type GridSortModel,
   type GridValidRowModel,
@@ -140,6 +142,11 @@ function getDensityClass(density: GridDensity): string {
   if (density === "comfortable") return styles.comfortable;
   return "";
 }
+
+const getDefaultRowClassName = ({
+  indexRelativeToCurrentPage,
+}: GridRowClassNameParams): string =>
+  indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd";
 
 function getGridColumnType<Row extends SuperDataGridRow>(
   field: string,
@@ -1128,6 +1135,25 @@ export function SuperDataGrid<
     ],
   );
 
+  const handleGridRowSelectable = useCallback(
+    ({ row }: GridRowParams) =>
+      isRowSelectable?.({ row: row as Row }) ?? true,
+    [isRowSelectable],
+  );
+  const gridSlots = useMemo(
+    () => ({
+      toolbar: hideToolbar ? undefined : SuperDataGridToolbar,
+      pagination: SuperDataGridPagination,
+      loadingOverlay: dataGridSlots?.loadingOverlay ?? SuperDataGridLoadingOverlay,
+      noRowsOverlay: dataGridSlots?.noRowsOverlay ?? SuperDataGridNoRowsOverlay,
+    }),
+    [
+      dataGridSlots?.loadingOverlay,
+      dataGridSlots?.noRowsOverlay,
+      hideToolbar,
+    ],
+  );
+
   const densityClass = getDensityClass(density);
   const workspaceStyle = getGridWorkspaceStyle(minHeight, height);
 
@@ -1183,8 +1209,8 @@ export function SuperDataGrid<
               paginationMode === "server" ? rowCount ?? data.length : undefined
             }
             loading={loading}
-            getRowHeight={getRowHeight ?? (() => "auto")}
-            getEstimatedRowHeight={getEstimatedRowHeight ?? (() => 76)}
+            getRowHeight={getRowHeight}
+            getEstimatedRowHeight={getEstimatedRowHeight}
             hideFooter={hideFooter}
             showToolbar={!hideToolbar}
             onDensityChange={handleDensityChange}
@@ -1204,21 +1230,13 @@ export function SuperDataGrid<
             keepNonExistentRowsSelected={checkboxSelection}
             isRowSelectable={
               checkboxSelection && isRowSelectable != null
-                ? ({ row }) => isRowSelectable?.({ row: row as Row }) ?? true
+                ? handleGridRowSelectable
                 : undefined
             }
             disableColumnMenu
             disableColumnResize
-            slots={{
-              toolbar: hideToolbar ? undefined : SuperDataGridToolbar,
-              pagination: SuperDataGridPagination,
-              loadingOverlay:
-                dataGridSlots?.loadingOverlay ?? SuperDataGridLoadingOverlay,
-              noRowsOverlay: dataGridSlots?.noRowsOverlay ?? SuperDataGridNoRowsOverlay,
-            }}
-            getRowClassName={getRowClassName ?? (({ indexRelativeToCurrentPage }) =>
-              indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
-            )}
+            slots={gridSlots}
+            getRowClassName={getRowClassName ?? getDefaultRowClassName}
           />
         </SuperDataGridContext.Provider>
       </div>

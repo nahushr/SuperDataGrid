@@ -6,6 +6,8 @@
   width: 100%;
   height: var(--super-data-grid-height, min(76vh, 760px));
   min-height: var(--super-data-grid-min-height);
+  box-sizing: border-box;
+  padding-block: 12px;
 }
 
 .viewsSidebarSlot {
@@ -50,7 +52,6 @@
   width: 0;
   min-width: 0;
   height: 100%;
-  min-height: var(--super-data-grid-min-height);
 }
 
 .gridRoot {
