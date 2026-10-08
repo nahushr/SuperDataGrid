@@ -1,7 +1,7 @@
 .pagination {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   width: 100%;
   min-height: 64px;
   box-sizing: border-box;
@@ -52,6 +52,7 @@
 
 .pages {
   flex: 0 0 auto;
+  margin-left: auto;
 }
 
 .pages :global(.MuiPaginationItem-root) {
@@ -73,19 +74,21 @@
 
 @media (max-width: 700px) {
   .pagination {
-    justify-content: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
   }
 
   .pageSizeControls {
-    justify-content: center;
+    justify-content: flex-start;
   }
 
   .pages {
-    flex: 1 1 100%;
+    flex: 0 0 auto;
     min-width: 0;
+    margin-left: auto;
   }
 
   .pages :global(.MuiPagination-ul) {
-    justify-content: center;
+    justify-content: flex-end;
   }
 }
