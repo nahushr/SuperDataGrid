@@ -38,12 +38,16 @@ export default function SuperDataGridViewsSidebar({
   return (
     <aside className={styles.viewsSidebar} aria-label="Saved views">
       <div className={styles.sidebarHeader}>
-        <Typography className={styles.sidebarTitle}>Views</Typography>
+        <div className={styles.sidebarHeading}>
+          <span className={styles.sidebarEyebrow}>WORKSPACE</span>
+          <Typography className={styles.sidebarTitle}>Saved views</Typography>
+        </div>
         {canAdd && (
           <Tooltip title="Add view">
             <IconButton
               size="small"
               color="primary"
+              className={styles.addViewButton}
               aria-label="Add view"
               onClick={onAdd}
             >

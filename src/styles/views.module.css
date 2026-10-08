@@ -2,15 +2,19 @@
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
-  min-width: 0;
   width: 100%;
+  min-width: 0;
   height: 100%;
-  padding: 12px 24px 12px 12px;
-  overflow: hidden;
   box-sizing: border-box;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  background: #ffffff;
+  padding: 16px 12px 12px;
+  overflow: hidden;
+  border: 1px solid rgb(148 163 184 / 22%);
+  border-radius: 18px;
+  background: linear-gradient(155deg, #ffffff 0%, #f7fbfb 100%);
+  box-shadow:
+    0 16px 34px rgb(15 23 42 / 7%),
+    0 2px 6px rgb(15 23 42 / 4%),
+    inset 0 1px 0 rgb(255 255 255 / 95%);
 }
 
 .sidebarHeader {
@@ -18,54 +22,134 @@
   flex: 0 0 auto;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  padding-bottom: 8px;
-  margin-bottom: 8px;
-  border-bottom: 1px solid #e2e8f0;
+  gap: 10px;
+  padding: 2px 3px 14px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgb(148 163 184 / 22%);
+}
+
+.sidebarHeading {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.sidebarEyebrow {
+  color: #718096;
+  font-size: 0.61rem;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+  line-height: 1;
 }
 
 .sidebarTitle {
-  color: #0f172a;
-  font-size: 0.95rem !important;
-  font-weight: 700 !important;
+  color: var(--app-text, #142f3a);
+  font-size: 1rem !important;
+  font-weight: 750 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.2 !important;
+}
+
+.addViewButton {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  border: 1px solid color-mix(in srgb, var(--app-primary, #167d87) 18%, white) !important;
+  border-radius: 12px !important;
+  color: var(--app-primary, #167d87) !important;
+  background: color-mix(in srgb, var(--app-primary, #167d87) 7%, white) !important;
+  transition:
+    color 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease,
+    transform 200ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+.addViewButton:hover {
+  border-color: var(--app-primary, #167d87) !important;
+  color: #ffffff !important;
+  background: var(--app-primary, #167d87) !important;
+  transform: translateY(-2px);
 }
 
 .viewList {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
-  gap: 8px;
+  gap: 9px;
   min-height: 0;
+  padding: 0 2px 2px 0;
   overflow-x: hidden;
   overflow-y: auto;
+  scrollbar-color: rgb(100 116 139 / 30%) transparent;
+  scrollbar-width: thin;
+}
+
+.viewList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.viewList::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgb(100 116 139 / 28%);
 }
 
 .viewCard {
+  position: relative;
   display: flex;
   flex: 0 0 auto;
-  align-items: center;
+  align-items: stretch;
   justify-content: space-between;
   width: 100%;
   min-width: 0;
-  min-height: 60px;
+  min-height: 62px;
   box-sizing: border-box;
-  padding: 8px 10px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  background: #ffffff;
-  color: #1e293b;
+  padding: 10px 8px 10px 11px;
+  overflow: hidden;
+  border: 1px solid rgb(148 163 184 / 22%);
+  border-radius: 14px;
+  color: var(--app-text, #142f3a);
+  background: rgb(255 255 255 / 78%);
+  box-shadow: 0 1px 2px rgb(15 23 42 / 3%);
   text-align: left;
   text-transform: none;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    box-shadow 200ms ease,
+    transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.viewCard::before {
+  position: absolute;
+  top: 12px;
+  bottom: 12px;
+  left: 0;
+  width: 3px;
+  border-radius: 0 999px 999px 0;
+  background: transparent;
+  content: "";
+  transition: background-color 180ms ease;
 }
 
 .viewCard:hover {
-  border-color: #93c5fd;
-  background: #f8fafc;
+  border-color: color-mix(in srgb, var(--app-primary, #167d87) 28%, white);
+  background: #ffffff;
+  box-shadow: 0 7px 18px rgb(15 23 42 / 8%);
+  transform: translateY(-1px);
 }
 
 .selectedView {
-  border-color: #1976d2;
-  background: #f0f7ff;
+  border-color: color-mix(in srgb, var(--app-primary, #167d87) 32%, white);
+  background: color-mix(in srgb, var(--app-primary, #167d87) 7%, white);
+  box-shadow:
+    0 4px 12px color-mix(in srgb, var(--app-primary, #167d87) 9%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--app-primary, #167d87) 5%, transparent);
+}
+
+.selectedView::before {
+  background: var(--app-primary, #167d87);
 }
 
 .viewSelectButton {
@@ -90,26 +174,36 @@
   flex: 1 1 auto;
   flex-direction: column;
   align-items: flex-start;
-  gap: 6px;
+  gap: 7px;
   min-width: 0;
   text-align: left;
 }
 
 .viewName {
   max-width: 100%;
-  overflow-wrap: anywhere;
-  color: #1e293b;
-  font-size: 0.85rem;
-  font-weight: 600;
+  overflow: hidden;
+  color: var(--app-text, #142f3a);
+  font-size: 0.86rem;
+  font-weight: 700;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .viewCount {
   max-width: 100%;
-  height: 22px !important;
-  color: #0369a1 !important;
-  background: #e0f2fe !important;
-  font-size: 0.68rem !important;
-  font-weight: 600 !important;
+  height: 21px !important;
+  border: 1px solid rgb(148 163 184 / 12%);
+  color: #526477 !important;
+  background: #f1f5f8 !important;
+  font-size: 0.66rem !important;
+  font-weight: 700 !important;
+}
+
+.selectedView .viewCount {
+  border-color: color-mix(in srgb, var(--app-primary, #167d87) 12%, white);
+  color: var(--app-primary, #167d87) !important;
+  background: color-mix(in srgb, var(--app-primary, #167d87) 10%, white) !important;
 }
 
 .viewCount :global(.MuiChip-label) {
@@ -119,49 +213,62 @@
 
 .viewNotes {
   max-width: 100%;
-  overflow-wrap: anywhere;
-  color: #64748b;
-  font-size: 0.75rem;
+  overflow: hidden;
+  color: #65778a;
+  font-size: 0.74rem;
   font-weight: 400;
   line-height: 1.4;
+  text-overflow: ellipsis;
 }
 
 .viewActions {
   display: flex;
   flex: 0 0 auto;
   align-items: center;
-  gap: 2px;
-  margin-left: 6px;
+  gap: 1px;
+  margin: -3px -3px -3px 4px;
+  opacity: 0.72;
+  transition: opacity 160ms ease;
+}
+
+.viewCard:hover .viewActions,
+.viewCard:focus-within .viewActions,
+.selectedView .viewActions {
+  opacity: 1;
 }
 
 .editViewButton,
 .deleteViewButton {
   flex: 0 0 auto;
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px !important;
 }
 
 .editViewButton {
-  color: #1976d2 !important;
+  color: var(--app-primary, #167d87) !important;
 }
 
 .editViewButton:hover {
-  background: rgb(25 118 210 / 8%) !important;
+  background: color-mix(in srgb, var(--app-primary, #167d87) 10%, white) !important;
 }
 
 .deleteViewButton {
-  color: #d32f2f !important;
+  color: #bd5260 !important;
 }
 
 .deleteViewButton:hover {
-  background: rgb(211 47 47 / 8%) !important;
+  background: rgb(189 82 96 / 10%) !important;
 }
 
 .emptyViews {
-  padding: 10px 4px;
-  color: #64748b;
-  font-size: 0.8rem !important;
-  line-height: 1.5 !important;
+  padding: 18px 10px;
+  border: 1px dashed rgb(148 163 184 / 34%);
+  border-radius: 13px;
+  color: #718096;
+  background: rgb(255 255 255 / 48%);
+  font-size: 0.78rem !important;
+  line-height: 1.55 !important;
 }
 
 @media (max-width: 760px) {
@@ -170,14 +277,33 @@
     width: 100%;
     height: 220px;
     max-height: 220px;
-    padding: 52px 12px 12px;
+    padding: 12px 12px 10px;
+  }
+
+  .sidebarHeader {
+    padding-bottom: 9px;
+    margin-bottom: 8px;
   }
 
   .viewList {
     flex: 1 1 auto;
+    flex-direction: row;
+    align-items: stretch;
+    overflow-x: auto;
+    overflow-y: hidden;
   }
 
   .viewCard {
+    flex: 0 0 210px;
     min-height: 64px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .addViewButton,
+  .viewCard,
+  .viewCard::before,
+  .viewActions {
+    transition: none;
   }
 }
