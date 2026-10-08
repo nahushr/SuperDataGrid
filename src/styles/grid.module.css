@@ -119,9 +119,16 @@
 
 .gridRoot :global(.MuiDataGrid-columnHeaders),
 .gridRoot :global(.MuiDataGrid-columnHeader) {
-  background-color: var(--app-grid-header, #267e81) !important;
-  border-bottom: none !important;
+  background-color: #0e7490 !important;
   color: #ffffff !important;
+}
+
+.gridRoot :global(.MuiDataGrid-columnHeaders) {
+  border-bottom: 1px solid #155e75 !important;
+}
+
+.gridRoot :global(.MuiDataGrid-columnHeader) {
+  border-bottom: 0 !important;
 }
 
 .gridRoot :global(.MuiDataGrid-columnHeader) {
@@ -134,8 +141,22 @@
   justify-content: center !important;
 }
 
-.gridRoot :global(.MuiDataGrid-columnHeaderTitle),
-.gridRoot :global(.MuiDataGrid-columnHeader .MuiSvgIcon-root) {
+.gridRoot :global(.MuiDataGrid-columnHeaderTitle) {
+  color: #ffffff !important;
+}
+
+.gridRoot :global(.MuiDataGrid-columnHeader .MuiDataGrid-sortIcon),
+.gridRoot :global(.MuiDataGrid-columnHeader .MuiDataGrid-menuIconButton .MuiSvgIcon-root),
+.gridRoot :global(.MuiDataGrid-columnHeader .MuiDataGrid-sortButton .MuiSvgIcon-root) {
+  width: 14px;
+  height: 14px;
+  color: #a5f3fc !important;
+  transition: color 140ms ease;
+}
+
+.gridRoot :global(.MuiDataGrid-columnHeader .MuiDataGrid-sortIcon:hover),
+.gridRoot :global(.MuiDataGrid-columnHeader .MuiDataGrid-menuIconButton:hover .MuiSvgIcon-root),
+.gridRoot :global(.MuiDataGrid-columnHeader .MuiDataGrid-sortButton:hover .MuiSvgIcon-root) {
   color: #ffffff !important;
 }
 
@@ -152,7 +173,7 @@
 
 .gridRoot :global(.MuiDataGrid-columnHeader .MuiDataGrid-sortButton) {
   background-color: transparent !important;
-  color: #ffffff !important;
+  color: #a5f3fc !important;
 }
 
 .gridRoot :global(.MuiDataGrid-columnHeader .MuiDataGrid-sortButton:hover) {
@@ -177,7 +198,7 @@
   text-align: left !important;
   text-overflow: clip !important;
   white-space: normal !important;
-  color: rgb(255 255 255 / 90%) !important;
+  color: #ffffff !important;
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.05em;
@@ -210,7 +231,7 @@
   align-items: center !important;
   justify-content: flex-start !important;
   overflow: visible !important;
-  border-bottom: none !important;
+  border-bottom: 1px solid #f1f5f9 !important;
   color: var(--app-text, #0f172a) !important;
   text-align: left !important;
   text-overflow: clip !important;
@@ -272,20 +293,20 @@
 }
 
 .gridRoot :global(.MuiDataGrid-row.even) {
-  background-color: var(--app-grid-row-even, #f8fbfb) !important;
+  background-color: #ffffff !important;
 }
 
 .gridRoot :global(.MuiDataGrid-row.odd) {
-  background-color: var(--app-grid-row-odd, #ffffff) !important;
+  background-color: #ffffff !important;
 }
 
 .gridRoot :global(.MuiDataGrid-row:hover) {
-  background-color: var(--app-hover, rgb(15 23 42 / 4%)) !important;
+  background-color: #f8fafc !important;
 }
 
 .gridRoot :global(.MuiDataGrid-row.Mui-selected),
 .gridRoot :global(.MuiDataGrid-row.Mui-selected:hover) {
-  background-color: var(--app-selected, rgb(38 126 129 / 12%)) !important;
+  background-color: #f0fdfa !important;
   color: var(--app-text, #0f172a) !important;
 }
 
