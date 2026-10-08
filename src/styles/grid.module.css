@@ -4,12 +4,12 @@
   position: relative;
   display: flex;
   align-items: stretch;
-  gap: 14px;
+  gap: 16px;
   width: 100%;
   height: var(--super-data-grid-height, min(76vh, 760px));
   min-height: var(--super-data-grid-min-height);
   box-sizing: border-box;
-  padding-block: 12px;
+  padding: 16px;
   background-color: #f8fafc;
 }
 
