@@ -18,12 +18,6 @@ interface SuperDataGridViewsSidebarProps {
   canDelete?: boolean;
 }
 
-function getConditionCount(view: SuperDataGridView): number {
-  return view.filterModel.items.filter(
-    (item) => item.field !== "" && item.operator !== "",
-  ).length;
-}
-
 export default function SuperDataGridViewsSidebar({
   views,
   selectedViewId,
@@ -89,7 +83,6 @@ export default function SuperDataGridViewsSidebar({
         </div>
 
         {views.map((view) => {
-          const conditionCount = getConditionCount(view);
           return (
             <div
               key={view.id}
@@ -104,11 +97,6 @@ export default function SuperDataGridViewsSidebar({
                     <span className={`${styles.viewName} tw:max-w-full tw:truncate tw:text-sm tw:font-semibold tw:tracking-tight tw:text-slate-800`}>
                       {view.name}
                     </span>
-                    <Chip
-                      className={`${styles.viewCount} tw:h-5 tw:border-transparent tw:bg-slate-100 tw:text-[11px] tw:font-semibold tw:text-slate-600 ${selectedViewId === view.id ? "tw:bg-[#cffafe] tw:text-[#0e7490]" : ""}`}
-                    size="small"
-                    label={`${conditionCount} condition${conditionCount === 1 ? "" : "s"}`}
-                  />
                   {view.notes && (
                     <span className={`${styles.viewNotes} tw:max-w-full tw:overflow-hidden tw:text-xs tw:leading-relaxed tw:text-slate-500`}>
                       {view.notes}
