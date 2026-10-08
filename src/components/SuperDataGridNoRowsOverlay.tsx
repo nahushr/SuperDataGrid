@@ -18,7 +18,7 @@ export default function SuperDataGridNoRowsOverlay() {
       ? "Nothing in this view yet"
       : "No rows to display";
   const description = hasFilters
-    ? "These conditions returned no results. Adjust the filters to bring matching records back."
+    ? "These conditions returned no results. Adjust or clear the filters to bring matching records back."
     : selectedView != null
       ? `“${selectedView.name}” currently has no matching records. Choose another view or adjust its conditions.`
       : "There are no records to show right now. When data is available, it will appear here.";
