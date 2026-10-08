@@ -119,26 +119,6 @@ function resolveRowId<Row extends SuperDataGridRow>(
   return `super-data-grid-row-${index}`;
 }
 
-function getColumnMinWidth(columnType?: SuperDataGridColumnType): number {
-  switch (columnType) {
-    case "actions": return 280;
-    case "address": return 320;
-    case "peopleDetails":
-    case "audit": return 260;
-    case "dateTime":
-    case "email":
-    case "longText":
-    case "json": return 220;
-    case "phone": return 240;
-    case "image": return 240;
-    case "priceBreakdown": return 235;
-    case "currency":
-    case "date":
-    case "badge": return 150;
-    default: return 140;
-  }
-}
-
 function getDensityClass(density: GridDensity): string {
   if (density === "compact") return styles.compact;
   if (density === "comfortable") return styles.comfortable;
@@ -243,6 +223,7 @@ function renderGridCell<Row extends SuperDataGridRow>(
 function createGridColumn<Row extends SuperDataGridRow>(
   field: string,
   data: readonly Row[],
+  autoSizedWidths: Readonly<Record<string, number>>,
   columnConfiguration: SuperDataGridProps<Row>["columnConfiguration"],
   columnTypes: SuperDataGridProps<Row>["columnTypes"],
   columnOptions: SuperDataGridProps<Row>["columnOptions"],
@@ -265,8 +246,10 @@ function createGridColumn<Row extends SuperDataGridRow>(
     // autosize can measure their rendered headers and cells after they mount.
     // Consumers can still opt into proportional sizing with `flex`.
     flex: configuration?.flex,
-    width: configuration?.width,
-    minWidth: configuration?.minWidth ?? getColumnMinWidth(columnType),
+    width: configuration?.width ?? autoSizedWidths[field],
+    // No package-wide width floor: autosizing uses the current page's rendered
+    // content and headers. Hosts can supply a minimum when their layout needs it.
+    minWidth: configuration?.minWidth,
     maxWidth: configuration?.maxWidth,
     hideable: configuration?.hideable,
     renderCell: ({ value, row }) => renderGridCell(
@@ -313,54 +296,141 @@ function useAutoSizeColumns(
   columnFieldsKey: string,
   loading: boolean,
   dataKey: string,
-): void {
+  columnDefinitionsKey: string,
+  onWidthsMeasured: (widths: Record<string, number>) => void,
+): boolean {
   const lastAutoSizeKey = React.useRef<string | null>(null);
+  const [isAutoSizing, setIsAutoSizing] = useState(false);
 
   useEffect(() => {
-    if (loading || columnFieldsKey.length === 0) return undefined;
-    const autoSizeKey = `${columnFieldsKey}\u0001${dataKey}`;
+    if (loading || columnFieldsKey.length === 0) {
+      setIsAutoSizing(false);
+      return undefined;
+    }
+
+    const autoSizeKey = `${columnFieldsKey}\u0001${dataKey}\u0001${columnDefinitionsKey}`;
     if (lastAutoSizeKey.current === autoSizeKey) return undefined;
 
-    const frame = window.requestAnimationFrame(() => {
-      const api = apiRef.current;
-      if (api == null) return;
+    let cancelled = false;
+    let firstFrame = 0;
+    let secondFrame = 0;
+    setIsAutoSizing(true);
 
-      lastAutoSizeKey.current = autoSizeKey;
-      void api.autosizeColumns({
-        columns: columnFieldsKey.split("\u0000"),
-        includeHeaders: true,
-        includeOutliers: true,
-        disableColumnVirtualization: true,
+    // MUI measures mounted cells. Temporarily disable row virtualization so
+    // every row from this server page participates in the width calculation.
+    // Two frames allow the grid to mount those rows before measuring them.
+    firstFrame = window.requestAnimationFrame(() => {
+      secondFrame = window.requestAnimationFrame(() => {
+        const api = apiRef.current;
+        if (api == null) {
+          setIsAutoSizing(false);
+          return;
+        }
+
+        void api.autosizeColumns({
+          columns: columnFieldsKey.split("\u0000"),
+          includeHeaders: true,
+          includeOutliers: true,
+          disableColumnVirtualization: true,
+        }).then(
+          () => {
+            onWidthsMeasured(resizeColumnsToRenderedContent(
+              api,
+              columnFieldsKey.split("\u0000"),
+            ));
+            if (!cancelled) lastAutoSizeKey.current = autoSizeKey;
+          },
+          () => undefined,
+        ).finally(() => {
+          if (!cancelled) setIsAutoSizing(false);
+        });
       });
     });
 
-    return () => window.cancelAnimationFrame(frame);
-  }, [apiRef, columnFieldsKey, dataKey, lastAutoSizeKey, loading]);
+    return () => {
+      cancelled = true;
+      window.cancelAnimationFrame(firstFrame);
+      window.cancelAnimationFrame(secondFrame);
+    };
+  }, [apiRef, columnDefinitionsKey, columnFieldsKey, dataKey, lastAutoSizeKey, loading, onWidthsMeasured]);
+
+  return isAutoSizing;
 }
 
-function getAutoSizeValueLength(value: unknown, depth = 0): number {
-  if (value == null) return 0;
-  if (typeof value === "string") return value.length;
+/**
+ * MUI measures the cell box during autosizing. Custom cell renderers can
+ * overflow that box while still reporting its default width, so also inspect
+ * each currently rendered cell's scroll width. At this point row
+ * virtualization is disabled and `data` contains only the current page.
+ */
+function resizeColumnsToRenderedContent(
+  api: NonNullable<ReturnType<typeof useGridApiRef>["current"]>,
+  fields: readonly string[],
+): Record<string, number> {
+  const root = api.rootElementRef.current;
+  if (root == null) return {};
+
+  const cells = Array.from(
+    root.querySelectorAll<HTMLElement>(`.MuiDataGrid-cell[data-field]`),
+  );
+  const widths: Record<string, number> = {};
+
+  for (const field of fields) {
+    const column = api.getColumn(field);
+    if (column == null) continue;
+
+    const cellWidth = cells.reduce((widest, cell) =>
+      cell.dataset.field === field ? Math.max(widest, cell.scrollWidth) : widest,
+    0);
+    const header = api.getColumnHeaderElement(field);
+    if (header == null && cellWidth === 0) continue;
+
+    const contentWidth = Math.max(cellWidth, header?.scrollWidth ?? 0);
+    const minWidth = column.minWidth ?? 0;
+    const maxWidth = column.maxWidth ?? Number.POSITIVE_INFINITY;
+    const currentWidth = column.computedWidth;
+    const measuredWidth = Math.min(
+      maxWidth,
+      Math.max(minWidth, currentWidth, contentWidth),
+    );
+
+    widths[field] = measuredWidth;
+  }
+
+  return widths;
+}
+
+function getAutoSizeValueSignature(value: unknown, depth = 0): string {
+  if (value == null) return String(value);
+  if (value instanceof Date) return `date:${value.getTime()}`;
+  if (typeof value === "string") return `string:${JSON.stringify(value)}`;
   if (typeof value === "number" || typeof value === "boolean") {
-    return String(value).length;
+    return `${typeof value}:${String(value)}`;
   }
   if (depth >= 4 && typeof value === "object") {
-    return Object.keys(value).length;
+    return `object-keys:${Object.keys(value).sort().join(",")}`;
   }
   if (Array.isArray(value)) {
-    return value.reduce(
-      (length, item) => length + getAutoSizeValueLength(item, depth + 1),
-      0,
-    );
+    return `array:${JSON.stringify(value.map((item) =>
+      getAutoSizeValueSignature(item, depth + 1),
+    ))}`;
   }
   if (typeof value === "object") {
-    return Object.entries(value as Record<string, unknown>).reduce(
-      (length, [key, item]) =>
-        length + key.length + getAutoSizeValueLength(item, depth + 1),
-      0,
-    );
+    const entries = Object.entries(value as Record<string, unknown>)
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([key, item]) => [key, getAutoSizeValueSignature(item, depth + 1)]);
+    return `object:${JSON.stringify(entries)}`;
   }
-  return 0;
+  return `${typeof value}:${String(value)}`;
+}
+
+function hashAutoSizeSignature(signature: string): string {
+  let hash = 2166136261;
+  for (let index = 0; index < signature.length; index += 1) {
+    hash ^= signature.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return `${signature.length}:${(hash >>> 0).toString(36)}`;
 }
 
 function getAutoSizeDataKey<Row extends SuperDataGridRow>(
@@ -368,19 +438,18 @@ function getAutoSizeDataKey<Row extends SuperDataGridRow>(
 ): string {
   return data.map((row, index) => {
     if (row == null || typeof row !== "object") {
-      return `${index}:${getAutoSizeValueLength(row)}`;
+      return `${index}:${hashAutoSizeSignature(getAutoSizeValueSignature(row))}`;
     }
     const record = row as Record<string, unknown>;
     const rowId = record.id ?? record._id ?? record.userId ?? index;
-    const fieldLengths = Object.keys(record)
+    const fieldValues = Object.keys(record)
       .sort((left, right) => left.localeCompare(right))
-      .map((field) => `${field}:${getAutoSizeValueLength(record[field])}`)
-      .join(",");
+      .map((field) => [field, getAutoSizeValueSignature(record[field])]);
     const stableRowId =
       typeof rowId === "string" || typeof rowId === "number"
         ? `${typeof rowId}:${rowId}`
         : `index:${index}`;
-    return `${stableRowId}:${fieldLengths}`;
+    return `${stableRowId}:${hashAutoSizeSignature(JSON.stringify(fieldValues))}`;
   }).join("\u0000");
 }
 
@@ -464,6 +533,7 @@ export function SuperDataGrid<
 }: Readonly<SuperDataGridProps<Row>>) {
   const apiRef = useGridApiRef();
   const viewsSidebarId = useId();
+  const [autoSizedWidths, setAutoSizedWidths] = useState<Record<string, number>>({});
   const [internalDensity, setInternalDensity] =
     useState<GridDensity>("standard");
   const density = densityProp ?? internalDensity;
@@ -501,19 +571,36 @@ export function SuperDataGrid<
     ids: new Set(),
   });
   const selectionControllerRef = React.useRef<AbortController | null>(null);
+  const updateAutoSizedWidths = useCallback(
+    (measuredWidths: Record<string, number>) => {
+      setAutoSizedWidths((currentWidths) => {
+        let changed = false;
+        const nextWidths = { ...currentWidths };
+        for (const [field, width] of Object.entries(measuredWidths)) {
+          if (Math.abs((currentWidths[field] ?? 0) - width) > 1) {
+            nextWidths[field] = width;
+            changed = true;
+          }
+        }
+        return changed ? nextWidths : currentWidths;
+      });
+    },
+    [],
+  );
 
   const gridColumns = useMemo<GridColDef[]>(
     () =>
       columns.map((field) => createGridColumn(
         field,
         data,
+        autoSizedWidths,
         columnConfiguration,
         columnTypes,
         columnOptions,
         cellComponents,
         onAction,
       )),
-    [cellComponents, columnConfiguration, columns, columnOptions, columnTypes, data, onAction],
+    [autoSizedWidths, cellComponents, columnConfiguration, columns, columnOptions, columnTypes, data, onAction],
   );
 
   const filterFields = useMemo(
@@ -588,6 +675,10 @@ export function SuperDataGrid<
     () => getAutoSizeDataKey(data),
     [data],
   );
+  const autoSizeColumnDefinitionsKey = useMemo(
+    () => createUniqueId("columns"),
+    [cellComponents, columnConfiguration, columnOptions, columnTypes, columns],
+  );
 
   const dataGridColumnVisibilityModel = useMemo(
     () => ({
@@ -619,11 +710,13 @@ export function SuperDataGrid<
     [data, getRowId, gridColumns],
   );
 
-  useAutoSizeColumns(
+  const isAutoSizing = useAutoSizeColumns(
     apiRef,
     autoSizeColumnFieldsKey,
     loading,
     autoSizeDataKey,
+    autoSizeColumnDefinitionsKey,
+    updateAutoSizedWidths,
   );
 
   const filterModel = filterModelProp ?? internalFilterModel;
@@ -1228,6 +1321,7 @@ export function SuperDataGrid<
           <DataGrid
             apiRef={apiRef}
             className={styles.gridRoot}
+            disableVirtualization={isAutoSizing}
             rows={rows}
             columns={dataGridColumns}
             columnGroupingModel={columnGroupingModel}
