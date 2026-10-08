@@ -97,11 +97,6 @@ export default function SuperDataGridViewsSidebar({
                     <span className={`${styles.viewName} tw:max-w-full tw:truncate tw:text-sm tw:font-semibold tw:tracking-tight tw:text-slate-800`}>
                       {view.name}
                     </span>
-                  {view.notes && (
-                    <span className={`${styles.viewNotes} tw:max-w-full tw:overflow-hidden tw:text-xs tw:leading-relaxed tw:text-slate-500`}>
-                      {view.notes}
-                    </span>
-                  )}
                 </span>
               </Button>
               {(canEdit || canDelete) && <div className={`${styles.viewActions} tw:flex tw:shrink-0 tw:items-center tw:gap-0.5 tw:opacity-70 tw:transition-opacity tw:duration-150`}>
