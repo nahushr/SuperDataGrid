@@ -266,7 +266,7 @@ export default function SuperDataGridToolbar() {
   return (
     <>
       <div
-        className={`${styles.toolbar} tw:relative tw:z-20 tw:flex tw:w-full tw:flex-col tw:gap-3 tw:rounded-2xl tw:border tw:border-slate-200/80 tw:bg-white/95 tw:px-3 tw:py-2.5 tw:shadow-sm tw:shadow-slate-900/5 tw:backdrop-blur`}
+        className={`${styles.toolbar} tw:relative tw:z-20 tw:flex tw:w-full tw:flex-col tw:gap-3`}
         role="toolbar"
         aria-label="Data grid actions"
       >
