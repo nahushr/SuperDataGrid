@@ -37,11 +37,11 @@ import { exportGridData, type ExportFormat } from "../utils/export";
 import styles from "../styles/toolbar.module.css";
 
 const toolbarButtonClasses =
-  "tw:min-h-9 tw:rounded-xl tw:px-3 tw:py-1.5 tw:text-[13px] tw:font-semibold tw:normal-case tw:tracking-normal tw:shadow-sm tw:transition-all tw:duration-200 tw:focus-visible:outline-none tw:focus-visible:ring-2 tw:focus-visible:ring-blue-500/30 tw:disabled:cursor-not-allowed tw:disabled:opacity-50";
+  "tw:min-h-9 tw:rounded-xl tw:px-3 tw:py-1.5 tw:text-[13px] tw:font-semibold tw:normal-case tw:tracking-normal tw:shadow-sm tw:transition-all tw:duration-200 tw:focus-visible:outline-none tw:focus-visible:ring-2 tw:focus-visible:ring-[#cffafe] tw:disabled:cursor-not-allowed tw:disabled:opacity-50";
 const outlinedToolbarButtonClasses =
-  "tw:border-slate-200 tw:bg-white tw:text-slate-700 tw:hover:-translate-y-px tw:hover:border-blue-300 tw:hover:bg-blue-50 tw:hover:text-blue-700 tw:hover:shadow-md";
-const primaryToolbarButtonClasses =
-  "tw:border-blue-600 tw:bg-blue-600 tw:text-white tw:shadow-md tw:hover:border-blue-700 tw:hover:bg-blue-700 tw:hover:text-white";
+  "tw:border-[#cffafe] tw:bg-white tw:text-[#0e7490] tw:hover:-translate-y-px tw:hover:border-[#0e7490] tw:hover:bg-[#ecfeff] tw:hover:text-[#0e7490] tw:hover:shadow-md";
+const activeSecondaryToolbarButtonClasses =
+  "tw:ring-2 tw:ring-[#cffafe] tw:ring-offset-1";
 const destructiveToolbarButtonClasses =
   "tw:border-rose-600 tw:bg-rose-600 tw:text-white tw:shadow-sm tw:hover:border-rose-700 tw:hover:bg-rose-700 tw:hover:text-white tw:disabled:border-rose-100 tw:disabled:bg-rose-50 tw:disabled:text-rose-300 tw:disabled:shadow-none";
 
@@ -278,9 +278,9 @@ export default function SuperDataGridToolbar() {
             <Tooltip title="Show or hide saved views">
               <Button
                 size="small"
-                variant={gridState.viewsOpen ? "contained" : "outlined"}
+                variant="outlined"
                 startIcon={<ViewSidebarIcon />}
-                className={`${styles.toolbarButton} ${toolbarButtonClasses} ${gridState.viewsOpen ? primaryToolbarButtonClasses : outlinedToolbarButtonClasses}`}
+                className={`${styles.toolbarButton} ${toolbarButtonClasses} ${outlinedToolbarButtonClasses} ${gridState.viewsOpen ? activeSecondaryToolbarButtonClasses : ""}`}
                 aria-pressed={gridState.viewsOpen}
                 onClick={gridState.onToggleViews}
               >
@@ -295,7 +295,7 @@ export default function SuperDataGridToolbar() {
                 variant="outlined"
                 color="warning"
                 startIcon={<ClearAllIcon />}
-                className={`${styles.toolbarButton} ${styles.clearSelectionButton} ${toolbarButtonClasses} tw:border-amber-200 tw:bg-amber-50 tw:text-amber-800 tw:hover:border-amber-300 tw:hover:bg-amber-100 tw:hover:text-amber-900`}
+                className={`${styles.toolbarButton} ${styles.clearSelectionButton} ${toolbarButtonClasses} ${outlinedToolbarButtonClasses}`}
                 onClick={gridState.onClearSelection}
               >
                 Clear selection ({gridState.selectionCount})
@@ -306,13 +306,13 @@ export default function SuperDataGridToolbar() {
             <Badge
               badgeContent={activeFilterCount}
               color="primary"
-              className="tw:[&_.MuiBadge-badge]:border-2 tw:[&_.MuiBadge-badge]:border-white tw:[&_.MuiBadge-badge]:bg-blue-600 tw:[&_.MuiBadge-badge]:font-bold"
+              className="tw:[&_.MuiBadge-badge]:border-2 tw:[&_.MuiBadge-badge]:border-white tw:[&_.MuiBadge-badge]:bg-[#0e7490] tw:[&_.MuiBadge-badge]:font-bold"
             >
               <Button
                 size="small"
-                variant={activeFilterCount > 0 ? "contained" : "outlined"}
+                variant="outlined"
                 startIcon={<FilterListIcon />}
-                className={`${styles.toolbarButton} ${toolbarButtonClasses} ${activeFilterCount > 0 ? primaryToolbarButtonClasses : outlinedToolbarButtonClasses}`}
+                className={`${styles.toolbarButton} ${toolbarButtonClasses} ${outlinedToolbarButtonClasses} ${activeFilterCount > 0 ? activeSecondaryToolbarButtonClasses : ""}`}
                 onClick={gridState.onFilterClick}
               >
                 Filter
@@ -440,7 +440,7 @@ export default function SuperDataGridToolbar() {
               variant="outlined"
               color="warning"
               startIcon={<RestartAltIcon />}
-              className={`${styles.toolbarButton} ${toolbarButtonClasses} tw:border-amber-200 tw:bg-amber-50 tw:text-amber-800 tw:hover:border-amber-300 tw:hover:bg-amber-100 tw:hover:text-amber-900`}
+              className={`${styles.toolbarButton} ${toolbarButtonClasses} ${outlinedToolbarButtonClasses}`}
               onClick={() => void gridState.onResetToDefault?.()}
               data-testid="super-data-grid-reset-default-button"
             >

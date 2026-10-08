@@ -1337,7 +1337,7 @@ export function SuperDataGrid<
         <SuperDataGridContext.Provider value={contextValue}>
           <DataGrid
             apiRef={apiRef}
-            className={`${styles.gridRoot} tw:bg-white tw:text-slate-900 tw:[&_.MuiDataGrid-columnHeaders]:border-b tw:[&_.MuiDataGrid-columnHeaders]:border-slate-700 tw:[&_.MuiDataGrid-columnHeaders]:bg-slate-800 tw:[&_.MuiDataGrid-columnHeaders]:text-white tw:[&_.MuiDataGrid-columnHeader]:bg-slate-800 tw:[&_.MuiDataGrid-columnHeader]:text-white tw:[&_.MuiDataGrid-columnHeaderTitle]:font-semibold tw:[&_.MuiDataGrid-columnHeaderTitle]:tracking-wide tw:[&_.MuiDataGrid-columnHeaderTitle]:text-white tw:[&_.MuiDataGrid-columnHeader_.MuiSvgIcon-root]:text-white`}
+            className={`${styles.gridRoot} tw:bg-white tw:text-slate-900 tw:[&_.MuiDataGrid-columnHeaders]:border-b tw:[&_.MuiDataGrid-columnHeaders]:border-[#155e75] tw:[&_.MuiDataGrid-columnHeaders]:bg-[#0e7490] tw:[&_.MuiDataGrid-columnHeaders]:text-white tw:[&_.MuiDataGrid-columnHeader]:bg-[#0e7490] tw:[&_.MuiDataGrid-columnHeader]:text-white tw:[&_.MuiDataGrid-columnSeparator]:text-[#155e75] tw:[&_.MuiDataGrid-columnHeaderTitle]:font-semibold tw:[&_.MuiDataGrid-columnHeaderTitle]:tracking-wide tw:[&_.MuiDataGrid-columnHeaderTitle]:text-white tw:[&_.MuiDataGrid-columnHeader_.MuiSvgIcon-root]:text-white`}
             disableColumnSorting
             disableVirtualization={isAutoSizing}
             rows={rows}

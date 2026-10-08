@@ -56,7 +56,7 @@ export default function SuperDataGridViewsSidebar({
             <IconButton
               size="small"
               color="primary"
-              className={`${styles.addViewButton} tw:h-9 tw:w-9 tw:rounded-xl tw:border tw:border-blue-200 tw:bg-blue-50 tw:text-blue-700 tw:transition-all tw:duration-200 tw:hover:-translate-y-0.5 tw:hover:border-blue-500 tw:hover:bg-blue-600 tw:hover:text-white tw:hover:shadow-md`}
+              className={`${styles.addViewButton} tw:h-9 tw:w-9 tw:rounded-xl tw:border tw:border-[#cffafe] tw:bg-white tw:text-[#0e7490] tw:transition-all tw:duration-200 tw:hover:-translate-y-0.5 tw:hover:border-[#0e7490] tw:hover:bg-[#ecfeff] tw:hover:text-[#0e7490] tw:hover:shadow-md`}
               aria-label="Add view"
               onClick={onAdd}
             >
@@ -68,7 +68,7 @@ export default function SuperDataGridViewsSidebar({
 
       <div className={`${styles.viewList} tw:flex tw:min-h-0 tw:flex-1 tw:flex-col tw:gap-2.5 tw:overflow-y-auto tw:pr-1`}>
         <div
-          className={`${styles.viewCard} tw:relative tw:flex tw:min-h-[60px] tw:w-full tw:items-stretch tw:justify-between tw:rounded-xl tw:border tw:border-slate-200/90 tw:bg-white tw:p-2.5 tw:shadow-sm tw:transition-all tw:duration-200 tw:hover:-translate-y-0.5 tw:hover:border-blue-200 tw:hover:shadow-md ${selectedViewId === null ? `${styles.selectedView} tw:border-blue-200 tw:bg-blue-50/70 tw:ring-1 tw:ring-blue-100 tw:before:bg-blue-600` : ""}`}
+          className={`${styles.viewCard} tw:relative tw:flex tw:min-h-[60px] tw:w-full tw:items-stretch tw:justify-between tw:rounded-xl tw:border tw:border-slate-200/90 tw:bg-white tw:p-2.5 tw:shadow-sm tw:transition-all tw:duration-200 tw:hover:-translate-y-0.5 tw:hover:border-[#cffafe] tw:hover:shadow-md ${selectedViewId === null ? `${styles.selectedView} tw:border-[#0e7490] tw:bg-[#ecfeff] tw:ring-1 tw:ring-[#cffafe] tw:before:bg-[#0e7490]` : ""}`}
         >
           <Button
             className={`${styles.viewSelectButton} tw:flex tw:min-h-0 tw:flex-1 tw:items-start tw:justify-start tw:rounded-lg tw:p-0 tw:text-left tw:normal-case tw:text-slate-800 tw:hover:bg-transparent`}
@@ -80,7 +80,7 @@ export default function SuperDataGridViewsSidebar({
                   All data
                 </span>
                 <Chip
-                  className={`${styles.viewCount} tw:h-5 tw:border-transparent tw:bg-slate-100 tw:text-[11px] tw:font-semibold tw:text-slate-600 ${selectedViewId === null ? "tw:bg-blue-100 tw:text-blue-700" : ""}`}
+                  className={`${styles.viewCount} tw:h-5 tw:border-transparent tw:bg-slate-100 tw:text-[11px] tw:font-semibold tw:text-slate-600 ${selectedViewId === null ? "tw:bg-[#cffafe] tw:text-[#0e7490]" : ""}`}
                   size="small"
                   label="All rows"
                 />
@@ -93,7 +93,7 @@ export default function SuperDataGridViewsSidebar({
           return (
             <div
               key={view.id}
-              className={`${styles.viewCard} tw:relative tw:flex tw:min-h-[60px] tw:w-full tw:items-stretch tw:justify-between tw:rounded-xl tw:border tw:border-slate-200/90 tw:bg-white tw:p-2.5 tw:shadow-sm tw:transition-all tw:duration-200 tw:hover:-translate-y-0.5 tw:hover:border-blue-200 tw:hover:shadow-md ${selectedViewId === view.id ? `${styles.selectedView} tw:border-blue-200 tw:bg-blue-50/70 tw:ring-1 tw:ring-blue-100 tw:before:bg-blue-600` : ""}`}
+              className={`${styles.viewCard} tw:relative tw:flex tw:min-h-[60px] tw:w-full tw:items-stretch tw:justify-between tw:rounded-xl tw:border tw:border-slate-200/90 tw:bg-white tw:p-2.5 tw:shadow-sm tw:transition-all tw:duration-200 tw:hover:-translate-y-0.5 tw:hover:border-[#cffafe] tw:hover:shadow-md ${selectedViewId === view.id ? `${styles.selectedView} tw:border-[#0e7490] tw:bg-[#ecfeff] tw:ring-1 tw:ring-[#cffafe] tw:before:bg-[#0e7490]` : ""}`}
             >
               <Button
                 className={`${styles.viewSelectButton} tw:flex tw:min-h-0 tw:flex-1 tw:items-start tw:justify-start tw:rounded-lg tw:p-0 tw:text-left tw:normal-case tw:text-slate-800 tw:hover:bg-transparent`}
@@ -105,7 +105,7 @@ export default function SuperDataGridViewsSidebar({
                       {view.name}
                     </span>
                     <Chip
-                      className={`${styles.viewCount} tw:h-5 tw:border-transparent tw:bg-slate-100 tw:text-[11px] tw:font-semibold tw:text-slate-600 ${selectedViewId === view.id ? "tw:bg-blue-100 tw:text-blue-700" : ""}`}
+                      className={`${styles.viewCount} tw:h-5 tw:border-transparent tw:bg-slate-100 tw:text-[11px] tw:font-semibold tw:text-slate-600 ${selectedViewId === view.id ? "tw:bg-[#cffafe] tw:text-[#0e7490]" : ""}`}
                     size="small"
                     label={`${conditionCount} condition${conditionCount === 1 ? "" : "s"}`}
                   />
@@ -121,7 +121,7 @@ export default function SuperDataGridViewsSidebar({
                 <Tooltip title={`Edit ${view.name}`}>
                   <IconButton
                     size="small"
-                    className={`${styles.editViewButton} tw:h-8 tw:w-8 tw:rounded-lg tw:text-blue-700 tw:hover:bg-blue-100`}
+                    className={`${styles.editViewButton} tw:h-8 tw:w-8 tw:rounded-lg tw:text-[#0e7490] tw:hover:bg-[#ecfeff]`}
                     aria-label={`Edit ${view.name}`}
                     onClick={() => onEdit(view)}
                   >
