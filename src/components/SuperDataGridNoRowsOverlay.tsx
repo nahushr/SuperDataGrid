@@ -16,7 +16,7 @@ export default function SuperDataGridNoRowsOverlay() {
     ? "No rows match these filters"
     : selectedView != null
       ? "Nothing in this view yet"
-      : "Your grid is empty";
+      : "No rows to display";
   const description = hasFilters
     ? "These conditions returned no results. Adjust the filters to bring matching records back."
     : selectedView != null

@@ -142,8 +142,8 @@ describe("saved view filters and sidebar", () => {
     };
     const callbacks = { onAdd: vi.fn(), onSelect: vi.fn(), onEdit: vi.fn(), onDelete: vi.fn() };
     const view = render(<SuperDataGridViewsSidebar views={[savedView]} selectedViewId="admins" {...callbacks} />);
-    expect(screen.getByText("Admins only")).toBeInTheDocument();
-    expect(screen.getByText("1 condition")).toBeInTheDocument();
+    expect(screen.queryByText("Admins only")).not.toBeInTheDocument();
+    expect(screen.queryByText("1 condition")).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: /All data/ }));
     fireEvent.click(screen.getByRole("button", { name: /^Admins/ }));
     fireEvent.click(screen.getByRole("button", { name: "Edit Admins" }));

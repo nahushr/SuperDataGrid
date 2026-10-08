@@ -306,7 +306,7 @@ export default function SuperDataGridToolbar() {
                 startIcon={<ClearAllIcon />}
                 className={`${styles.toolbarButton} ${styles.clearSelectionButton} ${toolbarButtonClasses} ${clearSelectionToolbarButtonClasses}`}
                 onClick={gridState.onClearSelection}
-                aria-label={`Clear selection for ${gridState.selectionCount} ${gridState.selectionLabel}`}
+                aria-label={`Clear ${gridState.selectionCount} selected rows`}
               >
                 Clear selection
                 <span className="tw:ml-1.5 tw:inline-flex tw:min-w-5 tw:items-center tw:justify-center tw:rounded-full tw:border tw:border-[#fecdd3] tw:bg-[#fecdd3] tw:px-1.5 tw:py-0.5 tw:text-[11px] tw:font-semibold tw:leading-none tw:text-[#9f1239]">
