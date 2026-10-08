@@ -10,6 +10,7 @@
   min-height: var(--super-data-grid-min-height);
   box-sizing: border-box;
   padding-block: 12px;
+  background-color: #f8fafc;
 }
 
 .gridWorkspaceViewsClosed {
@@ -88,6 +89,11 @@
   width: 0;
   min-width: 0;
   height: 100%;
+  box-sizing: border-box;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  background-color: #ffffff;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 4%);
 }
 
 .gridRoot {
@@ -96,10 +102,10 @@
   border: none !important;
   outline: none !important;
   color: var(--app-text, #0f172a);
-  background-color: var(--app-surface, #ffffff);
-  --DataGrid-containerBackground: var(--app-surface, #ffffff);
-  --DataGrid-pinnedBackground: var(--app-surface, #ffffff);
-  --DataGrid-rowBorderColor: var(--app-divider, #e2e8f0);
+  background-color: #ffffff;
+  --DataGrid-containerBackground: #ffffff;
+  --DataGrid-pinnedBackground: #ffffff;
+  --DataGrid-rowBorderColor: #f1f5f9;
 }
 
 .gridRoot :global(.MuiDataGrid-main),
@@ -303,21 +309,28 @@
   min-height: 68px;
 }
 
+.gridRoot :global(.MuiDataGrid-row) {
+  box-sizing: border-box;
+  border-left: 4px solid transparent;
+  transition: background-color 150ms ease;
+}
+
 .gridRoot :global(.MuiDataGrid-row.even) {
   background-color: #ffffff !important;
 }
 
 .gridRoot :global(.MuiDataGrid-row.odd) {
-  background-color: #ffffff !important;
+  background-color: #f8fafc !important;
 }
 
 .gridRoot :global(.MuiDataGrid-row:hover) {
-  background-color: #f8fafc !important;
+  background-color: #f0fdfa !important;
 }
 
 .gridRoot :global(.MuiDataGrid-row.Mui-selected),
 .gridRoot :global(.MuiDataGrid-row.Mui-selected:hover) {
-  background-color: #f0fdfa !important;
+  border-left-color: #06b6d4;
+  background-color: #ecfeff !important;
   color: var(--app-text, #0f172a) !important;
 }
 

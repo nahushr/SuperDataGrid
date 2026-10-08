@@ -31,7 +31,7 @@ export default function SuperDataGridViewsSidebar({
 }: Readonly<SuperDataGridViewsSidebarProps>) {
   return (
     <aside
-      className={`${styles.viewsSidebar} tw:flex tw:h-full tw:w-full tw:flex-col tw:overflow-hidden tw:rounded-2xl tw:border tw:border-slate-200/80 tw:bg-gradient-to-br tw:from-white tw:to-slate-50 tw:p-3 tw:shadow-lg tw:shadow-slate-900/5`}
+      className={`${styles.viewsSidebar} tw:flex tw:h-full tw:w-full tw:flex-col tw:overflow-hidden tw:p-3`}
       aria-label="Saved views"
     >
       <div
@@ -62,7 +62,7 @@ export default function SuperDataGridViewsSidebar({
 
       <div className={`${styles.viewList} tw:flex tw:min-h-0 tw:flex-1 tw:flex-col tw:gap-2.5 tw:overflow-y-auto tw:pr-1`}>
         <div
-          className={`${styles.viewCard} tw:relative tw:flex tw:min-h-[60px] tw:w-full tw:items-stretch tw:justify-between tw:rounded-xl tw:border tw:border-slate-200/90 tw:bg-white tw:p-2.5 tw:shadow-sm tw:transition-all tw:duration-200 tw:hover:-translate-y-0.5 tw:hover:border-[#cffafe] tw:hover:shadow-md ${selectedViewId === null ? `${styles.selectedView} tw:border-[#0e7490] tw:bg-[#ecfeff] tw:ring-1 tw:ring-[#cffafe] tw:before:bg-[#0e7490]` : ""}`}
+          className={`${styles.viewCard} tw:relative tw:flex tw:min-h-[60px] tw:w-full tw:items-stretch tw:justify-between tw:rounded-xl tw:border tw:border-slate-200/90 tw:bg-white tw:p-2.5 tw:shadow-sm tw:transition-all tw:duration-200 tw:hover:-translate-y-0.5 tw:hover:border-[#cffafe] tw:hover:shadow-md ${selectedViewId === null ? styles.selectedView : ""}`}
         >
           <Button
             className={`${styles.viewSelectButton} tw:flex tw:min-h-0 tw:flex-1 tw:items-start tw:justify-start tw:rounded-lg tw:p-0 tw:text-left tw:normal-case tw:text-slate-800 tw:hover:bg-transparent`}
@@ -86,7 +86,7 @@ export default function SuperDataGridViewsSidebar({
           return (
             <div
               key={view.id}
-              className={`${styles.viewCard} tw:relative tw:flex tw:min-h-[60px] tw:w-full tw:items-stretch tw:justify-between tw:rounded-xl tw:border tw:border-slate-200/90 tw:bg-white tw:p-2.5 tw:shadow-sm tw:transition-all tw:duration-200 tw:hover:-translate-y-0.5 tw:hover:border-[#cffafe] tw:hover:shadow-md ${selectedViewId === view.id ? `${styles.selectedView} tw:border-[#0e7490] tw:bg-[#ecfeff] tw:ring-1 tw:ring-[#cffafe] tw:before:bg-[#0e7490]` : ""}`}
+              className={`${styles.viewCard} tw:relative tw:flex tw:min-h-[60px] tw:w-full tw:items-stretch tw:justify-between tw:rounded-xl tw:border tw:border-slate-200/90 tw:bg-white tw:p-2.5 tw:shadow-sm tw:transition-all tw:duration-200 tw:hover:-translate-y-0.5 tw:hover:border-[#cffafe] tw:hover:shadow-md ${selectedViewId === view.id ? styles.selectedView : ""}`}
             >
               <Button
                 className={`${styles.viewSelectButton} tw:flex tw:min-h-0 tw:flex-1 tw:items-start tw:justify-start tw:rounded-lg tw:p-0 tw:text-left tw:normal-case tw:text-slate-800 tw:hover:bg-transparent`}
