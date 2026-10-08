@@ -1,5 +1,5 @@
 import React from "react";
-import PhoneIcon from "@mui/icons-material/Phone";
+import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
 import { parsePhoneNumberFromString, type CountryCode } from "libphonenumber-js";
 import type { SuperDataGridPhoneOptions } from "../../types";
 import { formatMaskedPhoneNumber } from "../../utils/commonCellData";
@@ -67,7 +67,7 @@ export default function PhoneCell({
 
   const content = (
     <>
-      {showIcon && <PhoneIcon className={`${styles.contactIcon} ${iconClassName ?? ""}`.trim()} aria-hidden="true" />}
+      {showIcon && <PhoneOutlinedIcon className={`${styles.contactIcon} ${iconClassName ?? ""}`.trim()} aria-hidden="true" />}
       {flag && <span aria-label={`${flagCountryCode.toUpperCase()} flag`} className={styles.phoneFlag} role="img">{flag}</span>}
       <span className={`${styles.phoneContactText} ${wrap ? styles.contactTextWrap : ""} ${textClassName ?? ""}`.trim()}>{explicitLabel || display}</span>
     </>

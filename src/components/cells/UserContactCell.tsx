@@ -1,5 +1,5 @@
 import React from "react";
-import PersonIcon from "@mui/icons-material/Person";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import type { ReactNode } from "react";
 import EmailCell from "./EmailCell";
 import PhoneCell from "./PhoneCell";
@@ -13,6 +13,7 @@ export interface UserContactCellProps {
   phone?: string | number | null;
   label?: string;
   showName?: boolean;
+  showNameIcon?: boolean;
   showEmail?: boolean;
   showPhone?: boolean;
   showEmptyFields?: boolean;
@@ -41,6 +42,7 @@ export function UserContactCell({
   phone,
   label,
   showName = true,
+  showNameIcon = true,
   showEmail = true,
   showPhone = true,
   showEmptyFields = false,
@@ -65,7 +67,7 @@ export function UserContactCell({
       {label && <span className={`${styles.contactLabel} ${labelTone}`}>{label}</span>}
       {showName && (displayName || showEmptyFields) && (
         <div className={styles.personRow}>
-          {icon ?? <PersonIcon className={styles.personIcon} aria-hidden="true" />}
+          {showNameIcon && (icon ?? <PersonOutlineIcon className={styles.personIcon} aria-hidden="true" />)}
           <span className={`${styles.personName} ${nameClassName ?? ""}`.trim()} title={displayName || emptyText}>
             {displayName || emptyText}
           </span>

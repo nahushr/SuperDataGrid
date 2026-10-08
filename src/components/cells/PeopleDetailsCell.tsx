@@ -1,15 +1,11 @@
 import React from "react";
 import Avatar from "@mui/material/Avatar";
-import EmailIcon from "@mui/icons-material/Email";
 import PersonIcon from "@mui/icons-material/Person";
-import PhoneIcon from "@mui/icons-material/Phone";
 import type { GridRowId } from "@mui/x-data-grid";
-import {
-  getPeopleAvatarParts,
-  getPeopleDetailsParts,
-  getPhoneDisplay,
-} from "../../utils/commonCellData";
+import { getPeopleAvatarParts, getPeopleDetailsParts } from "../../utils/commonCellData";
 import { getAvatarColorIndex } from "../../utils/avatar";
+import EmailCell from "./EmailCell";
+import PhoneCell from "./PhoneCell";
 import styles from "../../styles/common-cells.module.css";
 
 const AVATAR_COLOR_CLASSES = [
@@ -46,11 +42,10 @@ export default function PeopleDetailsCell({
 }: Readonly<PeopleDetailsCellProps>) {
   const { name, email, phone } = getPeopleDetailsParts(value);
   const avatar = getPeopleAvatarParts(value, row);
-  const formattedPhone = showPhone && phone ? getPhoneDisplay(phone) : null;
   const avatarColorIndex = getAvatarColorIndex(rowId ?? "unknown");
   const avatarColorClass = AVATAR_COLOR_CLASSES[avatarColorIndex];
 
-  if (!name && !email && !formattedPhone && !showEmptyFields) {
+  if (!name && !email && !(showPhone && phone) && !showEmptyFields) {
     return <span className={styles.emptyValue}>{emptyText}</span>;
   }
 
@@ -75,31 +70,12 @@ export default function PeopleDetailsCell({
           </span>
         </div>
       )}
-      {(email || showEmptyFields) &&
-        (email ? (
-          <a
-            className={styles.contactLink}
-            href={`mailto:${email}`}
-            onClick={(event) => event.stopPropagation()}
-            title={`Email ${email}`}
-          >
-            <EmailIcon className={styles.contactIcon} aria-hidden="true" />
-            <span className={styles.contactText}>{email}</span>
-          </a>
-        ) : (
-          <span className={styles.emptyContactValue}>{emptyText}</span>
-        ))}
-      {formattedPhone && (
-        <a
-          className={`${styles.contactLink} ${styles.phoneContactLink}`}
-          href={formattedPhone.href || undefined}
-          onClick={(event) => event.stopPropagation()}
-          title={`Call ${formattedPhone.display}`}
-        >
-          <PhoneIcon className={styles.contactIcon} aria-hidden="true" />
-          <span className={styles.phoneContactText}>{formattedPhone.display}</span>
-        </a>
-      )}
+      {(email || showEmptyFields) && (email ? (
+        <EmailCell value={email} wrap />
+      ) : (
+        <span className={styles.emptyContactValue}>{emptyText}</span>
+      ))}
+      {showPhone && phone && <PhoneCell value={phone} wrap />}
     </div>
   );
 }

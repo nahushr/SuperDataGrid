@@ -169,12 +169,16 @@
 .contactLink {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   width: 100%;
   min-width: 0;
   color: #1976d2;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.35;
   text-decoration: underline;
-  text-underline-offset: 2px;
+  text-underline-offset: 4px;
+  transition: color 140ms ease, text-decoration-color 140ms ease;
 }
 
 .contactLink:hover {
@@ -182,16 +186,48 @@
 }
 
 .contactIcon {
-  flex: 0 0 20px;
-  width: 20px !important;
-  height: 20px !important;
+  flex: 0 0 16px;
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.emailContactLink {
+  color: #0284c7;
+  text-decoration-color: #7dd3fc;
+}
+
+.emailContactLink:hover {
+  color: #0369a1;
+  text-decoration-color: #0284c7;
+}
+
+.emailContactLink .contactIcon {
+  color: #0284c7;
+}
+
+.phoneContactLink {
+  color: #0d9488;
+  font-family: "JetBrains Mono", "Roboto Mono", ui-monospace, monospace;
+  text-decoration-color: #5eead4;
+}
+
+.phoneContactLink:hover {
+  color: #0f766e;
+  text-decoration-color: #0d9488;
+}
+
+.phoneContactLink .contactIcon {
+  color: #0d9488;
 }
 
 .phoneFlag {
   display: inline-flex;
   flex: 0 0 auto;
   align-items: center;
-  font-size: 17px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background-color: #f1f5f9;
+  font-size: 12px;
   line-height: 1;
 }
 
@@ -207,10 +243,33 @@
   white-space: nowrap;
 }
 
+.phoneContactLinkWrap {
+  align-items: flex-start;
+  white-space: normal;
+}
+
+.phoneContactLinkWrap .phoneContactText {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
 .contactText {
   min-width: 0;
   overflow-wrap: anywhere;
   white-space: normal;
+}
+
+.contactTextWrap {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.contactTextNoWrap {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .longText {

@@ -1,6 +1,6 @@
 {
   "name": "@simplishelf/super-data-grid",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "description": "A plug-and-play React data grid with server-side data, saved views, filters, and custom cells.",
   "license": "MIT",
   "repository": {

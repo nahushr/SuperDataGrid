@@ -1,5 +1,5 @@
 import React from "react";
-import EmailIcon from "@mui/icons-material/Email";
+import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import type { SuperDataGridEmailOptions } from "../../types";
 import { firstText } from "../../utils/predefinedCellData";
 import styles from "../../styles/predefined-cells.module.css";
@@ -36,7 +36,7 @@ export default function EmailCell({
 
   const content = (
     <>
-      {showIcon && <EmailIcon className={`${styles.contactIcon} ${iconClassName ?? ""}`.trim()} aria-hidden="true" />}
+      {showIcon && <EmailOutlinedIcon className={`${styles.contactIcon} ${iconClassName ?? ""}`.trim()} aria-hidden="true" />}
       <span className={`${styles.contactText} ${wrap ? styles.contactTextWrap : styles.contactTextNoWrap} ${textClassName ?? ""}`.trim()}>{label}</span>
     </>
   );
