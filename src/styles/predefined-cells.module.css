@@ -110,6 +110,19 @@
   min-width: 0;
 }
 
+.dateValue,
+.timestamp {
+  color: #475569;
+  font-family: "JetBrains Mono", "Roboto Mono", ui-monospace, monospace;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.4;
+}
+
+.dateValue {
+  color: #334155;
+}
+
 .dateIcon {
   flex: 0 0 19px;
   width: 19px !important;
@@ -208,6 +221,12 @@
   overflow-wrap: anywhere;
   white-space: normal;
   line-height: 1.35;
+}
+
+.longTextWrapped {
+  overflow: visible;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .jsonPreviewButton {

@@ -3,17 +3,15 @@ import BlockOutlinedIcon from "@mui/icons-material/BlockOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import Button from "@mui/material/Button";
-import type { ReactNode } from "react";
+import { GridActionsCell, type GridActionDefinition } from "../GridActionsCell";
 import {
   SUPER_DATA_GRID_ACTIONS,
   type SuperDataGridActionType,
 } from "../../types";
-import styles from "../../styles/actions-cell.module.css";
 
 interface ActionDefinition {
   label: string;
-  icon: ReactNode;
+  icon: JSX.Element;
   destructive?: boolean;
 }
 
@@ -50,34 +48,15 @@ interface ActionsCellProps {
 
 export default function ActionsCell({ value, onAction }: Readonly<ActionsCellProps>) {
   const actions = Array.isArray(value) ? value.filter(isAction) : [];
-
-  if (actions.length === 0) {
-    return <span className={styles.emptyValue}>—</span>;
-  }
-
-  return (
-    <div className={styles.actionsCell}>
-      {actions.map((action, index) => {
-        const definition = ACTION_DEFINITIONS[action];
-
-        return (
-          <Button
-            key={`${action}-${index}`}
-            className={`${styles.actionButton} ${definition.destructive ? styles.destructiveAction : ""}`.trim()}
-            color={definition.destructive ? "error" : "primary"}
-            variant="text"
-            size="small"
-            startIcon={definition.icon}
-            aria-label={definition.label}
-            onClick={(event) => {
-              event.stopPropagation();
-              onAction?.(action);
-            }}
-          >
-            {definition.label}
-          </Button>
-        );
-      })}
-    </div>
-  );
+  const actionDefinitions: GridActionDefinition[] = actions.map((action, index) => {
+    const definition = ACTION_DEFINITIONS[action];
+    return {
+      key: `${action}-${index}`,
+      label: definition.label,
+      icon: definition.icon,
+      color: definition.destructive ? "error" : "inherit",
+      onClick: () => onAction?.(action),
+    };
+  });
+  return <GridActionsCell actions={actionDefinitions} emptyText="—" />;
 }

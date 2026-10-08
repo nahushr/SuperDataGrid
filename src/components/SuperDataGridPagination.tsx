@@ -1,5 +1,8 @@
 import React from "react";
 import {
+  Check as CheckIcon,
+} from "@mui/icons-material";
+import {
   Box,
   MenuItem,
   Pagination,
@@ -15,7 +18,16 @@ import {
   useGridSelector,
 } from "@mui/x-data-grid";
 import styles from "../styles/pagination.module.css";
+import selectStyles from "../styles/select-menu.module.css";
 import { SuperDataGridContext } from "../context/SuperDataGridContext";
+
+const selectMenuProps = {
+  classes: { root: selectStyles.menuRoot },
+  PaperProps: { className: selectStyles.menuPaper },
+  MenuListProps: { className: selectStyles.menuList },
+  anchorOrigin: { vertical: "top" as const, horizontal: "left" as const },
+  transformOrigin: { vertical: "bottom" as const, horizontal: "left" as const },
+};
 
 export const PAGE_SIZE_OPTIONS = [10, 25, 50, 100, 500];
 
@@ -47,13 +59,16 @@ export default function SuperDataGridPagination() {
           }
           inputProps={{ "aria-label": "Rows per page" }}
           className={styles.pageSizeSelect}
+          renderValue={(selected) => String(selected)}
+          MenuProps={selectMenuProps}
         >
           {(gridState?.pageSizeOptions.length
             ? gridState.pageSizeOptions
             : PAGE_SIZE_OPTIONS
           ).map((pageSize) => (
-            <MenuItem key={pageSize} value={pageSize}>
+            <MenuItem className={selectStyles.menuItem} key={pageSize} value={pageSize}>
               {pageSize}
+              {paginationModel.pageSize === pageSize && <CheckIcon className={selectStyles.checkIcon} />}
             </MenuItem>
           ))}
         </Select>

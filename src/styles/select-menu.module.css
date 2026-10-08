@@ -1,0 +1,88 @@
+.menuRoot {
+  z-index: 1400 !important;
+}
+
+.menuPaper {
+  max-height: 240px !important;
+  padding: 6px 4px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px !important;
+  background: #ffffff;
+  box-shadow: 0 10px 15px -3px rgb(15 23 42 / 0.1),
+    0 4px 6px -4px rgb(15 23 42 / 0.1) !important;
+}
+
+.menuList {
+  padding: 0 !important;
+}
+
+.menuItem {
+  display: flex;
+  min-height: 36px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 2px !important;
+  padding: 8px 12px !important;
+  border-radius: 6px !important;
+  color: #334155;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  transition: color 100ms ease-in-out, background-color 100ms ease-in-out;
+}
+
+.menuItem:hover {
+  background: #f0fdfa !important;
+  color: #0e7490 !important;
+}
+
+.menuItem:global(.Mui-selected) {
+  background: #ecfeff !important;
+  color: #0e7490 !important;
+  font-weight: 600 !important;
+}
+
+.menuItem:global(.Mui-selected:hover) {
+  background: #cffafe !important;
+}
+
+.checkIcon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  margin-left: auto;
+  color: #0891b2;
+}
+
+.select :global(.MuiSelect-select) {
+  color: #0f172a;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.select :global(.MuiOutlinedInput-notchedOutline) {
+  border-color: #cbd5e1;
+}
+
+.select:hover :global(.MuiOutlinedInput-notchedOutline) {
+  border-color: #94a3b8;
+}
+
+.select:global(.Mui-focused) :global(.MuiOutlinedInput-notchedOutline) {
+  border-width: 1px;
+  border-color: #0e7490;
+}
+
+.select:global(.Mui-focused) {
+  box-shadow: 0 0 0 2px rgb(6 182 212 / 0.2);
+}
+
+.select :global(.MuiSelect-icon) {
+  color: #94a3b8;
+  transition: color 120ms ease, transform 120ms ease;
+}
+
+.select:global(.Mui-focused) :global(.MuiSelect-icon) {
+  color: #0e7490;
+  transform: rotate(180deg);
+}

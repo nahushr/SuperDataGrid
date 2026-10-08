@@ -4,12 +4,12 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 2px;
+  gap: 3px;
   width: 100%;
   min-width: 0;
   padding: 2px 0;
   color: #0f172a;
-  line-height: 1.35;
+  line-height: 1.4;
 }
 
 .auditCell {
@@ -36,65 +36,85 @@
 
 .personIcon,
 .addressIcon {
-  flex: 0 0 20px;
-  width: 20px !important;
-  height: 20px !important;
-  color: #0f172a;
+  flex: 0 0 16px;
+  width: 16px !important;
+  height: 16px !important;
+  color: #94a3b8;
 }
 
 .personAvatar {
-  flex: 0 0 32px;
-  width: 32px !important;
-  height: 32px !important;
-  font-size: 13px !important;
+  flex: 0 0 36px;
+  width: 36px !important;
+  height: 36px !important;
+  background: #cffafe !important;
+  color: #0e7490 !important;
+  font-size: 14px !important;
   font-weight: 700;
 }
 
 .avatarColor0 {
-  background-color: #1d4ed8 !important;
+  background-color: #cffafe !important;
+  color: #0e7490 !important;
 }
 
 .avatarColor1 {
-  background-color: #6d28d9 !important;
+  background-color: #cffafe !important;
+  color: #0e7490 !important;
 }
 
 .avatarColor2 {
-  background-color: #a21caf !important;
+  background-color: #cffafe !important;
+  color: #0e7490 !important;
 }
 
 .avatarColor3 {
-  background-color: #be123c !important;
+  background-color: #cffafe !important;
+  color: #0e7490 !important;
 }
 
 .avatarColor4 {
-  background-color: #b91c1c !important;
+  background-color: #cffafe !important;
+  color: #0e7490 !important;
 }
 
 .avatarColor5 {
-  background-color: #c2410c !important;
+  background-color: #cffafe !important;
+  color: #0e7490 !important;
 }
 
 .avatarColor6 {
-  background-color: #92400e !important;
+  background-color: #cffafe !important;
+  color: #0e7490 !important;
 }
 
 .avatarColor7 {
-  background-color: #15803d !important;
+  background-color: #cffafe !important;
+  color: #0e7490 !important;
 }
 
 .avatarColor8 {
-  background-color: #0f766e !important;
+  background-color: #cffafe !important;
+  color: #0e7490 !important;
 }
 
 .avatarColor9 {
-  background-color: #0369a1 !important;
+  background-color: #cffafe !important;
+  color: #0e7490 !important;
 }
 
 .contactIcon {
   flex: 0 0 20px;
   width: 20px !important;
   height: 20px !important;
-  color: #1976d2;
+  color: #0284c7;
+}
+
+.emailContactLink .contactIcon {
+  color: #0284c7;
+}
+
+.phoneContactLink .contactIcon {
+  color: #0d9488;
 }
 
 .auditIcon {
@@ -116,27 +136,94 @@
 }
 
 .personName {
-  font-weight: 600;
+  color: #0f172a;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.35;
 }
 
 .contactLink {
   color: #1976d2;
   text-decoration: underline;
-  text-underline-offset: 2px;
+  text-underline-offset: 4px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.35;
 }
 
 .contactLink:hover {
-  color: #125aa0;
+  color: #0369a1;
+}
+
+.emailContactLink {
+  color: #0284c7;
+  text-decoration-color: #7dd3fc;
+}
+
+.emailContactLink:hover {
+  color: #0369a1;
+  text-decoration-color: #0284c7;
+}
+
+.phoneContactLink {
+  color: #0d9488;
+  font-family: "JetBrains Mono", "Roboto Mono", ui-monospace, monospace;
+  text-decoration-color: #5eead4;
+}
+
+.phoneContactLink:hover {
+  color: #0f766e;
+  text-decoration-color: #0d9488;
 }
 
 .contactText {
   flex: 1 1 auto;
+  min-width: 0;
   overflow-wrap: anywhere;
+}
+
+.contactTextWrap {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.contactTextNoWrap {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.contactLabel {
+  color: #64748b;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.contactLabelPrimary {
+  color: #0e7490;
+}
+
+.contactLabelSecondary {
+  color: #64748b;
 }
 
 .phoneContactLink {
   flex-wrap: nowrap;
   white-space: nowrap;
+}
+
+.phoneContactLinkWrap {
+  align-items: flex-start;
+  white-space: normal;
+}
+
+.phoneContactLinkWrap .phoneContactText {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .phoneContactText {
@@ -177,6 +264,7 @@
 }
 
 .emptyContactValue {
-  padding-left: 28px;
+  padding-left: 24px;
   color: #64748b;
+  font-size: 0.75rem;
 }

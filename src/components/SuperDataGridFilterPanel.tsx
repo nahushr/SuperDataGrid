@@ -18,6 +18,7 @@ import {
   ToggleButtonGroup,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import {
@@ -27,8 +28,15 @@ import {
 } from "@mui/x-data-grid";
 import type { SuperDataGridFilterField } from "../utils/filterFields";
 import styles from "../styles/filter-panel.module.css";
+import selectStyles from "../styles/select-menu.module.css";
 import { muiControlUtilities } from "../styles/tailwindClasses";
 import { createUniqueId } from "../utils/uniqueId";
+
+const selectMenuProps = {
+  classes: { root: selectStyles.menuRoot },
+  PaperProps: { className: selectStyles.menuPaper },
+  MenuListProps: { className: selectStyles.menuList },
+};
 
 interface FilterCondition {
   id: string;
@@ -151,12 +159,21 @@ function FilterConditionRow({
       <FormControl fullWidth size="small">
         <InputLabel>Value</InputLabel>
         <Select
+          className={selectStyles.select}
           value={filter.value}
           label="Value"
+          renderValue={(selected) =>
+            selected === "true" ? "True" : selected === "false" ? "False" : ""
+          }
+          MenuProps={selectMenuProps}
           onChange={(event) => onUpdate(filter.id, "value", event.target.value)}
         >
-          <MenuItem value="true">True</MenuItem>
-          <MenuItem value="false">False</MenuItem>
+          <MenuItem className={selectStyles.menuItem} value="true">
+            True{filter.value === "true" && <CheckIcon className={selectStyles.checkIcon} />}
+          </MenuItem>
+          <MenuItem className={selectStyles.menuItem} value="false">
+            False{filter.value === "false" && <CheckIcon className={selectStyles.checkIcon} />}
+          </MenuItem>
         </Select>
       </FormControl>
     );
@@ -189,24 +206,40 @@ function FilterConditionRow({
         <FormControl fullWidth size="small">
           <InputLabel>Column</InputLabel>
           <Select
+            className={selectStyles.select}
             value={filter.column}
             label="Column"
+            renderValue={(selected) =>
+              columns.find((column) => column.field === selected)?.headerName ?? ""
+            }
+            MenuProps={selectMenuProps}
             onChange={(event) => onUpdate(filter.id, "column", event.target.value)}
           >
             {columns.map((column) => (
-              <MenuItem key={column.field} value={column.field}>{column.headerName}</MenuItem>
+              <MenuItem className={selectStyles.menuItem} key={column.field} value={column.field}>
+                {column.headerName}
+                {filter.column === column.field && <CheckIcon className={selectStyles.checkIcon} />}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>
         <FormControl fullWidth size="small" disabled={!filter.column}>
           <InputLabel>Operator</InputLabel>
           <Select
+            className={selectStyles.select}
             value={filter.operator}
             label="Operator"
+            renderValue={(selected) =>
+              operators.find((operator) => operator.value === selected)?.label ?? ""
+            }
+            MenuProps={selectMenuProps}
             onChange={(event) => onUpdate(filter.id, "operator", event.target.value)}
           >
             {operators.map((operator) => (
-              <MenuItem key={operator.value} value={operator.value}>{operator.label}</MenuItem>
+              <MenuItem className={selectStyles.menuItem} key={operator.value} value={operator.value}>
+                {operator.label}
+                {filter.operator === operator.value && <CheckIcon className={selectStyles.checkIcon} />}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>

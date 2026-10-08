@@ -3,35 +3,48 @@
   flex-direction: column;
   gap: 12px;
   min-width: 0;
-  padding: 14px;
-  border: 1px solid #dbe4ee;
-  border-radius: 10px;
-  background: #f8fafc;
+  margin-top: 8px;
+  padding-top: 8px;
 }
 
 .builderHeader {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #cffafe;
 }
 
 .builderTitle {
-  color: #0f172a;
-  font-size: 0.95rem !important;
+  color: #0e7490;
+  font-size: 0.75rem !important;
   font-weight: 700 !important;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .builderDescription,
 .emptyState {
   color: #64748b;
-  font-size: 0.8rem !important;
+  font-size: 0.6875rem !important;
   line-height: 1.45 !important;
 }
 
 .addConditionButton {
   flex: 0 0 auto;
+  min-width: 0;
+  padding: 6px 10px !important;
+  border-radius: 8px !important;
+  color: #0e7490 !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
   text-transform: none !important;
+}
+
+.addConditionButton:hover {
+  background: #ecfeff !important;
+  color: #083344 !important;
 }
 
 .matchRow {
@@ -62,7 +75,7 @@
 
 .conditionRow {
   display: grid;
-  grid-template-columns: minmax(130px, 1fr) minmax(130px, 1fr) minmax(130px, 1fr) 34px;
+  grid-template-columns: minmax(250px, 2fr) minmax(100px, 1fr) minmax(60px, 0.6fr) 34px;
   align-items: center;
   gap: 8px;
   min-width: 0;
@@ -86,7 +99,11 @@
 
 .emptyState {
   margin: 0;
-  padding: 4px 0;
+  padding: 16px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  background: rgb(248 250 252 / 0.7);
+  text-align: center;
 }
 
 @media (max-width: 700px) {

@@ -8,19 +8,38 @@
   padding: 2px 0;
 }
 
+.actionsCellInline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  min-width: 0;
+  padding: 2px 0;
+}
+
 .actionButton {
   min-width: 0 !important;
   min-height: 0;
   justify-content: flex-start;
   padding: 4px 6px !important;
-  color: #1976d2;
+  color: #475569;
   font-size: 14px;
   font-weight: 600;
-  line-height: 1.4;
+  line-height: 1.35;
   text-align: left;
   text-transform: none;
   white-space: normal;
   overflow-wrap: anywhere;
+}
+
+.actionWrapper {
+  display: inline-flex;
+  min-width: 0;
+}
+
+.actionButton:hover {
+  color: #0e7490;
 }
 
 .actionButton :global(.MuiButton-startIcon) {
@@ -30,7 +49,11 @@
 }
 
 .destructiveAction {
-  color: #d32f2f !important;
+  color: #e11d48 !important;
+}
+
+.destructiveAction:hover {
+  color: #be123c !important;
 }
 
 .emptyValue {

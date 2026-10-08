@@ -8,6 +8,8 @@ import {
   type GridSortModel,
 } from "@mui/x-data-grid";
 import SuperDataGrid, {
+  GridActionBar,
+  GridActionButton,
   type SuperDataGridAllDataRequest,
   type SuperDataGridAllRowsRequest,
   type SuperDataGridBulkDeleteRequest,
@@ -307,6 +309,24 @@ export default function App() {
           columnOptions={columnOptions}
           data={data}
           beforeTable={<DemoActionJsonPanel value={actionJson} />}
+          toolbarActions={(
+            <GridActionBar>
+              <GridActionButton
+                appearance="primary"
+                size="small"
+                onClick={() => notify("Example Add User action")}
+              >
+                Add User
+              </GridActionButton>
+              <GridActionButton
+                appearance="secondary"
+                size="small"
+                onClick={() => notify("Example Import Users action")}
+              >
+                Import Users
+              </GridActionButton>
+            </GridActionBar>
+          )}
           minHeight={900}
           sortingMode="server"
           sortModel={sortModel}

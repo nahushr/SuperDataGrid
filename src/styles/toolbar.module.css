@@ -101,3 +101,46 @@
     justify-content: flex-end;
   }
 }
+
+@media (min-width: 1500px) {
+  .toolbarRow {
+    flex-wrap: nowrap;
+  }
+
+  .actions {
+    flex: 1 1 auto;
+    flex-wrap: nowrap;
+  }
+
+  .trailingActions {
+    flex: 0 0 auto;
+    flex-wrap: nowrap;
+    max-width: none;
+  }
+
+  .trailingActions > .toolbarActions {
+    flex: 0 0 auto;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 1499px) {
+  .toolbarRow {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .actions {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+
+  .trailingActions {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: none;
+    margin-left: 0;
+    justify-content: flex-end;
+  }
+}

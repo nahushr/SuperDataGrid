@@ -5,8 +5,11 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  IconButton,
   TextField,
+  Typography,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import type { GridFilterModel } from "@mui/x-data-grid";
 import type { SuperDataGridView } from "../types";
 import type { SuperDataGridFilterField } from "../utils/filterFields";
@@ -61,23 +64,38 @@ export default function SuperDataGridAddViewDialog({
       className={muiControlUtilities}
       open={open}
       onClose={onClose}
-      maxWidth="md"
+      maxWidth="sm"
       fullWidth
+      aria-labelledby="super-data-grid-view-dialog-title"
+      PaperProps={{ className: styles.paper }}
     >
-      <form onSubmit={saveView}>
-        <DialogTitle className={styles.title}>
-          {isEditing ? "Edit view" : "Add view"}
+      <form className={styles.form} onSubmit={saveView}>
+        <DialogTitle id="super-data-grid-view-dialog-title" className={styles.title}>
+          <div>
+            <Typography component="h2" className={styles.heading}>
+              {isEditing ? "Edit view" : "Add view"}
+            </Typography>
+            <Typography className={styles.description}>
+              Set a name, notes, and filters for this saved view. Its filters are
+              managed here and stay independent of the grid filter.
+            </Typography>
+          </div>
+          <IconButton
+            className={styles.closeButton}
+            onClick={onClose}
+            aria-label="Close view dialog"
+            size="small"
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
         </DialogTitle>
         <DialogContent className={styles.content}>
-          <p className={styles.description}>
-            Set a name, notes, and filters for this saved view. Its filters are
-            managed here and stay independent of the grid filter.
-          </p>
           <TextField
             autoFocus
             required
             fullWidth
             label="View name"
+            className={styles.field}
             value={name}
             onChange={(event) => setName(event.target.value)}
             inputProps={{ maxLength: 150 }}
@@ -87,6 +105,7 @@ export default function SuperDataGridAddViewDialog({
             multiline
             minRows={2}
             label="Notes (optional)"
+            className={styles.field}
             value={notes}
             onChange={(event) => setNotes(event.target.value)}
           />

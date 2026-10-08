@@ -203,6 +203,10 @@ export interface SuperDataGridColumnConfiguration {
   headerAlign?: "left" | "center" | "right";
   sortable?: boolean;
   hideable?: boolean;
+  /** Optional consumer class applied to the column's body cells. */
+  cellClassName?: GridColDef["cellClassName"];
+  /** Optional consumer class applied to the column header. */
+  headerClassName?: GridColDef["headerClassName"];
 }
 
 /** A filterable row field, including nested values not shown as grid columns. */
@@ -233,6 +237,16 @@ export type SuperDataGridExportScope = "currentPage" | "allMatching";
 export interface SuperDataGridProps<
   Row extends SuperDataGridRow = GridValidRowModel,
 > {
+  /** Consumer class added to the outer grid workspace for full-theme overrides. */
+  className?: string;
+  /** Consumer class added to the MUI grid root. */
+  gridClassName?: string;
+  /** Consumer class added to every data cell. */
+  cellClassName?: string;
+  /** Consumer class added to every column header. */
+  columnHeaderClassName?: string;
+  /** Consumer class added to every data row. */
+  rowClassName?: string;
   /** Object keys to show as columns, in display order. */
   columns: readonly string[];
   /** Optional labels and sizing for generated columns. */

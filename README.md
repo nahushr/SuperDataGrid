@@ -315,6 +315,45 @@ const [views, setViews] = useState<SuperDataGridView[]>([]);
 
 The package declares React, MUI Material, MUI X DataGrid, MUI Icons, and Emotion as peer dependencies. Consumers should have those packages in their app. `write-excel-file` is installed as a runtime dependency for XLSX downloads. The grid provides filtering, column visibility, density controls, and export for XLSX, CSV, JSON, and SQL. Exports include visible columns; SQL files contain `INSERT` statements for `super_data_grid`.
 
+## Reusable styled components and overrides
+
+The package exports the same ready-to-use cells and action controls used by its grid and examples: `AddressCell`, `CreatedByCell`, `DateCell`, `EmailCell`, `PhoneCell`, `UserContactCell`, `UTCTimestampCell`, `RenderLongCellItem`, `GridActionsCell`, `GridActionButton`, `GridActionBar`, and `GridErrorDetailsDialog`. Their default palette, spacing, contact links, and typography are included in `style.css`; no SimpliShelf stylesheet is needed. The stylesheet also loads Inter and JetBrains Mono for the package's sans-serif and code styles.
+
+Override the grid at the workspace, grid, cell, row, or individual column level. Cell components accept `className`; cells with multiple visual parts also accept `classes` or part-specific class props.
+
+```tsx
+<SuperDataGrid
+  columns={["name", "email"]}
+  data={rows}
+  className="my-grid-workspace"
+  gridClassName="my-grid-root"
+  cellClassName="my-grid-cell"
+  columnHeaderClassName="my-grid-header"
+  rowClassName="my-grid-row"
+  columnConfiguration={{
+    email: {
+      cellClassName: "my-email-cell",
+      headerClassName: "my-email-header",
+    },
+  }}
+/>
+```
+
+Use the exported action components to get the same defaults outside the grid toolbar:
+
+```tsx
+import { GridActionBar, GridActionButton } from "@simplishelf/super-data-grid";
+
+<GridActionBar>
+  <GridActionButton appearance="primary" onClick={addRecord}>
+    Add record
+  </GridActionButton>
+  <GridActionButton appearance="secondary" onClick={importRecords}>
+    Import
+  </GridActionButton>
+</GridActionBar>
+```
+
 ## Run the example
 
 The example app consumes this repository through a local `file:` dependency and demonstrates server-side pagination, filtering, row selection, Include Deleted, and bulk soft delete over 1,000 mock users. Ordinary mock requests add 300 ms latency, while page navigation waits three seconds to demonstrate the animated “Fetching details” grid overlay. All-pages exports and Select all fetch matching rows in chunks. Every 25th example row is disabled for selection. The example builds the local package before starting Vite:

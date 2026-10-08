@@ -6,18 +6,37 @@ import { formatMaskedPhoneNumber } from "../../utils/commonCellData";
 import { firstText } from "../../utils/predefinedCellData";
 import styles from "../../styles/predefined-cells.module.css";
 
-interface PhoneCellProps {
+export interface PhoneCellProps {
   value: unknown;
   options?: SuperDataGridPhoneOptions;
+  customFormatter?: (phone: string) => string;
+  emptyText?: string;
+  clickable?: boolean;
+  wrap?: boolean;
+  showIcon?: boolean;
+  className?: string;
+  iconClassName?: string;
+  textClassName?: string;
 }
 
-export default function PhoneCell({ value, options = {} }: Readonly<PhoneCellProps>) {
+export default function PhoneCell({
+  value,
+  options = {},
+  customFormatter,
+  emptyText = "—",
+  clickable = true,
+  wrap = false,
+  showIcon = options.showIcon !== false,
+  className,
+  iconClassName,
+  textClassName,
+}: Readonly<PhoneCellProps>) {
   const phoneText = firstText(value, ["phone", "phoneNumber", "mobile", "value"]);
   const record = typeof value === "object" && value !== null
     ? (value as Record<string, unknown>)
     : null;
   const explicitLabel = firstText(record, ["label", "displayName"]);
-  if (!phoneText) return <span className={styles.emptyValue}>—</span>;
+  if (!phoneText) return <span className={`${styles.emptyValue} ${className ?? ""}`.trim()}>{emptyText}</span>;
 
   let href = `tel:${phoneText}`;
   let display = phoneText;
@@ -43,22 +62,20 @@ export default function PhoneCell({ value, options = {} }: Readonly<PhoneCellPro
   } catch {
     // Preserve the original value when it is not a valid phone number.
   }
+  if (customFormatter) display = customFormatter(phoneText);
   const flag = options.showFlag === false ? "" : countryFlag(flagCountryCode);
 
-  return (
-    <a
-      className={`${styles.contactLink} ${styles.phoneContactLink}`}
-      href={href}
-      onClick={(event) => event.stopPropagation()}
-      title={`Call ${display}`}
-    >
-      {options.showIcon !== false && (
-        <PhoneIcon className={styles.contactIcon} aria-hidden="true" />
-      )}
+  const content = (
+    <>
+      {showIcon && <PhoneIcon className={`${styles.contactIcon} ${iconClassName ?? ""}`.trim()} aria-hidden="true" />}
       {flag && <span aria-label={`${flagCountryCode.toUpperCase()} flag`} className={styles.phoneFlag} role="img">{flag}</span>}
-      <span className={styles.phoneContactText}>{explicitLabel || display}</span>
-    </a>
+      <span className={`${styles.phoneContactText} ${wrap ? styles.contactTextWrap : ""} ${textClassName ?? ""}`.trim()}>{explicitLabel || display}</span>
+    </>
   );
+  const rootClassName = `${styles.contactLink} ${styles.phoneContactLink} ${wrap ? styles.phoneContactLinkWrap : ""} ${className ?? ""}`.trim();
+  return clickable
+    ? <a className={rootClassName} href={href} onClick={(event) => event.stopPropagation()} title={`Call ${display}`}>{content}</a>
+    : <span className={rootClassName}>{content}</span>;
 }
 
 function countryFlag(value: unknown): string {

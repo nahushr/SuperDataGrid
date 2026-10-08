@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useId, useMemo, useState } from "react";
 import {
   DataGrid,
   GridLogicOperator,
+  type GridCellParams,
   type GridColDef,
   type GridColumnVisibilityModel,
   type GridDensity,
@@ -99,6 +100,17 @@ export type {
   SuperDataGridRow,
   SuperDataGridView,
 } from "./types";
+export type { GridActionAppearance, GridActionButtonProps } from "./components/GridActionButton";
+export type { GridActionBarProps } from "./components/GridActionBar";
+export type {
+  GridActionDefinition,
+  GridActionsCellClasses,
+  GridActionsCellProps,
+} from "./components/GridActionsCell";
+export type {
+  SuperDataGridHostActionsClasses,
+  SuperDataGridHostActionsProps,
+} from "./components/SuperDataGridHostActions";
 export {
   SUPER_DATA_GRID_ACTIONS,
   SUPER_DATA_GRID_BADGE_COLORS,
@@ -247,6 +259,13 @@ function createGridColumn<Row extends SuperDataGridRow>(
     ? configuration?.flex ?? 1
     : undefined;
   const measuredWidth = autoSizedWidths[field];
+  const configuredCellClassName = configuration?.cellClassName;
+  const cellBaseClassName = monospaceCell ? styles.monospaceCell : "";
+  const cellClassName: GridColDef["cellClassName"] =
+    typeof configuredCellClassName === "function"
+      ? (params: GridCellParams) =>
+          [cellBaseClassName, configuredCellClassName(params)].filter(Boolean).join(" ")
+      : [cellBaseClassName, configuredCellClassName ?? ""].filter(Boolean).join(" ") || undefined;
   return {
     field,
     headerName: configuration?.headerName ?? toHeaderName(field),
@@ -267,7 +286,8 @@ function createGridColumn<Row extends SuperDataGridRow>(
       : Math.max(configuration?.minWidth ?? 0, measuredWidth ?? 0),
     maxWidth: configuration?.maxWidth,
     hideable: configuration?.hideable,
-    cellClassName: monospaceCell ? styles.monospaceCell : undefined,
+    cellClassName,
+    headerClassName: configuration?.headerClassName,
     renderCell: ({ value, row }) => renderGridCell(
       field,
       columnType,
@@ -489,6 +509,11 @@ function getAutoSizeDataKey<Row extends SuperDataGridRow>(
 export function SuperDataGrid<
   Row extends SuperDataGridRow = GridValidRowModel,
 >({
+  className,
+  gridClassName,
+  cellClassName,
+  columnHeaderClassName,
+  rowClassName,
   columns,
   columnConfiguration,
   columnTypes,
@@ -1300,7 +1325,7 @@ export function SuperDataGrid<
 
   return (
     <div
-      className={`super-data-grid ${styles.gridWorkspace} ${densityClass} ${muiControlUtilities} tw:font-sans tw:relative tw:flex tw:w-full tw:items-stretch tw:gap-3.5 tw:py-3 tw:[&_.MuiPaginationItem-root]:rounded-lg tw:[&_.MuiPaginationItem-root]:font-semibold tw:[&_.MuiPaginationItem-root.Mui-selected]:border-blue-600 tw:[&_.MuiPaginationItem-root.Mui-selected]:bg-blue-600 tw:[&_.MuiPaginationItem-root.Mui-selected]:text-white tw:hover:[&_.MuiPaginationItem-root.Mui-selected]:bg-blue-700 ${
+      className={`super-data-grid ${styles.gridWorkspace} ${densityClass} ${muiControlUtilities} tw:font-sans tw:relative tw:flex tw:w-full tw:items-stretch tw:gap-3.5 tw:py-3 tw:[&_.MuiPaginationItem-root]:rounded-lg tw:[&_.MuiPaginationItem-root]:font-semibold tw:[&_.MuiPaginationItem-root.Mui-selected]:border-blue-600 tw:[&_.MuiPaginationItem-root.Mui-selected]:bg-blue-600 tw:[&_.MuiPaginationItem-root.Mui-selected]:text-white tw:hover:[&_.MuiPaginationItem-root.Mui-selected]:bg-blue-700 ${className ?? ""} ${
         !hideViews && !viewsOpen ? styles.gridWorkspaceViewsClosed : ""
       }`}
       style={workspaceStyle}
@@ -1347,7 +1372,12 @@ export function SuperDataGrid<
         <SuperDataGridContext.Provider value={contextValue}>
           <DataGrid
             apiRef={apiRef}
-            className={`${styles.gridRoot} tw:font-sans tw:bg-white tw:text-slate-900 tw:[&_.MuiDataGrid-columnHeaders]:border-b tw:[&_.MuiDataGrid-columnHeaders]:border-[#155e75] tw:[&_.MuiDataGrid-columnHeaders]:bg-[#0e7490] tw:[&_.MuiDataGrid-columnHeaders]:text-white tw:[&_.MuiDataGrid-columnHeader]:bg-[#0e7490] tw:[&_.MuiDataGrid-columnHeader]:text-white tw:[&_.MuiDataGrid-columnSeparator]:text-[#155e75] tw:[&_.MuiDataGrid-columnHeaderTitle]:text-sm tw:[&_.MuiDataGrid-columnHeaderTitle]:font-bold tw:[&_.MuiDataGrid-columnHeaderTitle]:uppercase tw:[&_.MuiDataGrid-columnHeaderTitle]:tracking-wider tw:[&_.MuiDataGrid-columnHeaderTitle]:text-white tw:[&_.MuiDataGrid-columnHeader_.MuiDataGrid-sortIcon]:text-cyan-200 tw:[&_.MuiDataGrid-columnHeader_.MuiDataGrid-sortIcon]:h-4 tw:[&_.MuiDataGrid-columnHeader_.MuiDataGrid-sortIcon]:w-4`}
+            className={`${styles.gridRoot} tw:font-sans tw:bg-white tw:text-slate-900 tw:[&_.MuiDataGrid-columnHeaders]:border-b tw:[&_.MuiDataGrid-columnHeaders]:border-[#155e75] tw:[&_.MuiDataGrid-columnHeaders]:bg-[#0e7490] tw:[&_.MuiDataGrid-columnHeaders]:text-white tw:[&_.MuiDataGrid-columnHeader]:bg-[#0e7490] tw:[&_.MuiDataGrid-columnHeader]:text-white tw:[&_.MuiDataGrid-columnSeparator]:text-[#155e75] tw:[&_.MuiDataGrid-columnHeaderTitle]:text-sm tw:[&_.MuiDataGrid-columnHeaderTitle]:font-bold tw:[&_.MuiDataGrid-columnHeaderTitle]:uppercase tw:[&_.MuiDataGrid-columnHeaderTitle]:tracking-wider tw:[&_.MuiDataGrid-columnHeaderTitle]:text-white tw:[&_.MuiDataGrid-columnHeader_.MuiDataGrid-sortIcon]:text-cyan-200 tw:[&_.MuiDataGrid-columnHeader_.MuiDataGrid-sortIcon]:h-4 tw:[&_.MuiDataGrid-columnHeader_.MuiDataGrid-sortIcon]:w-4 ${gridClassName ?? ""}`}
+            classes={{
+              ...(cellClassName ? { cell: cellClassName } : {}),
+              ...(columnHeaderClassName ? { columnHeader: columnHeaderClassName } : {}),
+              ...(rowClassName ? { row: rowClassName } : {}),
+            }}
             disableColumnSorting
             disableVirtualization={isAutoSizing}
             rows={rows}
