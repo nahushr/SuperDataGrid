@@ -18,6 +18,7 @@
   width: 264px;
   min-width: 0;
   min-height: 0;
+  z-index: 2;
   contain: layout style;
 }
 
@@ -27,14 +28,17 @@
 }
 
 .viewsSidebarViewport {
-  position: relative;
+  position: absolute;
+  inset: 0 auto 0 0;
   display: flex;
-  flex: 1 1 auto;
+  flex: 0 0 264px;
+  width: 264px;
   min-width: 0;
   min-height: 0;
   height: 100%;
   overflow: hidden;
   border-radius: 18px;
+  pointer-events: none;
 }
 
 .viewsSidebarSlot {
@@ -45,11 +49,13 @@
   min-height: 0;
   height: 100%;
   opacity: 1;
+  pointer-events: auto;
   transform: translate3d(0, 0, 0) scale(1);
+  z-index: 1;
   transform-origin: left center;
   transition:
-    opacity 240ms ease,
-    transform 340ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 220ms ease,
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
     visibility 0s;
   visibility: visible;
   will-change: transform, opacity;
@@ -62,8 +68,8 @@
   visibility: hidden;
   transition:
     opacity 150ms ease,
-    transform 340ms cubic-bezier(0.22, 1, 0.36, 1),
-    visibility 0s linear 340ms;
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s linear 320ms;
 }
 
 .viewsSidebarToggle {
@@ -95,7 +101,7 @@
     color 180ms ease,
     background 180ms ease,
     box-shadow 180ms ease,
-    transform 340ms cubic-bezier(0.22, 1, 0.36, 1);
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform;
 }
 
@@ -395,8 +401,9 @@
   }
 
   .viewsSidebarViewport {
+    inset: 0 0 auto;
     width: 100%;
-    height: 100%;
+    height: 220px;
   }
 
   .viewsSidebarSlot {
@@ -408,7 +415,7 @@
   }
 
   .viewsSidebarSlotClosed {
-    transform: translate3d(0, -18px, 0) scale(0.99);
+    transform: translate3d(0, calc(-100% - 12px), 0) scale(0.99);
   }
 
   .viewsSidebarToggle {
@@ -465,5 +472,6 @@
   .viewsSidebarSlotClosed,
   .viewsSidebarToggle {
     transition: none;
+    will-change: auto;
   }
 }
