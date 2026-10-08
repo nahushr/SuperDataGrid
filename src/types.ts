@@ -279,6 +279,8 @@ export interface SuperDataGridProps<
   pageSizeOptions?: number[];
   /** Hide the pagination footer for embedded and selection grids. */
   hideFooter?: boolean;
+  /** Hide the selected-row total in the footer while retaining pagination. Defaults to true. */
+  hideFooterSelectedRowCount?: boolean;
   /** Hide the package toolbar for compact embedded grids. */
   hideToolbar?: boolean;
   /** Optional host-provided empty and loading overlays. */

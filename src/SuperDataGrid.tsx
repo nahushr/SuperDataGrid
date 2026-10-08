@@ -530,6 +530,7 @@ export function SuperDataGrid<
   getRowClassName,
   pageSizeOptions = PAGE_SIZE_OPTIONS,
   hideFooter = false,
+  hideFooterSelectedRowCount = true,
   hideToolbar = false,
   dataGridSlots,
   beforeTable,
@@ -1400,6 +1401,7 @@ export function SuperDataGrid<
             getRowHeight={getRowHeight}
             getEstimatedRowHeight={getEstimatedRowHeight}
             hideFooter={hideFooter}
+            hideFooterSelectedRowCount={hideFooterSelectedRowCount}
             showToolbar={!hideToolbar}
             onDensityChange={handleDensityChange}
             filterModel={filterModel}
