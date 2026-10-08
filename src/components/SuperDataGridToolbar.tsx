@@ -38,10 +38,16 @@ import styles from "../styles/toolbar.module.css";
 
 const toolbarButtonClasses =
   "tw:min-h-9 tw:rounded-xl tw:px-3 tw:py-1.5 tw:text-sm tw:font-medium tw:normal-case tw:tracking-normal tw:shadow-sm tw:transition-all tw:duration-200 tw:focus-visible:outline-none tw:focus-visible:ring-2 tw:focus-visible:ring-[#cffafe] tw:disabled:cursor-not-allowed tw:disabled:opacity-50";
-const outlinedToolbarButtonClasses =
-  "tw:border-[#cffafe] tw:bg-white tw:text-[#0e7490] tw:hover:-translate-y-px tw:hover:border-[#0e7490] tw:hover:bg-[#ecfeff] tw:hover:text-[#0e7490] tw:hover:shadow-md";
-const activeSecondaryToolbarButtonClasses =
-  "tw:ring-2 tw:ring-[#cffafe] tw:ring-offset-1";
+const viewsToolbarButtonClasses =
+  "tw:border-[#a5f3fc] tw:bg-[#ecfeff] tw:text-[#0e7490] tw:[&_.MuiButton-startIcon]:text-[#0891b2] tw:hover:-translate-y-px tw:hover:border-[#0e7490] tw:hover:bg-[#cffafe] tw:hover:text-[#0e7490] tw:hover:shadow-md";
+const utilityToolbarButtonClasses =
+  "tw:border-slate-200 tw:bg-white tw:text-slate-700 tw:[&_.MuiButton-startIcon]:text-[#0e7490] tw:hover:-translate-y-px tw:hover:border-[#a5f3fc] tw:hover:bg-[#f0fdfa] tw:hover:text-[#0e7490] tw:hover:shadow-md";
+const activeFilterToolbarButtonClasses =
+  "tw:border-[#67e8f9] tw:bg-[#cffafe] tw:text-[#0e7490] tw:[&_.MuiButton-startIcon]:text-[#0e7490] tw:hover:border-[#67e8f9] tw:hover:bg-[#cffafe] tw:hover:text-[#0e7490]";
+const clearSelectionToolbarButtonClasses =
+  "tw:border-[#fecdd3] tw:bg-[#fff1f2] tw:text-[#be123c] tw:[&_.MuiButton-startIcon]:text-[#e11d48] tw:hover:border-[#fda4af] tw:hover:bg-[#ffe4e6] tw:hover:text-[#be123c]";
+const resetToolbarButtonClasses =
+  "tw:border-slate-200 tw:bg-slate-50 tw:text-slate-500 tw:[&_.MuiButton-startIcon]:text-slate-400 tw:hover:border-slate-300 tw:hover:bg-white tw:hover:text-slate-700";
 const destructiveToolbarButtonClasses =
   "tw:border-rose-600 tw:bg-rose-600 tw:text-white tw:shadow-sm tw:hover:border-rose-700 tw:hover:bg-rose-700 tw:hover:text-white tw:disabled:border-rose-100 tw:disabled:bg-rose-50 tw:disabled:text-rose-300 tw:disabled:shadow-none";
 
@@ -280,7 +286,7 @@ export default function SuperDataGridToolbar() {
                 size="small"
                 variant="outlined"
                 startIcon={<ViewSidebarIcon />}
-                className={`${styles.toolbarButton} ${toolbarButtonClasses} ${outlinedToolbarButtonClasses} ${gridState.viewsOpen ? activeSecondaryToolbarButtonClasses : ""}`}
+                className={`${styles.toolbarButton} ${toolbarButtonClasses} ${viewsToolbarButtonClasses}`}
                 aria-pressed={gridState.viewsOpen}
                 onClick={gridState.onToggleViews}
               >
@@ -293,12 +299,15 @@ export default function SuperDataGridToolbar() {
               <Button
                 size="small"
                 variant="outlined"
-                color="warning"
                 startIcon={<ClearAllIcon />}
-                className={`${styles.toolbarButton} ${styles.clearSelectionButton} ${toolbarButtonClasses} ${outlinedToolbarButtonClasses}`}
+                className={`${styles.toolbarButton} ${styles.clearSelectionButton} ${toolbarButtonClasses} ${clearSelectionToolbarButtonClasses}`}
                 onClick={gridState.onClearSelection}
+                aria-label={`Clear selection for ${gridState.selectionCount} ${gridState.selectionLabel}`}
               >
-                Clear selection ({gridState.selectionCount})
+                Clear selection
+                <span className="tw:ml-1.5 tw:inline-flex tw:min-w-5 tw:items-center tw:justify-center tw:rounded-full tw:border tw:border-[#fecdd3] tw:bg-[#fecdd3] tw:px-1.5 tw:py-0.5 tw:text-[11px] tw:font-semibold tw:leading-none tw:text-[#9f1239]">
+                  {gridState.selectionCount}
+                </span>
               </Button>
             </Tooltip>
           )}
@@ -306,13 +315,13 @@ export default function SuperDataGridToolbar() {
             <Badge
               badgeContent={activeFilterCount}
               color="primary"
-              className="tw:[&_.MuiBadge-badge]:border-2 tw:[&_.MuiBadge-badge]:border-white tw:[&_.MuiBadge-badge]:bg-[#0e7490] tw:[&_.MuiBadge-badge]:font-bold"
+              className="tw:[&_.MuiBadge-badge]:border-2 tw:[&_.MuiBadge-badge]:border-white tw:[&_.MuiBadge-badge]:bg-[#0e7490] tw:[&_.MuiBadge-badge]:font-bold tw:[&_.MuiBadge-badge]:text-white"
             >
               <Button
                 size="small"
                 variant="outlined"
                 startIcon={<FilterListIcon />}
-                className={`${styles.toolbarButton} ${toolbarButtonClasses} ${outlinedToolbarButtonClasses} ${activeFilterCount > 0 ? activeSecondaryToolbarButtonClasses : ""}`}
+                className={`${styles.toolbarButton} ${toolbarButtonClasses} ${activeFilterCount > 0 ? activeFilterToolbarButtonClasses : utilityToolbarButtonClasses}`}
                 onClick={gridState.onFilterClick}
               >
                 Filter
@@ -326,7 +335,7 @@ export default function SuperDataGridToolbar() {
                 size="small"
                 variant="outlined"
                 startIcon={<ViewColumnIcon />}
-                className={`${styles.toolbarButton} ${toolbarButtonClasses} ${outlinedToolbarButtonClasses}`}
+                className={`${styles.toolbarButton} ${toolbarButtonClasses} ${utilityToolbarButtonClasses}`}
                 aria-haspopup="true"
                 aria-expanded={columnsAnchor ? "true" : undefined}
                 onClick={(event) => setColumnsAnchor(event.currentTarget)}
@@ -363,7 +372,7 @@ export default function SuperDataGridToolbar() {
               size="small"
               variant="outlined"
               startIcon={<DensityMediumIcon />}
-              className={`${styles.toolbarButton} ${toolbarButtonClasses} ${outlinedToolbarButtonClasses}`}
+              className={`${styles.toolbarButton} ${toolbarButtonClasses} ${utilityToolbarButtonClasses}`}
               aria-haspopup="true"
               aria-expanded={densityAnchor ? "true" : undefined}
               onClick={(event) => setDensityAnchor(event.currentTarget)}
@@ -408,7 +417,7 @@ export default function SuperDataGridToolbar() {
                     <FileDownloadIcon />
                   )
                 }
-                className={`${styles.toolbarButton} ${toolbarButtonClasses} ${outlinedToolbarButtonClasses}`}
+                className={`${styles.toolbarButton} ${toolbarButtonClasses} ${utilityToolbarButtonClasses}`}
                 aria-haspopup="menu"
                 aria-expanded={exportAnchor ? "true" : undefined}
                 disabled={isExporting}
@@ -438,9 +447,8 @@ export default function SuperDataGridToolbar() {
             <Button
               size="small"
               variant="outlined"
-              color="warning"
               startIcon={<RestartAltIcon />}
-              className={`${styles.toolbarButton} ${toolbarButtonClasses} ${outlinedToolbarButtonClasses}`}
+              className={`${styles.toolbarButton} ${toolbarButtonClasses} ${resetToolbarButtonClasses}`}
               onClick={() => void gridState.onResetToDefault?.()}
               data-testid="super-data-grid-reset-default-button"
             >
