@@ -483,6 +483,7 @@ export function SuperDataGrid<
   columnTypes,
   columnOptions,
   filterFields: suppliedFilterFields,
+  filterFieldsMode = "merge",
   data,
   minHeight,
   height,
@@ -651,6 +652,15 @@ export function SuperDataGrid<
 
   const filterFields = useMemo(
     () => {
+      if (filterFieldsMode === "replace") {
+        const supplied = [...(suppliedFilterFields ?? [])].filter(
+          (field, index, fields) =>
+            fields.findIndex((candidate) => candidate.field === field.field) === index,
+        );
+        knownFilterFieldsRef.current = supplied;
+        return supplied;
+      }
+
       const discovered = createFilterFields(gridColumns, data, columnTypes);
       const validParentFields = new Set(gridColumns.map((column) => column.field));
       const preservedNestedFields = knownFilterFieldsRef.current.filter(
@@ -668,7 +678,7 @@ export function SuperDataGrid<
       knownFilterFieldsRef.current = combined;
       return combined;
     },
-    [columnTypes, data, gridColumns, suppliedFilterFields],
+    [columnTypes, data, filterFieldsMode, gridColumns, suppliedFilterFields],
   );
 
   const filterOnlyColumns = useMemo<GridColDef[]>(

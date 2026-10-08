@@ -243,6 +243,8 @@ export interface SuperDataGridProps<
   columnOptions?: Partial<Record<string, SuperDataGridColumnOptions>>;
   /** Extra filter fields, including stable fields absent from the current page. */
   filterFields?: readonly SuperDataGridFilterField[];
+  /** Use the supplied filter list exactly, preserving its order and excluding discovered fields. */
+  filterFieldsMode?: "merge" | "replace";
   /** Row objects whose keys match the names in `columns`. */
   data: readonly Row[];
   /** Minimum height for the grid workspace. Numbers are pixels; defaults to 800px. */
