@@ -14,6 +14,38 @@
   padding-bottom: 0.5rem;
 }
 
+.hasToolbarActions {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    ". host"
+    "utilities bulk";
+  align-items: center;
+  column-gap: 1rem;
+  row-gap: 0.75rem;
+}
+
+.hasToolbarActions > .toolbarRow:first-of-type,
+.hasToolbarActions > .toolbarRow:nth-of-type(2) {
+  display: contents !important;
+}
+
+.hasToolbarActions .actions {
+  grid-area: utilities;
+}
+
+.hasToolbarActions > .toolbarRow:first-of-type > .trailingActions {
+  grid-area: host;
+}
+
+.hasToolbarActions > .toolbarRow:nth-of-type(2) > .trailingActions {
+  grid-area: bulk;
+}
+
+.hasToolbarActions .beforeTableContent {
+  grid-column: 1 / -1;
+}
+
 .beforeTableContent {
   width: 100%;
   min-width: 0;
@@ -90,6 +122,14 @@
     align-items: center;
   }
 
+  .hasToolbarActions {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "host"
+      "utilities"
+      "bulk";
+  }
+
   .actions {
     flex-basis: 100%;
   }
@@ -129,6 +169,21 @@
   .toolbarRow {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .hasToolbarActions {
+    column-gap: 0.75rem;
+  }
+
+  .hasToolbarActions .actions {
+    width: auto;
+    flex: 1 1 auto;
+  }
+
+  .hasToolbarActions .trailingActions {
+    width: auto;
+    flex: 0 1 auto;
+    margin-left: 0;
   }
 
   .actions {

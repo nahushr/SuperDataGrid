@@ -90,6 +90,7 @@
   min-width: 0;
   height: 100%;
   box-sizing: border-box;
+  padding: 16px;
   border: 1px solid #e2e8f0;
   border-radius: 16px;
   background-color: #ffffff;

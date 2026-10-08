@@ -272,12 +272,16 @@ export default function SuperDataGridToolbar() {
   return (
     <>
       <div
-        className={`${styles.toolbar} tw:relative tw:z-20 tw:flex tw:w-full tw:flex-col tw:gap-3`}
+        className={[
+          styles.toolbar,
+          gridState.toolbarActions != null ? styles.hasToolbarActions : "",
+          "tw:relative tw:z-20 tw:w-full",
+        ].filter(Boolean).join(" ")}
         role="toolbar"
         aria-label="Data grid actions"
       >
         <div
-          className={`${styles.toolbarRow} tw:flex tw:w-full tw:flex-wrap tw:items-center tw:justify-between tw:gap-3`}
+          className={`${styles.toolbarRow} tw:w-full tw:flex-wrap tw:items-center tw:justify-between tw:gap-3`}
         >
         <div className={`${styles.actions} tw:flex tw:min-w-0 tw:flex-1 tw:flex-wrap tw:items-center tw:gap-2`}>
           {!gridState.hideViews && (
@@ -466,7 +470,7 @@ export default function SuperDataGridToolbar() {
         </div>
         {(gridState.canBulkDelete || gridState.showIncludeDeleted) && (
           <div
-            className={`${styles.toolbarRow} tw:flex tw:w-full tw:flex-wrap tw:items-center tw:justify-between tw:gap-3`}
+            className={`${styles.toolbarRow} tw:w-full tw:flex-wrap tw:items-center tw:justify-between tw:gap-3`}
           >
             <div className={`${styles.trailingActions} tw:flex tw:flex-wrap tw:items-center tw:justify-end tw:gap-2`}>
               {gridState.canBulkDelete && (
