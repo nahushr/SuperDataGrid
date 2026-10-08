@@ -3,7 +3,7 @@
 @layer theme, utilities;
 
 @import "tailwindcss/theme.css" layer(theme) prefix(tw);
-@import "tailwindcss/utilities.css" layer(utilities) prefix(tw) important;
+@import "tailwindcss/utilities.css" layer(utilities) prefix(tw) important; /* NOSONAR */
 
 @theme prefix(tw) {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
