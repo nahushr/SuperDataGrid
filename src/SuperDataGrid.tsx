@@ -67,6 +67,14 @@ import type {
 import styles from "./styles/grid.module.css";
 import { muiControlUtilities } from "./styles/tailwindClasses";
 
+const isWideDesktopViewport = (): boolean =>
+  typeof window === "undefined" || window.innerWidth >= 1536;
+const shouldSizeColumnsToContent = (): boolean =>
+  typeof window === "undefined" ||
+  window.innerWidth < 1280 ||
+  window.innerWidth >= 1536;
+const EMPTY_AUTO_SIZED_WIDTHS: Readonly<Record<string, number>> = Object.freeze({});
+
 export type {
   SuperDataGridActionRequest,
   SuperDataGridActionType,
@@ -244,6 +252,7 @@ function createGridColumn<Row extends SuperDataGridRow>(
   data: readonly Row[],
   autoSizedWidths: Readonly<Record<string, number>>,
   flexSizingReady: boolean,
+  sizeColumnsToContent: boolean,
   columnConfiguration: SuperDataGridProps<Row>["columnConfiguration"],
   columnTypes: SuperDataGridProps<Row>["columnTypes"],
   columnOptions: SuperDataGridProps<Row>["columnOptions"],
@@ -283,7 +292,9 @@ function createGridColumn<Row extends SuperDataGridRow>(
     ),
     minWidth: flex == null
       ? configuration?.minWidth
-      : Math.max(configuration?.minWidth ?? 0, measuredWidth ?? 0),
+      : sizeColumnsToContent
+        ? Math.max(configuration?.minWidth ?? 0, measuredWidth ?? 0)
+        : configuration?.minWidth ?? 50,
     maxWidth: configuration?.maxWidth,
     hideable: configuration?.hideable,
     cellClassName,
@@ -604,7 +615,12 @@ export function SuperDataGrid<
   const knownFilterFieldsRef = React.useRef<SuperDataGridFilterField[]>([]);
   const [addViewOpen, setAddViewOpen] = useState(false);
   const [editingView, setEditingView] = useState<SuperDataGridView | null>(null);
-  const [viewsOpen, setViewsOpen] = useState(true);
+  const [viewsOpen, setViewsOpen] = useState(isWideDesktopViewport);
+  const wideDesktopViewportRef = React.useRef(isWideDesktopViewport());
+  const [sizeColumnsToContent, setSizeColumnsToContent] = useState(
+    shouldSizeColumnsToContent,
+  );
+  const sizeColumnsToContentRef = React.useRef(shouldSizeColumnsToContent());
   const [internalViews, setInternalViews] = useState<SuperDataGridView[]>([]);
   const [internalSelectedViewId, setInternalSelectedViewId] = useState<
     string | null
@@ -662,29 +678,35 @@ export function SuperDataGrid<
   const autoSizeKey = `${autoSizeColumnFieldsKey}\u0001${autoSizeDataKey}\u0001${autoSizeColumnDefinitionsKey}`;
   const { isAutoSizing, measuredKey } = useAutoSizeColumns(
     apiRef,
-    autoSizeColumnFieldsKey,
+    sizeColumnsToContent ? autoSizeColumnFieldsKey : "",
     loading,
     autoSizeDataKey,
     autoSizeColumnDefinitionsKey,
     updateAutoSizedWidths,
   );
   const flexSizingReady =
-    autoSizeColumnFields.length === 0 || measuredKey === autoSizeKey;
+    !sizeColumnsToContent ||
+    autoSizeColumnFields.length === 0 ||
+    measuredKey === autoSizeKey;
+  const widthsForCurrentViewport = sizeColumnsToContent
+    ? autoSizedWidths
+    : EMPTY_AUTO_SIZED_WIDTHS;
 
   const gridColumns = useMemo<GridColDef[]>(
     () =>
       columns.map((field) => createGridColumn(
         field,
         data,
-        autoSizedWidths,
+        widthsForCurrentViewport,
         flexSizingReady,
+        sizeColumnsToContent,
         columnConfiguration,
         columnTypes,
         columnOptions,
         cellComponents,
         onAction,
       )),
-    [autoSizedWidths, cellComponents, columnConfiguration, columns, columnOptions, columnTypes, data, flexSizingReady, onAction],
+    [cellComponents, columnConfiguration, columns, columnOptions, columnTypes, data, flexSizingReady, onAction, sizeColumnsToContent, widthsForCurrentViewport],
   );
 
   const filterFields = useMemo(
@@ -866,6 +888,25 @@ export function SuperDataGrid<
     },
     [onViewsOpenChange],
   );
+
+  useEffect(() => {
+    const synchronizeViewsBreakpoint = (): void => {
+      const isWideDesktop = window.innerWidth >= 1536;
+      if (isWideDesktop !== wideDesktopViewportRef.current) {
+        wideDesktopViewportRef.current = isWideDesktop;
+        setViewsOpen(isWideDesktop);
+      }
+
+      const shouldSizeToContent = shouldSizeColumnsToContent();
+      if (shouldSizeToContent !== sizeColumnsToContentRef.current) {
+        sizeColumnsToContentRef.current = shouldSizeToContent;
+        setSizeColumnsToContent(shouldSizeToContent);
+      }
+    };
+
+    window.addEventListener("resize", synchronizeViewsBreakpoint);
+    return () => window.removeEventListener("resize", synchronizeViewsBreakpoint);
+  }, []);
 
   const handleFilterModelChange = useCallback(
     (model: GridFilterModel) => {
@@ -1331,11 +1372,20 @@ export function SuperDataGrid<
       }`}
       style={workspaceStyle}
     >
+      {!hideViews && viewsOpen && (
+        <button
+          type="button"
+          className={styles.viewsBackdrop}
+          aria-label="Close saved views panel"
+          data-testid="super-data-grid-views-backdrop"
+          onClick={() => handleViewsOpenChange(false)}
+        />
+      )}
       {!hideViews && (
         <div
           className={`${styles.viewsSidebarRegion} ${
             viewsOpen ? "" : styles.viewsSidebarRegionClosed
-          } tw:relative tw:z-10 tw:overflow-hidden`}
+          } tw:z-10 tw:overflow-hidden`}
         >
           <div
             className={styles.viewsSidebarViewport}

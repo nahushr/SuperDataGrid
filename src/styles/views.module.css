@@ -276,13 +276,13 @@
 
 @media (max-width: 760px) {
   .viewsSidebar {
-    flex: 0 0 auto;
+    flex: 1 1 auto;
     width: 100%;
-    height: 220px;
-    max-height: 220px;
+    height: 100%;
+    max-height: none;
     padding: 12px 12px 10px;
-    border-right: 0;
-    border-bottom: 1px solid #e2e8f0;
+    border-right: 1px solid #e2e8f0;
+    border-bottom: 0;
   }
 
   .sidebarHeader {
@@ -292,15 +292,15 @@
 
   .viewList {
     flex: 1 1 auto;
-    flex-direction: row;
+    flex-direction: column;
     align-items: stretch;
-    overflow-x: auto;
-    overflow-y: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   .viewCard {
-    flex: 0 0 210px;
-    min-height: 64px;
+    flex: 0 0 auto;
+    min-height: 62px;
   }
 }
 
