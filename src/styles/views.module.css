@@ -8,12 +8,11 @@
   box-sizing: border-box;
   padding: 16px 12px 12px;
   overflow: hidden;
-  border: 1px solid #e2e8f0;
-  border-radius: 18px;
+  border: 0;
+  border-right: 1px solid #e2e8f0;
+  border-radius: 0;
   background: #ffffff;
-  box-shadow:
-    0 1px 2px rgb(15 23 42 / 4%),
-    inset 0 1px 0 rgb(255 255 255 / 90%);
+  box-shadow: none;
 }
 
 .sidebarHeader {
@@ -140,11 +139,16 @@
 }
 
 .selectedView {
-  border-color: #e2e8f0;
   border-left: 4px solid #0e7490 !important;
   padding-left: 8px;
-  background: #ecfeff !important;
-  box-shadow: 0 2px 8px rgb(14 116 144 / 8%);
+  background: rgb(236 254 255 / 70%) !important;
+  box-shadow: 0 2px 8px rgb(14 116 144 / 6%);
+}
+
+.viewCard.selectedView,
+.viewCard.selectedView:hover {
+  border-left: 4px solid #0e7490 !important;
+  background: rgb(236 254 255 / 70%) !important;
 }
 
 .selectedView::before {
@@ -277,6 +281,8 @@
     height: 220px;
     max-height: 220px;
     padding: 12px 12px 10px;
+    border-right: 0;
+    border-bottom: 1px solid #e2e8f0;
   }
 
   .sidebarHeader {

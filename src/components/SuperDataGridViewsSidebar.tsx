@@ -62,7 +62,7 @@ export default function SuperDataGridViewsSidebar({
 
       <div className={`${styles.viewList} tw:flex tw:min-h-0 tw:flex-1 tw:flex-col tw:gap-2.5 tw:overflow-y-auto tw:pr-1`}>
         <div
-          className={`${styles.viewCard} tw:relative tw:flex tw:min-h-[60px] tw:w-full tw:items-stretch tw:justify-between tw:rounded-xl tw:border tw:border-slate-200/90 tw:bg-white tw:p-2.5 tw:shadow-sm tw:transition-all tw:duration-200 tw:hover:-translate-y-0.5 tw:hover:border-[#cffafe] tw:hover:shadow-md ${selectedViewId === null ? styles.selectedView : ""}`}
+          className={`${styles.viewCard} tw:relative tw:flex tw:min-h-[60px] tw:w-full tw:items-stretch tw:justify-between tw:p-2.5 ${selectedViewId === null ? styles.selectedView : ""}`}
         >
           <Button
             className={`${styles.viewSelectButton} tw:flex tw:min-h-0 tw:flex-1 tw:items-start tw:justify-start tw:rounded-lg tw:p-0 tw:text-left tw:normal-case tw:text-slate-800 tw:hover:bg-transparent`}
@@ -86,7 +86,7 @@ export default function SuperDataGridViewsSidebar({
           return (
             <div
               key={view.id}
-              className={`${styles.viewCard} tw:relative tw:flex tw:min-h-[60px] tw:w-full tw:items-stretch tw:justify-between tw:rounded-xl tw:border tw:border-slate-200/90 tw:bg-white tw:p-2.5 tw:shadow-sm tw:transition-all tw:duration-200 tw:hover:-translate-y-0.5 tw:hover:border-[#cffafe] tw:hover:shadow-md ${selectedViewId === view.id ? styles.selectedView : ""}`}
+              className={`${styles.viewCard} tw:relative tw:flex tw:min-h-[60px] tw:w-full tw:items-stretch tw:justify-between tw:p-2.5 ${selectedViewId === view.id ? styles.selectedView : ""}`}
             >
               <Button
                 className={`${styles.viewSelectButton} tw:flex tw:min-h-0 tw:flex-1 tw:items-start tw:justify-start tw:rounded-lg tw:p-0 tw:text-left tw:normal-case tw:text-slate-800 tw:hover:bg-transparent`}
