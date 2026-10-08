@@ -48,9 +48,6 @@ const clearSelectionToolbarButtonClasses =
   "tw:border-[#fecdd3] tw:bg-[#fff1f2] tw:text-[#be123c] tw:[&_.MuiButton-startIcon]:text-[#e11d48] tw:hover:border-[#fda4af] tw:hover:bg-[#ffe4e6] tw:hover:text-[#be123c]";
 const resetToolbarButtonClasses =
   "tw:border-slate-200 tw:bg-slate-50 tw:text-slate-500 tw:[&_.MuiButton-startIcon]:text-slate-400 tw:hover:border-slate-300 tw:hover:bg-white tw:hover:text-slate-700";
-const destructiveToolbarButtonClasses =
-  "tw:border-rose-600 tw:bg-rose-600 tw:text-white tw:shadow-sm tw:hover:border-rose-700 tw:hover:bg-rose-700 tw:hover:text-white tw:disabled:border-rose-100 tw:disabled:bg-rose-50 tw:disabled:text-rose-300 tw:disabled:shadow-none";
-
 const DENSITY_OPTIONS: Array<{ label: string; value: GridDensity }> = [
   { label: "Compact", value: "compact" },
   { label: "Standard", value: "standard" },
@@ -274,254 +271,260 @@ export default function SuperDataGridToolbar() {
       <div
         className={[
           styles.toolbar,
-          gridState.toolbarActions != null ? styles.hasToolbarActions : "",
           "tw:relative tw:z-20 tw:w-full",
         ].filter(Boolean).join(" ")}
         role="toolbar"
         aria-label="Data grid actions"
       >
-        <div
-          className={`${styles.toolbarRow} tw:w-full tw:flex-wrap tw:items-center tw:justify-between tw:gap-3`}
-        >
-        <div className={`${styles.actions} tw:flex tw:min-w-0 tw:flex-1 tw:flex-wrap tw:items-center tw:gap-2`}>
-          {!gridState.hideViews && (
-            <Tooltip title="Show or hide saved views">
-              <Button
-                size="small"
-                variant="outlined"
-                startIcon={<ViewSidebarIcon />}
-                className={`${styles.toolbarButton} ${toolbarButtonClasses} ${viewsToolbarButtonClasses}`}
-                aria-pressed={gridState.viewsOpen}
-                onClick={gridState.onToggleViews}
-              >
-                Views
-              </Button>
-            </Tooltip>
-          )}
-          {gridState.checkboxSelection && gridState.selectionCount > 0 && (
-            <Tooltip title={`Clear ${gridState.selectionCount} selected rows`}>
-              <Button
-                size="small"
-                variant="outlined"
-                startIcon={<ClearAllIcon />}
-                className={`${styles.toolbarButton} ${styles.clearSelectionButton} ${toolbarButtonClasses} ${clearSelectionToolbarButtonClasses}`}
-                onClick={gridState.onClearSelection}
-                aria-label={`Clear ${gridState.selectionCount} selected rows`}
-              >
-                Clear selection
-                <span className="tw:ml-1.5 tw:inline-flex tw:min-w-5 tw:items-center tw:justify-center tw:rounded-full tw:border tw:border-[#fecdd3] tw:bg-[#fecdd3] tw:px-1.5 tw:py-0.5 tw:text-[11px] tw:font-semibold tw:leading-none tw:text-[#9f1239]">
-                  {gridState.selectionCount}
-                </span>
-              </Button>
-            </Tooltip>
-          )}
-          <Tooltip title="Filter data">
-            <Badge
-              badgeContent={activeFilterCount}
-              color="primary"
-              className={`${styles.filterBadge} tw:relative tw:z-30 tw:overflow-visible tw:[&_.MuiBadge-badge]:z-10 tw:[&_.MuiBadge-badge]:border-2 tw:[&_.MuiBadge-badge]:border-white tw:[&_.MuiBadge-badge]:bg-[#0e7490] tw:[&_.MuiBadge-badge]:font-bold tw:[&_.MuiBadge-badge]:text-white`}
-            >
-              <Button
-                size="small"
-                variant="outlined"
-                startIcon={<FilterListIcon />}
-                className={`${styles.toolbarButton} ${toolbarButtonClasses} ${activeFilterCount > 0 ? activeFilterToolbarButtonClasses : utilityToolbarButtonClasses}`}
-                onClick={gridState.onFilterClick}
-              >
-                Filter
-              </Button>
-            </Badge>
-          </Tooltip>
-
-          {toggleableColumns.length > 0 && (
-            <Tooltip title="Show or hide columns">
-              <Button
-                size="small"
-                variant="outlined"
-                startIcon={<ViewColumnIcon />}
-                className={`${styles.toolbarButton} ${toolbarButtonClasses} ${utilityToolbarButtonClasses}`}
-                aria-haspopup="true"
-                aria-expanded={columnsAnchor ? "true" : undefined}
-                onClick={(event) => setColumnsAnchor(event.currentTarget)}
-              >
-                Columns
-              </Button>
-            </Tooltip>
-          )}
-          <Menu
-            anchorEl={columnsAnchor}
-            open={Boolean(columnsAnchor)}
-            onClose={() => setColumnsAnchor(null)}
-          >
-            {toggleableColumns.map((column) => (
-              <MenuItem key={column.field}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      size="small"
-                      checked={gridState.columnVisibilityModel[column.field] !== false}
-                      onChange={(event) =>
-                        updateColumnVisibility(column.field, event.target.checked)
-                      }
-                    />
-                  }
-                  label={column.headerName ?? column.field}
-                />
-              </MenuItem>
-            ))}
-          </Menu>
-
-          <Tooltip title="Adjust row density">
-            <Button
-              size="small"
-              variant="outlined"
-              startIcon={<DensityMediumIcon />}
-              className={`${styles.toolbarButton} ${toolbarButtonClasses} ${utilityToolbarButtonClasses}`}
-              aria-haspopup="true"
-              aria-expanded={densityAnchor ? "true" : undefined}
-              onClick={(event) => setDensityAnchor(event.currentTarget)}
-            >
-              Density
-            </Button>
-          </Tooltip>
-          <Menu
-            anchorEl={densityAnchor}
-            open={Boolean(densityAnchor)}
-            onClose={() => setDensityAnchor(null)}
-            anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-            transformOrigin={{ vertical: "top", horizontal: "left" }}
-          >
-            {DENSITY_OPTIONS.map((option) => (
-              <MenuItem
-                key={option.value}
-                onClick={() => {
-                  gridState.onDensityChange(option.value);
-                  setDensityAnchor(null);
-                }}
-              >
-                <ListItemIcon>
-                  {gridState.density === option.value ? (
-                    <CheckIcon fontSize="small" />
-                  ) : null}
-                </ListItemIcon>
-                <ListItemText>{option.label}</ListItemText>
-              </MenuItem>
-            ))}
-          </Menu>
-
-          <Tooltip title={isExporting ? "Creating export" : "Export data"}>
-            <span>
-              <Button
-                size="small"
-                variant="outlined"
-                startIcon={
-                  isExporting ? (
-                    <CircularProgress size={14} color="inherit" />
-                  ) : (
-                    <FileDownloadIcon />
-                  )
-                }
-                className={`${styles.toolbarButton} ${toolbarButtonClasses} ${utilityToolbarButtonClasses}`}
-                aria-haspopup="menu"
-                aria-expanded={exportAnchor ? "true" : undefined}
-                disabled={isExporting}
-                onClick={(event) => setExportAnchor(event.currentTarget)}
-              >
-                {isExporting ? "Exporting" : "Export"}
-              </Button>
-            </span>
-          </Tooltip>
-          <Menu
-            anchorEl={exportAnchor}
-            open={Boolean(exportAnchor)}
-            onClose={() => setExportAnchor(null)}
-            anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-            transformOrigin={{ vertical: "top", horizontal: "left" }}
-          >
-            {EXPORT_FORMATS.map((format) => (
-              <MenuItem
-                key={format.value}
-                onClick={() => chooseExportFormat(format.value)}
-              >
-                {format.label}
-              </MenuItem>
-            ))}
-          </Menu>
-          {gridState.onResetToDefault != null && (
-            <Button
-              size="small"
-              variant="outlined"
-              startIcon={<RestartAltIcon />}
-              className={`${styles.toolbarButton} ${toolbarButtonClasses} ${resetToolbarButtonClasses}`}
-              onClick={() => void gridState.onResetToDefault?.()}
-              data-testid="super-data-grid-reset-default-button"
-            >
-              Reset to default
-            </Button>
-          )}
-        </div>
-          <div className={`${styles.trailingActions} tw:flex tw:flex-wrap tw:items-center tw:justify-end tw:gap-2`}>
-            {gridState.toolbarActions != null && (
-              <div className={`${styles.toolbarActions} tw:flex tw:min-w-0 tw:flex-wrap tw:items-center tw:gap-2`}>
-                {gridState.toolbarActions}
-              </div>
-            )}
-          </div>
-        </div>
-        {(gridState.canBulkDelete || gridState.showIncludeDeleted) && (
+        {gridState.toolbarActions != null && (
           <div
-            className={`${styles.toolbarRow} tw:w-full tw:flex-wrap tw:items-center tw:justify-between tw:gap-3`}
+            className={`${styles.toolbarRow} ${styles.toolbarActionsRow} tw:w-full tw:flex-wrap tw:items-center tw:justify-end tw:gap-3`}
           >
-            <div className={`${styles.trailingActions} tw:flex tw:flex-wrap tw:items-center tw:justify-end tw:gap-2`}>
-              {gridState.canBulkDelete && (
-                <Tooltip
-                  title={
-                    gridState.selectionCount > 0
-                      ? `${gridState.selectionCount} selected ${gridState.selectionLabel}`
-                      : "Select rows to enable bulk delete"
-                  }
-                >
-                  <span>
-                    <Button
-                      size="small"
-                      variant="contained"
-                      color="error"
-                      startIcon={
-                        isDeleting ? (
-                          <CircularProgress size={14} color="inherit" />
-                        ) : (
-                          <DeleteOutlineIcon />
-                        )
-                      }
-                      className={`${styles.toolbarButton} ${styles.bulkDeleteButton} ${toolbarButtonClasses} ${destructiveToolbarButtonClasses}`}
-                      disabled={gridState.selectionCount === 0 || isDeleting}
-                      onClick={() => void deleteSelectedRows()}
-                    >
-                      {isDeleting ? "Working" : gridState.bulkDeleteLabel}
-                      {gridState.selectionCount > 0 ? ` (${gridState.selectionCount})` : ""}
-                    </Button>
-                  </span>
-                </Tooltip>
-              )}
-              {gridState.showIncludeDeleted && (
-                <FormControlLabel
-                  className={`${styles.includeDeletedLabel} tw:m-0 tw:rounded-xl tw:px-2 tw:py-1 tw:text-sm tw:font-medium tw:text-slate-600 tw:transition-colors tw:hover:bg-slate-100`}
-                  control={
-                    <Checkbox
-                      size="small"
-                      className="tw:rounded-lg tw:text-slate-500 tw:hover:bg-blue-50"
-                      checked={gridState.includeDeleted}
-                      onChange={(event) =>
-                        gridState.onIncludeDeletedChange?.(event.target.checked)
-                      }
-                    />
-                  }
-                  label="Include Deleted"
-                />
-              )}
+            <div
+              className={`${styles.trailingActions} ${styles.toolbarActions} tw:flex tw:flex-wrap tw:items-center tw:justify-end tw:gap-2`}
+            >
+              {gridState.toolbarActions}
             </div>
           </div>
         )}
+        <div
+          className={`${styles.toolbarRow} tw:w-full tw:flex-wrap tw:items-center tw:justify-between tw:gap-3`}
+        >
+          <div
+            className={`${styles.actions} tw:flex tw:min-w-0 tw:flex-1 tw:flex-wrap tw:items-center tw:gap-2`}
+          >
+            {!gridState.hideViews && (
+              <Tooltip title="Show or hide saved views">
+                <Button
+                  size="small"
+                  variant="outlined"
+                  startIcon={<ViewSidebarIcon />}
+                  className={`${styles.toolbarButton} ${toolbarButtonClasses} ${viewsToolbarButtonClasses}`}
+                  aria-pressed={gridState.viewsOpen}
+                  onClick={gridState.onToggleViews}
+                >
+                  Views
+                </Button>
+              </Tooltip>
+            )}
+            {gridState.checkboxSelection && gridState.selectionCount > 0 && (
+              <Tooltip title={`Clear ${gridState.selectionCount} selected rows`}>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  startIcon={<ClearAllIcon />}
+                  className={`${styles.toolbarButton} ${styles.clearSelectionButton} ${toolbarButtonClasses} ${clearSelectionToolbarButtonClasses}`}
+                  onClick={gridState.onClearSelection}
+                  aria-label={`Clear ${gridState.selectionCount} selected rows`}
+                >
+                  Clear selection
+                  <span className="tw:ml-1.5 tw:inline-flex tw:min-w-5 tw:items-center tw:justify-center tw:rounded-full tw:border tw:border-[#fecdd3] tw:bg-[#fecdd3] tw:px-1.5 tw:py-0.5 tw:text-[11px] tw:font-semibold tw:leading-none tw:text-[#9f1239]">
+                    {gridState.selectionCount}
+                  </span>
+                </Button>
+              </Tooltip>
+            )}
+            <Tooltip title="Filter data">
+              <Badge
+                badgeContent={activeFilterCount}
+                color="primary"
+                className={`${styles.filterBadge} tw:relative tw:z-30 tw:overflow-visible tw:[&_.MuiBadge-badge]:z-10 tw:[&_.MuiBadge-badge]:border-2 tw:[&_.MuiBadge-badge]:border-white tw:[&_.MuiBadge-badge]:bg-[#0e7490] tw:[&_.MuiBadge-badge]:font-bold tw:[&_.MuiBadge-badge]:text-white`}
+              >
+                <Button
+                  size="small"
+                  variant="outlined"
+                  startIcon={<FilterListIcon />}
+                  className={`${styles.toolbarButton} ${toolbarButtonClasses} ${activeFilterCount > 0 ? activeFilterToolbarButtonClasses : utilityToolbarButtonClasses}`}
+                  onClick={gridState.onFilterClick}
+                >
+                  Filter
+                </Button>
+              </Badge>
+            </Tooltip>
+
+            {toggleableColumns.length > 0 && (
+              <Tooltip title="Show or hide columns">
+                <Button
+                  size="small"
+                  variant="outlined"
+                  startIcon={<ViewColumnIcon />}
+                  className={`${styles.toolbarButton} ${toolbarButtonClasses} ${utilityToolbarButtonClasses}`}
+                  aria-haspopup="true"
+                  aria-expanded={columnsAnchor ? "true" : undefined}
+                  onClick={(event) => setColumnsAnchor(event.currentTarget)}
+                >
+                  Columns
+                </Button>
+              </Tooltip>
+            )}
+            <Menu
+              anchorEl={columnsAnchor}
+              open={Boolean(columnsAnchor)}
+              onClose={() => setColumnsAnchor(null)}
+            >
+              {toggleableColumns.map((column) => (
+                <MenuItem key={column.field}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        size="small"
+                        checked={gridState.columnVisibilityModel[column.field] !== false}
+                        onChange={(event) =>
+                          updateColumnVisibility(column.field, event.target.checked)
+                        }
+                      />
+                    }
+                    label={column.headerName ?? column.field}
+                  />
+                </MenuItem>
+              ))}
+            </Menu>
+
+            <Tooltip title="Adjust row density">
+              <Button
+                size="small"
+                variant="outlined"
+                startIcon={<DensityMediumIcon />}
+                className={`${styles.toolbarButton} ${toolbarButtonClasses} ${utilityToolbarButtonClasses}`}
+                aria-haspopup="true"
+                aria-expanded={densityAnchor ? "true" : undefined}
+                onClick={(event) => setDensityAnchor(event.currentTarget)}
+              >
+                Density
+              </Button>
+            </Tooltip>
+            <Menu
+              anchorEl={densityAnchor}
+              open={Boolean(densityAnchor)}
+              onClose={() => setDensityAnchor(null)}
+              anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+              transformOrigin={{ vertical: "top", horizontal: "left" }}
+            >
+              {DENSITY_OPTIONS.map((option) => (
+                <MenuItem
+                  key={option.value}
+                  onClick={() => {
+                    gridState.onDensityChange(option.value);
+                    setDensityAnchor(null);
+                  }}
+                >
+                  <ListItemIcon>
+                    {gridState.density === option.value ? (
+                      <CheckIcon fontSize="small" />
+                    ) : null}
+                  </ListItemIcon>
+                  <ListItemText>{option.label}</ListItemText>
+                </MenuItem>
+              ))}
+            </Menu>
+
+            <Tooltip title={isExporting ? "Creating export" : "Export data"}>
+              <span>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  startIcon={
+                    isExporting ? (
+                      <CircularProgress size={14} color="inherit" />
+                    ) : (
+                      <FileDownloadIcon />
+                    )
+                  }
+                  className={`${styles.toolbarButton} ${toolbarButtonClasses} ${utilityToolbarButtonClasses}`}
+                  aria-haspopup="menu"
+                  aria-expanded={exportAnchor ? "true" : undefined}
+                  disabled={isExporting}
+                  onClick={(event) => setExportAnchor(event.currentTarget)}
+                >
+                  {isExporting ? "Exporting" : "Export"}
+                </Button>
+              </span>
+            </Tooltip>
+            <Menu
+              anchorEl={exportAnchor}
+              open={Boolean(exportAnchor)}
+              onClose={() => setExportAnchor(null)}
+              anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+              transformOrigin={{ vertical: "top", horizontal: "left" }}
+            >
+              {EXPORT_FORMATS.map((format) => (
+                <MenuItem
+                  key={format.value}
+                  onClick={() => chooseExportFormat(format.value)}
+                >
+                  {format.label}
+                </MenuItem>
+              ))}
+            </Menu>
+          </div>
+          <div
+            className={`${styles.trailingActions} tw:flex tw:flex-wrap tw:items-center tw:justify-end tw:gap-2`}
+          >
+            {gridState.onResetToDefault != null && (
+              <Button
+                size="small"
+                variant="outlined"
+                startIcon={<RestartAltIcon />}
+                className={`${styles.toolbarButton} ${toolbarButtonClasses} ${resetToolbarButtonClasses}`}
+                onClick={() => void gridState.onResetToDefault?.()}
+                data-testid="super-data-grid-reset-default-button"
+              >
+                Reset to default
+              </Button>
+            )}
+            {gridState.canBulkDelete && (
+              <Tooltip
+                title={
+                  gridState.selectionCount > 0
+                    ? `${gridState.selectionCount} selected ${gridState.selectionLabel}`
+                    : "Select rows to enable bulk delete"
+                }
+              >
+                <span
+                  className={
+                    gridState.selectionCount === 0 || isDeleting
+                      ? styles.bulkDeleteTooltipTargetDisabled
+                      : styles.bulkDeleteTooltipTarget
+                  }
+                >
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    startIcon={
+                      isDeleting ? (
+                        <CircularProgress size={14} color="inherit" />
+                      ) : (
+                        <DeleteOutlineIcon />
+                      )
+                    }
+                    className={`${styles.toolbarButton} ${styles.bulkDeleteButton} ${toolbarButtonClasses}`}
+                    disabled={gridState.selectionCount === 0 || isDeleting}
+                    onClick={() => void deleteSelectedRows()}
+                  >
+                    {isDeleting ? "Working" : gridState.bulkDeleteLabel}
+                    {gridState.selectionCount > 0 ? ` (${gridState.selectionCount})` : ""}
+                  </Button>
+                </span>
+              </Tooltip>
+            )}
+            {gridState.showIncludeDeleted && (
+              <FormControlLabel
+                className={`${styles.includeDeletedLabel} tw:m-0 tw:rounded-xl tw:px-2 tw:py-1 tw:text-sm tw:font-medium tw:text-slate-600 tw:transition-colors tw:hover:bg-slate-100`}
+                control={
+                  <Checkbox
+                    size="small"
+                    className="tw:rounded-lg tw:text-slate-500 tw:hover:bg-blue-50"
+                    checked={gridState.includeDeleted}
+                    onChange={(event) =>
+                      gridState.onIncludeDeletedChange?.(event.target.checked)
+                    }
+                  />
+                }
+                label="Include Deleted"
+              />
+            )}
+          </div>
+        </div>
         {gridState.beforeTable != null && (
           <div className={styles.beforeTableContent}>
             {gridState.beforeTable}
