@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   OpsModal as Dialog,
   OpsModalActions as DialogActions,
   OpsModalContent as DialogContent,
 } from "@simplishelf/opscards";
-import { Button, TextField } from "@mui/material";
+import { Button } from "@mui/material";
+import { FieldType, PolyForm, type FormCardConfig } from "@simplishelf/polyform";
+import { useForm } from "react-hook-form";
 import type { GridFilterModel } from "@mui/x-data-grid";
 import type { SuperDataGridView } from "../types";
 import type { SuperDataGridFilterField } from "../utils/filterFields";
@@ -20,7 +22,16 @@ interface SuperDataGridAddViewDialogProps {
   onSave: (name: string, notes: string, filterModel: GridFilterModel) => void;
 }
 
+interface ViewFormValues {
+  name: string;
+  notes: string;
+}
+
 const EMPTY_FILTER_MODEL: GridFilterModel = { items: [] };
+
+function createDefaultViewFormValues(): ViewFormValues {
+  return { name: "", notes: "" };
+}
 
 export default function SuperDataGridAddViewDialog({
   open,
@@ -29,28 +40,62 @@ export default function SuperDataGridAddViewDialog({
   onClose,
   onSave,
 }: Readonly<SuperDataGridAddViewDialogProps>) {
-  const [name, setName] = useState("");
-  const [notes, setNotes] = useState("");
   const [filterModel, setFilterModel] = useState<GridFilterModel>(
     EMPTY_FILTER_MODEL,
   );
+  const { control, handleSubmit, reset, watch } = useForm<ViewFormValues>({
+    defaultValues: createDefaultViewFormValues(),
+  });
+  const name = watch("name");
 
   useEffect(() => {
-    if (open) {
-      setName(initialView?.name ?? "");
-      setNotes(initialView?.notes ?? "");
-      setFilterModel(initialView?.filterModel ?? EMPTY_FILTER_MODEL);
-    }
-  }, [initialView, open]);
+    if (!open) return;
+    reset({
+      name: initialView?.name ?? "",
+      notes: initialView?.notes ?? "",
+    });
+    setFilterModel(initialView?.filterModel ?? EMPTY_FILTER_MODEL);
+  }, [initialView, open, reset]);
 
-  const saveView = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const trimmedName = name.trim();
+  const formCards = useMemo<FormCardConfig<ViewFormValues>[]>(
+    () => [
+      {
+        id: "saved-view-details",
+        sections: [
+          {
+            fields: [
+              {
+                name: "name",
+                label: "View name",
+                type: FieldType.Text,
+                variant: "outlined",
+                required: true,
+                maxLength: 150,
+                placeholder: "e.g. Active users",
+                gridSize: { xs: 12, sm: 12 },
+              },
+              {
+                name: "notes",
+                label: "Notes (optional)",
+                type: FieldType.Textarea,
+                variant: "outlined",
+                rows: 3,
+                placeholder: "Add a short note about this view",
+                gridSize: { xs: 12, sm: 12 },
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    [],
+  );
+
+  const saveView = handleSubmit((values) => {
+    const trimmedName = values.name.trim();
     if (!trimmedName) return;
-    onSave(trimmedName, notes.trim(), filterModel);
-    setName("");
-    setNotes("");
-  };
+    onSave(trimmedName, values.notes.trim(), filterModel);
+  });
 
   const isEditing = initialView != null;
 
@@ -59,33 +104,24 @@ export default function SuperDataGridAddViewDialog({
       className={muiControlUtilities}
       open={open}
       onClose={onClose}
-      maxWidth="sm"
+      maxWidth="md"
       fullWidth
       title={isEditing ? "Edit view" : "Add view"}
-      subtitle="Set a name, notes, and filters for this saved view. Its filters are managed here and stay independent of the grid filter."
+      subtitle="Give this view a name and add optional filters."
       closeButtonLabel="Close view dialog"
     >
       <form className={styles.form} onSubmit={saveView}>
-        <DialogContent>
+        <DialogContent className={styles.dialogContent}>
           <div className={styles.content}>
-            <TextField
-              autoFocus
-              required
-              fullWidth
-              label="View name"
-              className={styles.field}
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              inputProps={{ maxLength: 150 }}
-            />
-            <TextField
-              fullWidth
-              multiline
-              minRows={2}
-              label="Notes (optional)"
-              className={styles.field}
-              value={notes}
-              onChange={(event) => setNotes(event.target.value)}
+            <PolyForm
+              cards={formCards}
+              control={control}
+              classNames={{
+                root: styles.polyFormRoot,
+                card: styles.polyFormCard,
+                section: styles.polyFormSection,
+                fieldGridItem: styles.polyFormField,
+              }}
             />
             {open && (
               <SuperDataGridViewFilterBuilder
@@ -96,9 +132,12 @@ export default function SuperDataGridAddViewDialog({
             )}
           </div>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={onClose}>Cancel</Button>
+        <DialogActions className={styles.actions}>
+          <Button data-testid="cancel-saved-view" onClick={onClose}>
+            Cancel
+          </Button>
           <Button
+            data-testid="save-saved-view"
             type="submit"
             variant="contained"
             disabled={name.trim().length === 0}

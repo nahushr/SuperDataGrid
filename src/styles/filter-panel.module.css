@@ -1,72 +1,15 @@
-.matchRow {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-  font-size: 0.875rem;
-}
-
-.conditionDivider {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 16px 0;
-}
-
-.dividerLine {
-  flex: 1;
-}
-
-.conditionRow {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.25fr) auto;
-  align-items: center;
-  gap: 12px;
-}
-
-.valueField {
-  min-width: 0;
-}
-
-.addFilterButton,
-.actionButton {
-  text-transform: none !important;
-  font-weight: 600 !important;
-}
-
-.addFilterButton {
-  margin-top: 16px !important;
+.dialogContent {
+  min-height: 0;
+  max-height: min(65vh, 680px);
+  overflow-y: auto;
 }
 
 .actions {
   display: flex;
+  align-items: center;
   gap: 8px;
 }
 
 .actionsSpacer {
   flex: 1;
-}
-
-@media (max-width: 700px) {
-  .content {
-    padding: 16px !important;
-  }
-
-  .matchRow {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .conditionRow {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
-  }
-
-  .valueField {
-    grid-column: 1 / -1;
-    grid-row: 2;
-  }
-
-  .actions {
-    flex-wrap: wrap;
-  }
 }

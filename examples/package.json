@@ -14,9 +14,12 @@
     "@mui/icons-material": "^5.15.0",
     "@mui/material": "^5.15.0",
     "@mui/x-data-grid": "^8.17.0",
-    "@simplishelf/opscards": "^0.2.3",
+    "@mui/x-date-pickers": "^7.0.0",
+    "@simplishelf/opscards": "file:../../opscards",
+    "@simplishelf/polyform": "file:../../polyform",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.49.0",
     "@simplishelf/super-data-grid": "file:.."
   },
   "devDependencies": {

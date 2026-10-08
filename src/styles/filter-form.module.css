@@ -1,0 +1,209 @@
+.builder {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.builderHeader {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #cffafe;
+}
+
+.builderTitle {
+  color: #0e7490;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.matchRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #475569;
+  font-size: 0.8125rem;
+}
+
+.matchRow :global(.MuiToggleButton-root) {
+  padding: 5px 10px;
+  border-color: #cbd5e1;
+  color: #475569;
+  font-size: 0.75rem;
+  text-transform: none;
+}
+
+.matchRow :global(.MuiToggleButton-root.Mui-selected) {
+  border-color: #67e8f9;
+  background: #ecfeff;
+  color: #0e7490;
+}
+
+.polyFormRoot {
+  gap: 10px !important;
+}
+
+.polyFormCard {
+  min-width: 0;
+  padding: 12px 14px !important;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px !important;
+  background: #ffffff;
+  box-shadow: none !important;
+}
+
+.polyFormSection {
+  min-width: 0;
+  margin: 0 !important;
+}
+
+.conditionSection :global(.MuiGrid-container) {
+  align-items: center;
+}
+
+.conditionTitle {
+  color: #334155;
+  font-size: 0.8125rem !important;
+  font-weight: 600 !important;
+}
+
+.conditionDivider {
+  margin-top: 6px !important;
+  margin-bottom: 8px !important;
+  border-color: #f1f5f9 !important;
+}
+
+.conditionDividerSpacer {
+  display: none;
+}
+
+.removeConditionButton {
+  width: 32px;
+  height: 32px;
+  color: #be123c !important;
+}
+
+.removeConditionButton:hover {
+  background: #fff1f2 !important;
+}
+
+.polyFormField {
+  min-width: 0;
+}
+
+.polyFormField :global(.MuiFormControl-root) {
+  margin: 0;
+}
+
+.polyFormField :global(.MuiInputLabel-root) {
+  color: #475569;
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.polyFormField :global(.MuiInputLabel-root.Mui-focused) {
+  color: #0e7490;
+}
+
+.polyFormField :global(.MuiInputBase-root) {
+  min-height: 44px;
+  border-radius: 9px;
+  background: #f8fafc;
+  color: #0f172a;
+  font-size: 0.875rem;
+}
+
+.polyFormField :global(.MuiInputBase-root:hover) {
+  background: #ffffff;
+}
+
+.polyFormField :global(.MuiOutlinedInput-notchedOutline) {
+  border-color: #cbd5e1;
+}
+
+.polyFormField :global(.MuiInputBase-root.Mui-focused) {
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgb(6 182 212 / 0.16);
+}
+
+.polyFormField :global(.MuiInputBase-root.Mui-focused .MuiOutlinedInput-notchedOutline) {
+  border-width: 1px;
+  border-color: #0e7490;
+}
+
+.polyFormField :global(.MuiInputBase-input) {
+  padding: 11px 13px;
+}
+
+.polyFormField :global(.MuiSelect-select) {
+  padding: 11px 13px;
+}
+
+.polyFormField :global(textarea.MuiInputBase-input) {
+  line-height: 1.5;
+}
+
+.noValue {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  padding: 0 12px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 9px;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 0.8125rem;
+}
+
+.emptyState {
+  margin: 0;
+  padding: 18px 16px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 0.8125rem !important;
+  line-height: 1.5 !important;
+  text-align: center;
+}
+
+.addConditionButton,
+.addFilterButton {
+  align-self: flex-start;
+  min-width: 0;
+  padding: 6px 10px !important;
+  border-radius: 8px !important;
+  color: #0e7490 !important;
+  font-size: 0.8125rem !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+}
+
+.addConditionButton:hover,
+.addFilterButton:hover {
+  border-color: #0891b2;
+  background: #ecfeff !important;
+  color: #083344 !important;
+}
+
+@media (max-width: 700px) {
+  .builderHeader {
+    align-items: flex-start;
+  }
+
+  .matchRow {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .polyFormCard {
+    padding: 10px !important;
+  }
+}

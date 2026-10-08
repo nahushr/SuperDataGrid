@@ -5,55 +5,104 @@
   flex-direction: column;
 }
 
-.content {
-  display: flex;
+.dialogContent {
   min-height: 0;
-  flex: 1 1 auto;
-  flex-direction: column;
-  gap: 16px;
   overflow-y: auto;
 }
 
-.field :global(.MuiInputLabel-root) {
+.content {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.polyFormRoot {
+  gap: 0 !important;
+}
+
+.polyFormCard {
+  min-width: 0;
+  padding: 0 !important;
+  border: 0;
+  background: transparent;
+  box-shadow: none !important;
+}
+
+.polyFormSection {
+  margin: 0 !important;
+}
+
+.polyFormField {
+  min-width: 0;
+}
+
+.polyFormField :global(.MuiFormControl-root) {
+  margin: 0;
+}
+
+.polyFormField :global(.MuiInputLabel-root) {
   color: #334155;
-  font-size: 0.875rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-size: 0.8125rem;
+  font-weight: 600;
 }
 
-.field :global(.MuiInputLabel-asterisk) {
-  color: #f43f5e;
+.polyFormField :global(.MuiInputLabel-root.Mui-focused) {
+  color: #0e7490;
+}
+
+.polyFormField :global(.MuiInputLabel-asterisk) {
+  color: #e11d48;
   font-weight: 700;
 }
 
-.field :global(.MuiOutlinedInput-root) {
-  border-radius: 8px;
+.polyFormField :global(.MuiInputBase-root) {
+  min-height: 48px;
+  border-radius: 10px;
   background: #f8fafc;
   color: #0f172a;
   font-size: 0.875rem;
   font-weight: 500;
 }
 
-.field :global(.MuiOutlinedInput-notchedOutline) {
+.polyFormField :global(.MuiInputBase-root:hover) {
+  background: #ffffff;
+}
+
+.polyFormField :global(.MuiOutlinedInput-notchedOutline) {
   border-color: #cbd5e1;
 }
 
-.field :global(.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline) {
-  border-color: #94a3b8;
-}
-
-.field :global(.MuiOutlinedInput-root.Mui-focused) {
+.polyFormField :global(.MuiInputBase-root.Mui-focused) {
   background: #ffffff;
-  box-shadow: 0 0 0 2px rgb(6 182 212 / 0.2);
+  box-shadow: 0 0 0 3px rgb(6 182 212 / 0.18);
 }
 
-.field :global(.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline) {
+.polyFormField :global(.MuiInputBase-root.Mui-focused .MuiOutlinedInput-notchedOutline) {
   border-width: 1px;
   border-color: #0e7490;
 }
 
-.field :global(.MuiInputBase-input::placeholder) {
+.polyFormField :global(.MuiInputBase-input) {
+  padding: 12px 14px;
+}
+
+.polyFormField :global(textarea.MuiInputBase-input) {
+  line-height: 1.5;
+}
+
+.polyFormField :global(.MuiInputBase-input::placeholder) {
   color: #94a3b8;
   opacity: 1;
+}
+
+.actions {
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+@media (max-width: 700px) {
+  .content {
+    gap: 18px;
+  }
 }

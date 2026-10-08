@@ -1,49 +1,18 @@
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   OpsModal as Dialog,
   OpsModalActions as DialogActions,
   OpsModalContent as DialogContent,
 } from "@simplishelf/opscards";
-import {
-  Box,
-  Button,
-  Chip,
-  Divider,
-  FormControl,
-  IconButton,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-  ToggleButton,
-  ToggleButtonGroup,
-} from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import CheckIcon from "@mui/icons-material/Check";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import { Box, Button } from "@mui/material";
 import {
   GridLogicOperator,
-  type GridFilterItem,
   type GridFilterModel,
 } from "@mui/x-data-grid";
 import type { SuperDataGridFilterField } from "../utils/filterFields";
+import SuperDataGridPolyFilterForm from "./SuperDataGridPolyFilterForm";
 import styles from "../styles/filter-panel.module.css";
-import selectStyles from "../styles/select-menu.module.css";
 import { muiControlUtilities } from "../styles/tailwindClasses";
-import { createUniqueId } from "../utils/uniqueId";
-
-const selectMenuProps = {
-  classes: { root: selectStyles.menuRoot },
-  PaperProps: { className: selectStyles.menuPaper },
-  MenuListProps: { className: selectStyles.menuList },
-};
-
-interface FilterCondition {
-  id: string;
-  column: string;
-  operator: string;
-  value: string;
-}
 
 interface FilterPanelProps {
   open: boolean;
@@ -53,210 +22,10 @@ interface FilterPanelProps {
   onApply: (model: GridFilterModel) => void;
 }
 
-const TEXT_OPERATORS = [
-  { value: "contains", label: "contains" },
-  { value: "equals", label: "=" },
-  { value: "startsWith", label: "starts with" },
-  { value: "endsWith", label: "ends with" },
-  { value: "isEmpty", label: "is empty" },
-  { value: "isNotEmpty", label: "is not empty" },
-  { value: "isAnyOf", label: "is one of" },
-];
-const NUMBER_OPERATORS = [
-  { value: "=", label: "=" },
-  { value: "!=", label: "!=" },
-  { value: ">", label: ">" },
-  { value: ">=", label: ">=" },
-  { value: "<", label: "<" },
-  { value: "<=", label: "<=" },
-  { value: "isEmpty", label: "is empty" },
-  { value: "isNotEmpty", label: "is not empty" },
-];
-const DATE_OPERATORS = [
-  { value: "is", label: "is" },
-  { value: "not", label: "is not" },
-  { value: "after", label: "is after" },
-  { value: "onOrAfter", label: "is on or after" },
-  { value: "before", label: "is before" },
-  { value: "onOrBefore", label: "is on or before" },
-  { value: "isEmpty", label: "is empty" },
-  { value: "isNotEmpty", label: "is not empty" },
-];
-const BOOLEAN_OPERATORS = [{ value: "is", label: "is" }];
-
-function operatorsFor(column?: SuperDataGridFilterField) {
-  if (column?.type === "number") return NUMBER_OPERATORS;
-  if (column?.type === "boolean") return BOOLEAN_OPERATORS;
-  if (column?.type === "date" || column?.type === "dateTime") {
-    return DATE_OPERATORS;
-  }
-  return TEXT_OPERATORS;
-}
-
-function needsValue(operator: string) {
-  return operator !== "isEmpty" && operator !== "isNotEmpty";
-}
-
-function valueToDraft(value: GridFilterItem["value"]): string {
-  if (value instanceof Date) return value.toISOString().slice(0, 10);
-  if (Array.isArray(value)) return value.join(";");
-  return value == null ? "" : String(value);
-}
-
-function itemToCondition(item: GridFilterItem, index: number): FilterCondition {
-  return {
-    id: String(item.id ?? `filter-${index}`),
-    column: item.field ?? "",
-    operator: item.operator ?? "",
-    value: valueToDraft(item.value),
-  };
-}
-
-function makeEmptyCondition(): FilterCondition {
-  return {
-    id: createUniqueId("filter"),
-    column: "",
-    operator: "",
-    value: "",
-  };
-}
-
-type UpdateFilter = (id: string, key: keyof FilterCondition, value: string) => void;
-
-interface FilterConditionRowProps {
-  columns: SuperDataGridFilterField[];
-  filter: FilterCondition;
-  filterCount: number;
-  index: number;
-  logicOperator: "and" | "or";
-  onRemove: (id: string) => void;
-  onUpdate: UpdateFilter;
-}
-
-function filterInputType(column?: SuperDataGridFilterField): "number" | "date" | "text" {
-  if (column?.type === "number") return "number";
-  if (column?.type === "date" || column?.type === "dateTime") return "date";
-  return "text";
-}
-
-function FilterConditionRow({
-  columns,
-  filter,
-  filterCount,
-  index,
-  logicOperator,
-  onRemove,
-  onUpdate,
-}: Readonly<FilterConditionRowProps>) {
-  const selectedColumn = columns.find((column) => column.field === filter.column);
-  const operators = operatorsFor(selectedColumn);
-  const showValue = filter.operator !== "" && needsValue(filter.operator);
-  const isDate = selectedColumn?.type === "date" || selectedColumn?.type === "dateTime";
-  let valueControl: React.ReactNode = null;
-
-  if (showValue && selectedColumn?.type === "boolean") {
-    valueControl = (
-      <FormControl fullWidth size="small">
-        <InputLabel>Value</InputLabel>
-        <Select
-          className={selectStyles.select}
-          value={filter.value}
-          label="Value"
-          renderValue={(selected) =>
-            selected === "true" ? "True" : selected === "false" ? "False" : ""
-          }
-          MenuProps={selectMenuProps}
-          onChange={(event) => onUpdate(filter.id, "value", event.target.value)}
-        >
-          <MenuItem className={selectStyles.menuItem} value="true">
-            True{filter.value === "true" && <CheckIcon className={selectStyles.checkIcon} />}
-          </MenuItem>
-          <MenuItem className={selectStyles.menuItem} value="false">
-            False{filter.value === "false" && <CheckIcon className={selectStyles.checkIcon} />}
-          </MenuItem>
-        </Select>
-      </FormControl>
-    );
-  } else if (showValue) {
-    valueControl = (
-      <TextField
-        label="Value"
-        type={filterInputType(selectedColumn)}
-        size="small"
-        fullWidth
-        value={filter.value}
-        placeholder={filter.operator === "isAnyOf" ? "Value1;Value2;Value3" : "Filter value"}
-        onChange={(event) => onUpdate(filter.id, "value", event.target.value)}
-        helperText={filter.operator === "isAnyOf" ? "Use semicolon (;) to separate multiple values" : undefined}
-        InputLabelProps={isDate ? { shrink: true } : undefined}
-      />
-    );
-  }
-
-  return (
-    <React.Fragment>
-      {index > 0 && (
-        <Box className={styles.conditionDivider}>
-          <Divider className={styles.dividerLine} />
-          <Chip label={logicOperator.toUpperCase()} size="small" color="primary" variant="outlined" />
-          <Divider className={styles.dividerLine} />
-        </Box>
-      )}
-      <Box className={styles.conditionRow}>
-        <FormControl fullWidth size="small">
-          <InputLabel>Column</InputLabel>
-          <Select
-            className={selectStyles.select}
-            value={filter.column}
-            label="Column"
-            renderValue={(selected) =>
-              columns.find((column) => column.field === selected)?.headerName ?? ""
-            }
-            MenuProps={selectMenuProps}
-            onChange={(event) => onUpdate(filter.id, "column", event.target.value)}
-          >
-            {columns.map((column) => (
-              <MenuItem className={selectStyles.menuItem} key={column.field} value={column.field}>
-                {column.headerName}
-                {filter.column === column.field && <CheckIcon className={selectStyles.checkIcon} />}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl fullWidth size="small" disabled={!filter.column}>
-          <InputLabel>Operator</InputLabel>
-          <Select
-            className={selectStyles.select}
-            value={filter.operator}
-            label="Operator"
-            renderValue={(selected) =>
-              operators.find((operator) => operator.value === selected)?.label ?? ""
-            }
-            MenuProps={selectMenuProps}
-            onChange={(event) => onUpdate(filter.id, "operator", event.target.value)}
-          >
-            {operators.map((operator) => (
-              <MenuItem className={selectStyles.menuItem} key={operator.value} value={operator.value}>
-                {operator.label}
-                {filter.operator === operator.value && <CheckIcon className={selectStyles.checkIcon} />}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <Box className={styles.valueField}>{valueControl}</Box>
-        <IconButton
-          aria-label={`Remove filter ${index + 1}`}
-          color="error"
-          size="small"
-          disabled={filterCount === 1}
-          onClick={() => onRemove(filter.id)}
-        >
-          <DeleteOutlineIcon />
-        </IconButton>
-      </Box>
-    </React.Fragment>
-  );
-}
+const EMPTY_FILTER_MODEL: GridFilterModel = {
+  items: [],
+  logicOperator: GridLogicOperator.And,
+};
 
 export default function SuperDataGridFilterPanel({
   open,
@@ -265,91 +34,31 @@ export default function SuperDataGridFilterPanel({
   onClose,
   onApply,
 }: Readonly<FilterPanelProps>) {
-  const [logicOperator, setLogicOperator] = React.useState<"and" | "or">(
-    filterModel.logicOperator === GridLogicOperator.Or ? "or" : "and",
-  );
-  const [filters, setFilters] = React.useState<FilterCondition[]>([
-    makeEmptyCondition(),
-  ]);
+  const [draftModel, setDraftModel] = useState<GridFilterModel>(filterModel);
+  const [resetModel, setResetModel] = useState<GridFilterModel>(filterModel);
+  const [resetKey, setResetKey] = useState(0);
 
-  React.useEffect(() => {
-    setLogicOperator(
-      filterModel.logicOperator === GridLogicOperator.Or ? "or" : "and",
-    );
-    setFilters(
-      filterModel.items.length > 0
-        ? filterModel.items.map((item, index) => itemToCondition(item, index))
-        : [makeEmptyCondition()],
-    );
+  useEffect(() => {
+    if (!open) return;
+    setDraftModel(filterModel);
+    setResetModel(filterModel);
+    setResetKey((revision) => revision + 1);
   }, [filterModel, open]);
 
-  const updateFilter = (
-    id: string,
-    key: keyof FilterCondition,
-    value: string,
-  ) => {
-    setFilters((current) =>
-      current.map((filter) => {
-        if (filter.id !== id) return filter;
-        if (key === "column") {
-          return { ...filter, column: value, operator: "", value: "" };
-        }
-        if (key === "operator") {
-          return {
-            ...filter,
-            operator: value,
-            value: needsValue(value) ? filter.value : "",
-          };
-        }
-        return { ...filter, [key]: value };
-      }),
-    );
+  const handleDraftChange = useCallback((model: GridFilterModel) => {
+    setDraftModel(model);
+  }, []);
+
+  const clearFilters = () => {
+    setDraftModel(EMPTY_FILTER_MODEL);
+    setResetModel(EMPTY_FILTER_MODEL);
+    setResetKey((revision) => revision + 1);
+    onApply(EMPTY_FILTER_MODEL);
   };
 
   const applyFilters = () => {
-    const validFilters = filters.filter(
-      (filter) =>
-        filter.column !== "" &&
-        filter.operator !== "" &&
-        (!needsValue(filter.operator) || filter.value !== ""),
-    );
-    const items: GridFilterItem[] = validFilters.map((filter) => {
-      const column = columns.find((item) => item.field === filter.column);
-      let value: unknown = filter.value;
-
-      if (filter.operator === "isAnyOf") {
-        value = filter.value.split(";").map((entry) => entry.trim());
-      } else if (column?.type === "number" && needsValue(filter.operator)) {
-        value = Number(filter.value);
-      } else if (column?.type === "boolean") {
-        value = filter.value === "true";
-      } else if (
-        (column?.type === "date" || column?.type === "dateTime") &&
-        needsValue(filter.operator)
-      ) {
-        value = new Date(`${filter.value}T00:00:00`);
-      }
-
-      return {
-        id: filter.id,
-        field: filter.column,
-        operator: filter.operator,
-        value,
-      };
-    });
-
-    onApply({
-      items,
-      logicOperator:
-        logicOperator === "or" ? GridLogicOperator.Or : GridLogicOperator.And,
-    });
+    onApply(draftModel);
     onClose();
-  };
-
-  const removeAll = () => {
-    setFilters([makeEmptyCondition()]);
-    setLogicOperator("and");
-    onApply({ items: [], logicOperator: GridLogicOperator.And });
   };
 
   return (
@@ -357,75 +66,42 @@ export default function SuperDataGridFilterPanel({
       className={muiControlUtilities}
       open={open}
       onClose={onClose}
-      maxWidth="md"
+      maxWidth="lg"
       fullWidth
       title="Filter Data"
+      subtitle="Build filters from the columns shown in this grid."
       closeButtonLabel="Close filter dialog"
     >
-      <DialogContent>
-        {filters.length > 1 && (
-          <Box className={styles.matchRow}>
-            <span>Match:</span>
-            <ToggleButtonGroup
-              value={logicOperator}
-              exclusive
-              size="small"
-              onChange={(_, value: "and" | "or" | null) => {
-                if (value != null) setLogicOperator(value);
-              }}
-            >
-              <ToggleButton value="and">All (AND)</ToggleButton>
-              <ToggleButton value="or">Any (OR)</ToggleButton>
-            </ToggleButtonGroup>
-            <span>of the following conditions:</span>
-          </Box>
-        )}
-
-        {filters.map((filter, index) => (
-          <FilterConditionRow
-            key={filter.id}
-            columns={columns}
-            filter={filter}
-            filterCount={filters.length}
-            index={index}
-            logicOperator={logicOperator}
-            onRemove={(id) => setFilters((current) => current.filter((item) => item.id !== id))}
-            onUpdate={updateFilter}
-          />
-        ))}
-
-        <Button
-          startIcon={<AddIcon />}
-          onClick={() => setFilters((current) => [...current, makeEmptyCondition()])}
-          variant="outlined"
-          className={`${styles.addFilterButton} ${styles.actionButton}`}
-        >
-          Add Filter
-        </Button>
+      <DialogContent className={styles.dialogContent}>
+        <SuperDataGridPolyFilterForm
+          columns={columns}
+          initialModel={resetModel}
+          resetKey={resetKey}
+          onChange={handleDraftChange}
+          addButtonLabel="Add filter"
+          startWithBlankCondition
+          keepOneCondition
+        />
       </DialogContent>
       <DialogActions className={styles.actions}>
         <Button
-          onClick={removeAll}
+          data-testid="clear-grid-filters"
+          onClick={clearFilters}
           variant="outlined"
           color="secondary"
-          className={styles.actionButton}
         >
-          Remove All
+          Remove all
         </Button>
         <Box className={styles.actionsSpacer} />
-        <Button
-          onClick={onClose}
-          variant="outlined"
-          className={styles.actionButton}
-        >
+        <Button data-testid="cancel-grid-filters" onClick={onClose} variant="outlined">
           Cancel
         </Button>
         <Button
+          data-testid="apply-grid-filters"
           onClick={applyFilters}
           variant="contained"
-          className={styles.actionButton}
         >
-          Apply Filters
+          Apply filters
         </Button>
       </DialogActions>
     </Dialog>
