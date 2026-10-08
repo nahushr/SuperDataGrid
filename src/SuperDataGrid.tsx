@@ -1368,7 +1368,7 @@ export function SuperDataGrid<
 
   return (
     <div
-      className={`super-data-grid ${styles.gridWorkspace} ${densityClass} ${muiControlUtilities} tw:font-sans tw:relative tw:flex tw:w-full tw:items-stretch tw:gap-3.5 tw:py-4 tw:[&_.MuiPaginationItem-root]:rounded-lg tw:[&_.MuiPaginationItem-root]:font-semibold tw:[&_.MuiPaginationItem-root.Mui-selected]:border-blue-600 tw:[&_.MuiPaginationItem-root.Mui-selected]:bg-blue-600 tw:[&_.MuiPaginationItem-root.Mui-selected]:text-white tw:hover:[&_.MuiPaginationItem-root.Mui-selected]:bg-blue-700 ${className ?? ""} ${
+      className={`super-data-grid ${styles.gridWorkspace} ${densityClass} ${muiControlUtilities} tw:font-sans tw:relative tw:flex tw:w-full tw:items-stretch tw:gap-3.5 tw:pt-4 tw:pb-0 tw:[&_.MuiPaginationItem-root]:rounded-lg tw:[&_.MuiPaginationItem-root]:font-semibold tw:[&_.MuiPaginationItem-root.Mui-selected]:border-blue-600 tw:[&_.MuiPaginationItem-root.Mui-selected]:bg-blue-600 tw:[&_.MuiPaginationItem-root.Mui-selected]:text-white tw:hover:[&_.MuiPaginationItem-root.Mui-selected]:bg-blue-700 ${className ?? ""} ${
         !hideViews && !viewsOpen ? styles.gridWorkspaceViewsClosed : ""
       }`}
       style={workspaceStyle}
