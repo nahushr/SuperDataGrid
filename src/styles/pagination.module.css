@@ -1,11 +1,11 @@
 .pagination {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   width: 100%;
   min-height: 64px;
   box-sizing: border-box;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 12px;
   padding: 8px 16px;
 }
@@ -48,6 +48,10 @@
 .pages :global(.MuiPagination-ul) {
   flex-wrap: wrap;
   justify-content: flex-end;
+}
+
+.pages {
+  flex: 0 0 auto;
 }
 
 .pages :global(.MuiPaginationItem-root) {
