@@ -514,6 +514,7 @@ export function SuperDataGrid<
   onAddViewOpenChange,
   onFilterPanelOpenChange,
   selectedViewId: selectedViewIdProp,
+  separateViewFilters = false,
   onSelectedViewChange,
   loading = false,
   checkboxSelection = false,
@@ -802,11 +803,13 @@ export function SuperDataGrid<
 
   const handleFilterModelChange = useCallback(
     (model: GridFilterModel) => {
-      if (selectedViewIdProp === undefined) setInternalSelectedViewId(null);
-      onSelectedViewChange?.(null);
+      if (!separateViewFilters) {
+        if (selectedViewIdProp === undefined) setInternalSelectedViewId(null);
+        onSelectedViewChange?.(null);
+      }
       updateFilterModel(model);
     },
-    [onSelectedViewChange, selectedViewIdProp, updateFilterModel],
+    [onSelectedViewChange, selectedViewIdProp, separateViewFilters, updateFilterModel],
   );
 
   const handlePaginationModelChange = useCallback(
@@ -1049,14 +1052,16 @@ export function SuperDataGrid<
         setInternalSelectedViewId(nextViewId);
       }
       onSelectedViewChange?.(nextViewId);
-      updateFilterModel(
-        view?.filterModel ?? {
-          items: [],
-          logicOperator: GridLogicOperator.And,
-        },
-      );
+      if (!separateViewFilters) {
+        updateFilterModel(
+          view?.filterModel ?? {
+            items: [],
+            logicOperator: GridLogicOperator.And,
+          },
+        );
+      }
     },
-    [onSelectedViewChange, selectedViewIdProp, updateFilterModel],
+    [onSelectedViewChange, selectedViewIdProp, separateViewFilters, updateFilterModel],
   );
 
   const handleAddView = useCallback(
@@ -1141,7 +1146,7 @@ export function SuperDataGrid<
   );
 
   useEffect(() => {
-    if (selectedViewIdProp === undefined) return;
+    if (selectedViewIdProp === undefined || separateViewFilters) return;
     const selectedView =
       selectedViewIdProp == null
         ? null
@@ -1153,7 +1158,7 @@ export function SuperDataGrid<
         logicOperator: GridLogicOperator.And,
       },
     );
-  }, [selectedViewIdProp, updateFilterModel, views]);
+  }, [selectedViewIdProp, separateViewFilters, updateFilterModel, views]);
 
   const contextValue = useMemo(
     () => ({

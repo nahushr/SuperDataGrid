@@ -346,6 +346,8 @@ export interface SuperDataGridProps<
   onFilterPanelOpenChange?: (open: boolean) => void;
   /** Controlled selected saved view ID; `null` selects all rows. */
   selectedViewId?: string | null;
+  /** Keep saved-view selection independent from the standalone Filter model. */
+  separateViewFilters?: boolean;
   /** Called when the selected saved view changes. */
   onSelectedViewChange?: (viewId: string | null) => void;
   /** Show the grid's loading overlay. */
