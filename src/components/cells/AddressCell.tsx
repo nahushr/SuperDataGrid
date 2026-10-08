@@ -1,5 +1,5 @@
 import React from "react";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
+import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
 import { getAddressParts } from "../../utils/commonCellData";
 import UserContactCell from "./UserContactCell";
 import styles from "../../styles/common-cells.module.css";
@@ -57,7 +57,7 @@ export default function AddressCell({
     >
       {(street || fallbackText) && (
         <div className={styles.addressStreetRow}>
-          <LocationOnIcon
+          <PlaceOutlinedIcon
             className={`${styles.addressIcon} ${iconClassName ?? ""} ${classes.icon ?? ""}`.trim()}
             style={iconColor ? { color: iconColor } : undefined}
             aria-hidden="true"
@@ -68,7 +68,7 @@ export default function AddressCell({
       {cityLine && (
         <div className={street ? styles.addressSubtext : styles.addressStreetRow}>
           {!street && (
-            <LocationOnIcon
+            <PlaceOutlinedIcon
               className={`${styles.addressIcon} ${iconClassName ?? ""} ${classes.icon ?? ""}`.trim()}
               style={iconColor ? { color: iconColor } : undefined}
               aria-hidden="true"

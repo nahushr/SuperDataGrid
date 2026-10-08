@@ -34,11 +34,17 @@
   min-width: 0;
 }
 
-.personIcon,
-.addressIcon {
+.personIcon {
   flex: 0 0 16px;
   width: 16px !important;
   height: 16px !important;
+  color: #94a3b8;
+}
+
+.addressIcon {
+  flex: 0 0 14px;
+  width: 14px !important;
+  height: 14px !important;
   color: #94a3b8;
 }
 
@@ -246,7 +252,7 @@
 .addressSubtext {
   width: 100%;
   min-width: 0;
-  padding-left: 28px;
+  padding-left: 22px;
 }
 
 .addressSubtextText {
