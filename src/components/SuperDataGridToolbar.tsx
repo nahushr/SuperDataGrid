@@ -315,7 +315,7 @@ export default function SuperDataGridToolbar() {
             <Badge
               badgeContent={activeFilterCount}
               color="primary"
-              className="tw:[&_.MuiBadge-badge]:border-2 tw:[&_.MuiBadge-badge]:border-white tw:[&_.MuiBadge-badge]:bg-[#0e7490] tw:[&_.MuiBadge-badge]:font-bold tw:[&_.MuiBadge-badge]:text-white"
+              className={`${styles.filterBadge} tw:relative tw:z-30 tw:overflow-visible tw:[&_.MuiBadge-badge]:z-10 tw:[&_.MuiBadge-badge]:border-2 tw:[&_.MuiBadge-badge]:border-white tw:[&_.MuiBadge-badge]:bg-[#0e7490] tw:[&_.MuiBadge-badge]:font-bold tw:[&_.MuiBadge-badge]:text-white`}
             >
               <Button
                 size="small"

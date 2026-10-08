@@ -107,6 +107,10 @@
   border: none !important;
 }
 
+.gridRoot :global(.MuiDataGrid-topContainer) {
+  overflow: visible !important;
+}
+
 .gridRoot :global(.MuiDataGrid-main) {
   flex: 1 1 auto;
   min-height: 0;

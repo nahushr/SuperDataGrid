@@ -70,6 +70,15 @@
   font-weight: 600 !important;
 }
 
+.filterBadge {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  flex: 0 0 auto;
+  overflow: visible;
+  margin-inline-end: 0.25rem;
+}
+
 .clearSelectionButton,
 .bulkDeleteButton {
   flex-shrink: 0;
