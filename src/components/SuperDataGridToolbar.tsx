@@ -456,60 +456,68 @@ export default function SuperDataGridToolbar() {
             </Button>
           )}
         </div>
-        <div className={`${styles.trailingActions} tw:flex tw:flex-wrap tw:items-center tw:justify-end tw:gap-2`}>
-          {gridState.toolbarActions != null && (
-            <div className={`${styles.toolbarActions} tw:flex tw:min-w-0 tw:flex-wrap tw:items-center tw:gap-2`}>
-              {gridState.toolbarActions}
-            </div>
-          )}
-          {gridState.canBulkDelete && (
-            <Tooltip
-              title={
-                gridState.selectionCount > 0
-                  ? `${gridState.selectionCount} selected ${gridState.selectionLabel}`
-                  : "Select rows to enable bulk delete"
-              }
-            >
-              <span>
-                <Button
-                  size="small"
-                  variant="contained"
-                  color="error"
-                  startIcon={
-                    isDeleting ? (
-                      <CircularProgress size={14} color="inherit" />
-                    ) : (
-                      <DeleteOutlineIcon />
-                    )
+          <div className={`${styles.trailingActions} tw:flex tw:flex-wrap tw:items-center tw:justify-end tw:gap-2`}>
+            {gridState.toolbarActions != null && (
+              <div className={`${styles.toolbarActions} tw:flex tw:min-w-0 tw:flex-wrap tw:items-center tw:gap-2`}>
+                {gridState.toolbarActions}
+              </div>
+            )}
+          </div>
+        </div>
+        {(gridState.canBulkDelete || gridState.showIncludeDeleted) && (
+          <div
+            className={`${styles.toolbarRow} tw:flex tw:w-full tw:flex-wrap tw:items-center tw:justify-between tw:gap-3`}
+          >
+            <div className={`${styles.trailingActions} tw:flex tw:flex-wrap tw:items-center tw:justify-end tw:gap-2`}>
+              {gridState.canBulkDelete && (
+                <Tooltip
+                  title={
+                    gridState.selectionCount > 0
+                      ? `${gridState.selectionCount} selected ${gridState.selectionLabel}`
+                      : "Select rows to enable bulk delete"
                   }
-                  className={`${styles.toolbarButton} ${styles.bulkDeleteButton} ${toolbarButtonClasses} ${destructiveToolbarButtonClasses}`}
-                  disabled={gridState.selectionCount === 0 || isDeleting}
-                  onClick={() => void deleteSelectedRows()}
                 >
-                  {isDeleting ? "Working" : gridState.bulkDeleteLabel}
-                  {gridState.selectionCount > 0 ? ` (${gridState.selectionCount})` : ""}
-                </Button>
-              </span>
-            </Tooltip>
-          )}
-          {gridState.showIncludeDeleted && (
-            <FormControlLabel
-              className={`${styles.includeDeletedLabel} tw:m-0 tw:rounded-xl tw:px-2 tw:py-1 tw:text-sm tw:font-medium tw:text-slate-600 tw:transition-colors tw:hover:bg-slate-100`}
-              control={
-                <Checkbox
-                  size="small"
-                  className="tw:rounded-lg tw:text-slate-500 tw:hover:bg-blue-50"
-                  checked={gridState.includeDeleted}
-                  onChange={(event) =>
-                    gridState.onIncludeDeletedChange?.(event.target.checked)
+                  <span>
+                    <Button
+                      size="small"
+                      variant="contained"
+                      color="error"
+                      startIcon={
+                        isDeleting ? (
+                          <CircularProgress size={14} color="inherit" />
+                        ) : (
+                          <DeleteOutlineIcon />
+                        )
+                      }
+                      className={`${styles.toolbarButton} ${styles.bulkDeleteButton} ${toolbarButtonClasses} ${destructiveToolbarButtonClasses}`}
+                      disabled={gridState.selectionCount === 0 || isDeleting}
+                      onClick={() => void deleteSelectedRows()}
+                    >
+                      {isDeleting ? "Working" : gridState.bulkDeleteLabel}
+                      {gridState.selectionCount > 0 ? ` (${gridState.selectionCount})` : ""}
+                    </Button>
+                  </span>
+                </Tooltip>
+              )}
+              {gridState.showIncludeDeleted && (
+                <FormControlLabel
+                  className={`${styles.includeDeletedLabel} tw:m-0 tw:rounded-xl tw:px-2 tw:py-1 tw:text-sm tw:font-medium tw:text-slate-600 tw:transition-colors tw:hover:bg-slate-100`}
+                  control={
+                    <Checkbox
+                      size="small"
+                      className="tw:rounded-lg tw:text-slate-500 tw:hover:bg-blue-50"
+                      checked={gridState.includeDeleted}
+                      onChange={(event) =>
+                        gridState.onIncludeDeletedChange?.(event.target.checked)
+                      }
+                    />
                   }
+                  label="Include Deleted"
                 />
-              }
-              label="Include Deleted"
-            />
-          )}
-        </div>
-        </div>
+              )}
+            </div>
+          </div>
+        )}
         {gridState.beforeTable != null && (
           <div className={styles.beforeTableContent}>
             {gridState.beforeTable}
