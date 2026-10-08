@@ -313,7 +313,7 @@
 .gridRoot :global(.MuiDataGrid-row) {
   box-sizing: border-box;
   border-left: 4px solid transparent;
-  border-bottom: 1px solid rgb(226 232 240 / 80%) !important;
+  border-bottom: 1px solid #e2e8f0 !important;
   transition: background-color 150ms ease;
 }
 
@@ -322,17 +322,17 @@
 }
 
 .gridRoot :global(.MuiDataGrid-row.odd) {
-  background-color: #f8fafc !important;
+  background-color: #f1f5f9 !important;
 }
 
 .gridRoot :global(.MuiDataGrid-row:hover) {
-  background-color: rgb(240 253 250 / 40%) !important;
+  background-color: #e0f2fe !important;
 }
 
 .gridRoot :global(.MuiDataGrid-row.Mui-selected),
 .gridRoot :global(.MuiDataGrid-row.Mui-selected:hover) {
   border-left-color: #06b6d4;
-  background-color: #ecfeff !important;
+  background-color: #cffafe !important;
   color: var(--app-text, #0f172a) !important;
 }
 
