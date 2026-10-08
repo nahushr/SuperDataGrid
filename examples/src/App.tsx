@@ -310,7 +310,7 @@ export default function App() {
           data={data}
           beforeTable={<DemoActionJsonPanel value={actionJson} />}
           toolbarActions={(
-            <GridActionBar>
+            <GridActionBar surface="dark">
               <GridActionButton
                 appearance="primary"
                 size="small"
@@ -319,7 +319,7 @@ export default function App() {
                 Add User
               </GridActionButton>
               <GridActionButton
-                appearance="secondary"
+                appearance="onDark"
                 size="small"
                 onClick={() => notify("Example Import Users action")}
               >

@@ -2,7 +2,11 @@ import React, { type ReactNode } from "react";
 import Button, { type ButtonProps } from "@mui/material/Button";
 import styles from "../styles/grid-actions.module.css";
 
-export type GridActionAppearance = "primary" | "secondary" | "utility";
+export type GridActionAppearance =
+  | "primary"
+  | "secondary"
+  | "utility"
+  | "onDark";
 
 export interface GridActionButtonProps extends Omit<ButtonProps, "color"> {
   appearance?: GridActionAppearance;
@@ -17,17 +21,18 @@ export function GridActionButton({
   children,
   ...buttonProps
 }: GridActionButtonProps) {
-  const appearanceClass = appearance === "primary"
-    ? styles.primaryAction
-    : appearance === "utility"
-      ? styles.utilityAction
-      : styles.secondaryAction;
+  const appearanceClasses: Record<GridActionAppearance, string> = {
+    primary: styles.primaryAction,
+    secondary: styles.secondaryAction,
+    utility: styles.utilityAction,
+    onDark: styles.onDarkAction,
+  };
   return (
     <Button
       {...buttonProps}
       color="inherit"
       startIcon={startIcon}
-      className={`${styles.actionButton} ${appearanceClass} ${className ?? ""}`.trim()}
+      className={`${styles.actionButton} ${appearanceClasses[appearance]} ${className ?? ""}`.trim()}
     >
       {children}
     </Button>

@@ -345,11 +345,11 @@ Use the exported action components to get the same defaults outside the grid too
 ```tsx
 import { GridActionBar, GridActionButton } from "@simplishelf/super-data-grid";
 
-<GridActionBar>
+<GridActionBar surface="dark">
   <GridActionButton appearance="primary" onClick={addRecord}>
     Add record
   </GridActionButton>
-  <GridActionButton appearance="secondary" onClick={importRecords}>
+  <GridActionButton appearance="onDark" onClick={importRecords}>
     Import
   </GridActionButton>
 </GridActionBar>
