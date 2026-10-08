@@ -12,6 +12,7 @@ import type { SuperDataGridView } from "../types";
 import type { SuperDataGridFilterField } from "../utils/filterFields";
 import SuperDataGridViewFilterBuilder from "./SuperDataGridViewFilterBuilder";
 import styles from "../styles/add-view.module.css";
+import { muiControlUtilities } from "../styles/tailwindClasses";
 
 interface SuperDataGridAddViewDialogProps {
   open: boolean;
@@ -56,7 +57,13 @@ export default function SuperDataGridAddViewDialog({
   const isEditing = initialView != null;
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+    <Dialog
+      className={muiControlUtilities}
+      open={open}
+      onClose={onClose}
+      maxWidth="md"
+      fullWidth
+    >
       <form onSubmit={saveView}>
         <DialogTitle className={styles.title}>
           {isEditing ? "Edit view" : "Add view"}

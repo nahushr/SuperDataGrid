@@ -10,6 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import styles from "../styles/selection-scope.module.css";
+import { muiControlUtilities } from "../styles/tailwindClasses";
 
 interface SuperDataGridSelectionScopeDialogProps {
   open: boolean;
@@ -38,6 +39,7 @@ export default function SuperDataGridSelectionScopeDialog({
 }: Readonly<SuperDataGridSelectionScopeDialogProps>) {
   return (
     <Dialog
+      className={muiControlUtilities}
       open={open}
       onClose={selectingAll ? undefined : onClose}
       aria-labelledby="super-data-grid-selection-title"

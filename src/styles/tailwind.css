@@ -1,0 +1,7 @@
+@layer theme, utilities;
+
+@import "tailwindcss/theme.css" layer(theme) prefix(tw);
+@import "tailwindcss/utilities.css" layer(utilities) prefix(tw) important;
+
+/* Scan only package source; consumers receive a prebuilt, self-contained stylesheet. */
+@source "..";

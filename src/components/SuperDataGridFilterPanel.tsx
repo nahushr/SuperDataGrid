@@ -27,6 +27,7 @@ import {
 } from "@mui/x-data-grid";
 import type { SuperDataGridFilterField } from "../utils/filterFields";
 import styles from "../styles/filter-panel.module.css";
+import { muiControlUtilities } from "../styles/tailwindClasses";
 import { createUniqueId } from "../utils/uniqueId";
 
 interface FilterCondition {
@@ -320,6 +321,7 @@ export default function SuperDataGridFilterPanel({
 
   return (
     <Dialog
+      className={muiControlUtilities}
       open={open}
       onClose={onClose}
       maxWidth="md"

@@ -10,6 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import styles from "../styles/bulk-delete.module.css";
+import { muiControlUtilities } from "../styles/tailwindClasses";
 
 interface SuperDataGridBulkDeleteDialogProps {
   open: boolean;
@@ -32,6 +33,7 @@ export default function SuperDataGridBulkDeleteDialog({
 }: Readonly<SuperDataGridBulkDeleteDialogProps>) {
   return (
     <Dialog
+      className={muiControlUtilities}
       open={open}
       onClose={loading ? undefined : onClose}
       aria-labelledby="super-data-grid-bulk-delete-title"

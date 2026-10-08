@@ -36,6 +36,15 @@ import SuperDataGridExportScopeDialog from "./SuperDataGridExportScopeDialog";
 import { exportGridData, type ExportFormat } from "../utils/export";
 import styles from "../styles/toolbar.module.css";
 
+const toolbarButtonClasses =
+  "tw:min-h-9 tw:rounded-xl tw:px-3 tw:py-1.5 tw:text-[13px] tw:font-semibold tw:normal-case tw:tracking-normal tw:shadow-sm tw:transition-all tw:duration-200 tw:focus-visible:outline-none tw:focus-visible:ring-2 tw:focus-visible:ring-blue-500/30 tw:disabled:cursor-not-allowed tw:disabled:opacity-50";
+const outlinedToolbarButtonClasses =
+  "tw:border-slate-200 tw:bg-white tw:text-slate-700 tw:hover:-translate-y-px tw:hover:border-blue-300 tw:hover:bg-blue-50 tw:hover:text-blue-700 tw:hover:shadow-md";
+const primaryToolbarButtonClasses =
+  "tw:border-blue-600 tw:bg-blue-600 tw:text-white tw:shadow-md tw:hover:border-blue-700 tw:hover:bg-blue-700 tw:hover:text-white";
+const destructiveToolbarButtonClasses =
+  "tw:border-rose-600 tw:bg-rose-600 tw:text-white tw:shadow-sm tw:hover:border-rose-700 tw:hover:bg-rose-700 tw:hover:text-white tw:disabled:border-rose-100 tw:disabled:bg-rose-50 tw:disabled:text-rose-300 tw:disabled:shadow-none";
+
 const DENSITY_OPTIONS: Array<{ label: string; value: GridDensity }> = [
   { label: "Compact", value: "compact" },
   { label: "Standard", value: "standard" },
@@ -256,16 +265,22 @@ export default function SuperDataGridToolbar() {
 
   return (
     <>
-      <div className={styles.toolbar} role="toolbar" aria-label="Data grid actions">
-        <div className={styles.toolbarRow}>
-        <div className={styles.actions}>
+      <div
+        className={`${styles.toolbar} tw:relative tw:z-20 tw:flex tw:w-full tw:flex-col tw:gap-3 tw:rounded-2xl tw:border tw:border-slate-200/80 tw:bg-white/95 tw:px-3 tw:py-2.5 tw:shadow-sm tw:shadow-slate-900/5 tw:backdrop-blur`}
+        role="toolbar"
+        aria-label="Data grid actions"
+      >
+        <div
+          className={`${styles.toolbarRow} tw:flex tw:w-full tw:flex-wrap tw:items-center tw:justify-between tw:gap-3`}
+        >
+        <div className={`${styles.actions} tw:flex tw:min-w-0 tw:flex-1 tw:flex-wrap tw:items-center tw:gap-2`}>
           {!gridState.hideViews && (
             <Tooltip title="Show or hide saved views">
               <Button
                 size="small"
                 variant={gridState.viewsOpen ? "contained" : "outlined"}
                 startIcon={<ViewSidebarIcon />}
-                className={styles.toolbarButton}
+                className={`${styles.toolbarButton} ${toolbarButtonClasses} ${gridState.viewsOpen ? primaryToolbarButtonClasses : outlinedToolbarButtonClasses}`}
                 aria-pressed={gridState.viewsOpen}
                 onClick={gridState.onToggleViews}
               >
@@ -280,7 +295,7 @@ export default function SuperDataGridToolbar() {
                 variant="outlined"
                 color="warning"
                 startIcon={<ClearAllIcon />}
-                className={`${styles.toolbarButton} ${styles.clearSelectionButton}`}
+                className={`${styles.toolbarButton} ${styles.clearSelectionButton} ${toolbarButtonClasses} tw:border-amber-200 tw:bg-amber-50 tw:text-amber-800 tw:hover:border-amber-300 tw:hover:bg-amber-100 tw:hover:text-amber-900`}
                 onClick={gridState.onClearSelection}
               >
                 Clear selection ({gridState.selectionCount})
@@ -288,12 +303,16 @@ export default function SuperDataGridToolbar() {
             </Tooltip>
           )}
           <Tooltip title="Filter data">
-            <Badge badgeContent={activeFilterCount} color="primary">
+            <Badge
+              badgeContent={activeFilterCount}
+              color="primary"
+              className="tw:[&_.MuiBadge-badge]:border-2 tw:[&_.MuiBadge-badge]:border-white tw:[&_.MuiBadge-badge]:bg-blue-600 tw:[&_.MuiBadge-badge]:font-bold"
+            >
               <Button
                 size="small"
                 variant={activeFilterCount > 0 ? "contained" : "outlined"}
                 startIcon={<FilterListIcon />}
-                className={styles.toolbarButton}
+                className={`${styles.toolbarButton} ${toolbarButtonClasses} ${activeFilterCount > 0 ? primaryToolbarButtonClasses : outlinedToolbarButtonClasses}`}
                 onClick={gridState.onFilterClick}
               >
                 Filter
@@ -307,7 +326,7 @@ export default function SuperDataGridToolbar() {
                 size="small"
                 variant="outlined"
                 startIcon={<ViewColumnIcon />}
-                className={styles.toolbarButton}
+                className={`${styles.toolbarButton} ${toolbarButtonClasses} ${outlinedToolbarButtonClasses}`}
                 aria-haspopup="true"
                 aria-expanded={columnsAnchor ? "true" : undefined}
                 onClick={(event) => setColumnsAnchor(event.currentTarget)}
@@ -344,7 +363,7 @@ export default function SuperDataGridToolbar() {
               size="small"
               variant="outlined"
               startIcon={<DensityMediumIcon />}
-              className={styles.toolbarButton}
+              className={`${styles.toolbarButton} ${toolbarButtonClasses} ${outlinedToolbarButtonClasses}`}
               aria-haspopup="true"
               aria-expanded={densityAnchor ? "true" : undefined}
               onClick={(event) => setDensityAnchor(event.currentTarget)}
@@ -389,7 +408,7 @@ export default function SuperDataGridToolbar() {
                     <FileDownloadIcon />
                   )
                 }
-                className={styles.toolbarButton}
+                className={`${styles.toolbarButton} ${toolbarButtonClasses} ${outlinedToolbarButtonClasses}`}
                 aria-haspopup="menu"
                 aria-expanded={exportAnchor ? "true" : undefined}
                 disabled={isExporting}
@@ -421,7 +440,7 @@ export default function SuperDataGridToolbar() {
               variant="outlined"
               color="warning"
               startIcon={<RestartAltIcon />}
-              className={styles.toolbarButton}
+              className={`${styles.toolbarButton} ${toolbarButtonClasses} tw:border-amber-200 tw:bg-amber-50 tw:text-amber-800 tw:hover:border-amber-300 tw:hover:bg-amber-100 tw:hover:text-amber-900`}
               onClick={() => void gridState.onResetToDefault?.()}
               data-testid="super-data-grid-reset-default-button"
             >
@@ -429,9 +448,9 @@ export default function SuperDataGridToolbar() {
             </Button>
           )}
         </div>
-        <div className={styles.trailingActions}>
+        <div className={`${styles.trailingActions} tw:flex tw:flex-wrap tw:items-center tw:justify-end tw:gap-2`}>
           {gridState.toolbarActions != null && (
-            <div className={styles.toolbarActions}>
+            <div className={`${styles.toolbarActions} tw:flex tw:min-w-0 tw:flex-wrap tw:items-center tw:gap-2`}>
               {gridState.toolbarActions}
             </div>
           )}
@@ -455,7 +474,7 @@ export default function SuperDataGridToolbar() {
                       <DeleteOutlineIcon />
                     )
                   }
-                  className={`${styles.toolbarButton} ${styles.bulkDeleteButton}`}
+                  className={`${styles.toolbarButton} ${styles.bulkDeleteButton} ${toolbarButtonClasses} ${destructiveToolbarButtonClasses}`}
                   disabled={gridState.selectionCount === 0 || isDeleting}
                   onClick={() => void deleteSelectedRows()}
                 >
@@ -467,10 +486,11 @@ export default function SuperDataGridToolbar() {
           )}
           {gridState.showIncludeDeleted && (
             <FormControlLabel
-              className={styles.includeDeletedLabel}
+              className={`${styles.includeDeletedLabel} tw:m-0 tw:rounded-xl tw:px-2 tw:py-1 tw:text-sm tw:font-medium tw:text-slate-600 tw:transition-colors tw:hover:bg-slate-100`}
               control={
                 <Checkbox
                   size="small"
+                  className="tw:rounded-lg tw:text-slate-500 tw:hover:bg-blue-50"
                   checked={gridState.includeDeleted}
                   onChange={(event) =>
                     gridState.onIncludeDeletedChange?.(event.target.checked)

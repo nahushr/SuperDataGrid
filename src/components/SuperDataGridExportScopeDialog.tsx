@@ -8,6 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import styles from "../styles/export-scope.module.css";
+import { muiControlUtilities } from "../styles/tailwindClasses";
 
 interface SuperDataGridExportScopeDialogProps {
   open: boolean;
@@ -27,7 +28,13 @@ export default function SuperDataGridExportScopeDialog({
   onAllData,
 }: Readonly<SuperDataGridExportScopeDialogProps>) {
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
+    <Dialog
+      className={muiControlUtilities}
+      open={open}
+      onClose={onClose}
+      maxWidth="xs"
+      fullWidth
+    >
       <DialogTitle className={styles.title}>Export {formatLabel}</DialogTitle>
       <DialogContent className={styles.content}>
         <Typography className={styles.description}>

@@ -64,6 +64,7 @@ import type {
   SuperDataGridView,
 } from "./types";
 import styles from "./styles/grid.module.css";
+import { muiControlUtilities } from "./styles/tailwindClasses";
 
 export type {
   SuperDataGridActionRequest,
@@ -1289,7 +1290,7 @@ export function SuperDataGrid<
 
   return (
     <div
-      className={`${styles.gridWorkspace} ${densityClass} ${
+      className={`super-data-grid ${styles.gridWorkspace} ${densityClass} ${muiControlUtilities} tw:relative tw:flex tw:w-full tw:items-stretch tw:gap-3.5 tw:py-3 tw:[&_.MuiPaginationItem-root]:rounded-lg tw:[&_.MuiPaginationItem-root]:font-semibold tw:[&_.MuiPaginationItem-root.Mui-selected]:border-blue-600 tw:[&_.MuiPaginationItem-root.Mui-selected]:bg-blue-600 tw:[&_.MuiPaginationItem-root.Mui-selected]:text-white tw:hover:[&_.MuiPaginationItem-root.Mui-selected]:bg-blue-700 ${
         !hideViews && !viewsOpen ? styles.gridWorkspaceViewsClosed : ""
       }`}
       style={workspaceStyle}
@@ -1298,7 +1299,7 @@ export function SuperDataGrid<
         <div
           className={`${styles.viewsSidebarRegion} ${
             viewsOpen ? "" : styles.viewsSidebarRegionClosed
-          }`}
+          } tw:relative tw:z-10 tw:overflow-hidden`}
         >
           <div
             className={styles.viewsSidebarViewport}
@@ -1308,7 +1309,7 @@ export function SuperDataGrid<
               id={viewsSidebarId}
               className={`${styles.viewsSidebarSlot} ${
                 viewsOpen ? "" : styles.viewsSidebarSlotClosed
-              }`}
+              } tw:flex tw:h-full tw:w-full tw:min-w-0 tw:origin-left tw:transition-all tw:duration-300 tw:ease-out`}
             >
               <SuperDataGridViewsSidebar
                 views={views}
@@ -1336,7 +1337,7 @@ export function SuperDataGrid<
         <SuperDataGridContext.Provider value={contextValue}>
           <DataGrid
             apiRef={apiRef}
-            className={styles.gridRoot}
+            className={`${styles.gridRoot} tw:bg-white tw:text-slate-900 tw:[&_.MuiDataGrid-columnHeaders]:border-b tw:[&_.MuiDataGrid-columnHeaders]:border-slate-700 tw:[&_.MuiDataGrid-columnHeaders]:bg-slate-800 tw:[&_.MuiDataGrid-columnHeaders]:text-white tw:[&_.MuiDataGrid-columnHeader]:bg-slate-800 tw:[&_.MuiDataGrid-columnHeader]:text-white tw:[&_.MuiDataGrid-columnHeaderTitle]:font-semibold tw:[&_.MuiDataGrid-columnHeaderTitle]:tracking-wide tw:[&_.MuiDataGrid-columnHeaderTitle]:text-white tw:[&_.MuiDataGrid-columnHeader_.MuiSvgIcon-root]:text-white`}
             disableVirtualization={isAutoSizing}
             rows={rows}
             columns={dataGridColumns}

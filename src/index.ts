@@ -1,3 +1,5 @@
+import "./styles/tailwind.css";
+
 export { SuperDataGrid as default, SuperDataGrid } from "./SuperDataGrid";
 export {
   SUPER_DATA_GRID_ACTIONS,
@@ -49,4 +51,5 @@ export type {
   SuperDataGridRow,
   SuperDataGridView,
 } from "./SuperDataGrid";
+
 export type { ProductImageCarouselProps } from "./components/cells/ProductImageCarousel";
