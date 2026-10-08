@@ -63,7 +63,7 @@
 
 .field :global(.MuiInputLabel-root) {
   color: #334155;
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -114,12 +114,12 @@
 
 .actionButton {
   min-height: 36px;
-  padding: 7px 16px !important;
+  padding: 8px 16px !important;
   border: 1px solid #cbd5e1 !important;
   border-radius: 8px !important;
   background: #ffffff !important;
   color: #475569 !important;
-  font-size: 0.75rem !important;
+  font-size: 0.875rem !important;
   text-transform: none !important;
   font-weight: 600 !important;
   transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
