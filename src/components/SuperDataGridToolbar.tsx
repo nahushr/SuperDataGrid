@@ -47,7 +47,7 @@ const activeFilterToolbarButtonClasses =
 const clearSelectionToolbarButtonClasses =
   "tw:border-[#fecdd3] tw:bg-[#fff1f2] tw:text-[#be123c] tw:[&_.MuiButton-startIcon]:text-[#e11d48] tw:hover:border-[#fda4af] tw:hover:bg-[#ffe4e6] tw:hover:text-[#be123c]";
 const resetToolbarButtonClasses =
-  "tw:border-slate-200 tw:bg-slate-50 tw:text-slate-500 tw:[&_.MuiButton-startIcon]:text-slate-400 tw:hover:border-slate-300 tw:hover:bg-white tw:hover:text-slate-700";
+  "tw:border-amber-300 tw:bg-amber-50 tw:text-amber-900 tw:[&_.MuiButton-startIcon]:text-amber-600 tw:hover:border-amber-300 tw:hover:bg-amber-100 tw:hover:text-amber-900";
 const DENSITY_OPTIONS: Array<{ label: string; value: GridDensity }> = [
   { label: "Compact", value: "compact" },
   { label: "Standard", value: "standard" },
@@ -276,17 +276,6 @@ export default function SuperDataGridToolbar() {
         role="toolbar"
         aria-label="Data grid actions"
       >
-        {gridState.toolbarActions != null && (
-          <div
-            className={`${styles.toolbarRow} ${styles.toolbarActionsRow} tw:w-full tw:flex-wrap tw:items-center tw:justify-end tw:gap-3`}
-          >
-            <div
-              className={`${styles.trailingActions} ${styles.toolbarActions} tw:flex tw:flex-wrap tw:items-center tw:justify-end tw:gap-2`}
-            >
-              {gridState.toolbarActions}
-            </div>
-          </div>
-        )}
         <div
           className={`${styles.toolbarRow} tw:w-full tw:flex-wrap tw:items-center tw:justify-between tw:gap-3`}
         >
@@ -456,10 +445,6 @@ export default function SuperDataGridToolbar() {
                 </MenuItem>
               ))}
             </Menu>
-          </div>
-          <div
-            className={`${styles.trailingActions} tw:flex tw:flex-wrap tw:items-center tw:justify-end tw:gap-2`}
-          >
             {gridState.onResetToDefault != null && (
               <Button
                 size="small"
@@ -472,6 +457,10 @@ export default function SuperDataGridToolbar() {
                 Reset to default
               </Button>
             )}
+          </div>
+          <div
+            className={`${styles.trailingActions} tw:flex tw:flex-wrap tw:items-center tw:justify-end tw:gap-2`}
+          >
             {gridState.canBulkDelete && (
               <Tooltip
                 title={
@@ -523,6 +512,7 @@ export default function SuperDataGridToolbar() {
                 label="Include Deleted"
               />
             )}
+            {gridState.toolbarActions}
           </div>
         </div>
         {gridState.beforeTable != null && (

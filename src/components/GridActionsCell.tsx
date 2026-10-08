@@ -41,7 +41,7 @@ export interface GridActionsCellProps {
 export function GridActionsCell({
   actions,
   emptyText = "—",
-  layout = "grid",
+  layout = "inline",
   className,
   classes = {},
 }: Readonly<GridActionsCellProps>) {
@@ -56,8 +56,18 @@ export function GridActionsCell({
   return (
     <Box className={`${rootClassName} ${classes.root ?? ""} ${className ?? ""}`.trim()}>
       {actions.map((action) => {
+        const actionIdentity = `${action.key} ${action.label}`;
         const isDestructive = action.color === "error" ||
-          /(deactivate|delete|cancel)/i.test(`${action.key} ${action.label}`);
+          /(deactivate|delete|cancel)/i.test(actionIdentity);
+        const isView = /\bview\b/i.test(actionIdentity);
+        const isEdit = /\bedit\b/i.test(actionIdentity);
+        const semanticActionClass = isDestructive
+          ? styles.destructiveAction
+          : isView
+            ? styles.viewAction
+            : isEdit
+              ? styles.editAction
+              : styles.actionButton;
         const button = (
           <Button
             href={action.href}
@@ -74,7 +84,7 @@ export function GridActionsCell({
               if (action.href === "#") event.preventDefault();
               action.onClick?.(event);
             }}
-            className={`${styles.actionButton} ${isDestructive ? styles.destructiveAction : ""} ${classes.button ?? ""} ${isDestructive ? classes.destructiveButton ?? "" : ""} ${action.className ?? ""}`.trim()}
+            className={`${styles.actionButton} ${semanticActionClass} ${classes.button ?? ""} ${isDestructive ? classes.destructiveButton ?? "" : ""} ${action.className ?? ""}`.trim()}
           >
             {action.label}
           </Button>

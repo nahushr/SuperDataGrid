@@ -15,10 +15,10 @@
 }
 
 .actionButton {
-  min-height: 36px;
-  border-radius: 10px !important;
-  padding: 7px 12px !important;
-  font-size: 14px !important;
+  min-height: 32px;
+  border-radius: 8px !important;
+  padding: 6px 12px !important;
+  font-size: 12px !important;
   font-weight: 600 !important;
   line-height: 1.25 !important;
   text-transform: none !important;
@@ -40,6 +40,8 @@
   background: #06b6d4 !important;
   color: #083344 !important;
   font-weight: 700 !important;
+  padding-right: 14px !important;
+  padding-left: 14px !important;
   box-shadow: 0 1px 2px rgb(8 51 68 / 14%) !important;
 }
 
@@ -50,14 +52,14 @@
 
 .secondaryAction,
 .utilityAction {
-  border: 1px solid #cffafe !important;
+  border: 1px solid #e2e8f0 !important;
   background: #ffffff !important;
   color: #0e7490 !important;
 }
 
 .secondaryAction:hover,
 .utilityAction:hover {
-  border-color: #0891b2 !important;
+  border-color: #a5f3fc !important;
   background: #ecfeff !important;
   color: #0e7490 !important;
 }
