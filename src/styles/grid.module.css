@@ -138,6 +138,8 @@
 .gridRoot :global(.MuiDataGrid-columnHeader) {
   justify-content: flex-start !important;
   text-align: left !important;
+  box-sizing: border-box;
+  padding: 14px 16px !important;
 }
 
 .gridRoot :global(.MuiDataGrid-columnHeaderCheckbox),
@@ -152,8 +154,8 @@
 .gridRoot :global(.MuiDataGrid-columnHeader .MuiDataGrid-sortIcon),
 .gridRoot :global(.MuiDataGrid-columnHeader .MuiDataGrid-menuIconButton .MuiSvgIcon-root),
 .gridRoot :global(.MuiDataGrid-columnHeader .MuiDataGrid-sortButton .MuiSvgIcon-root) {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   color: #a5f3fc !important;
   transition: color 140ms ease;
 }
@@ -203,10 +205,10 @@
   text-overflow: clip !important;
   white-space: normal !important;
   color: #ffffff !important;
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: 0.875rem;
+  font-weight: 700;
   letter-spacing: 0.05em;
-  line-height: 1.2;
+  line-height: 1.35;
   text-transform: uppercase;
 }
 
@@ -234,9 +236,13 @@
   display: flex !important;
   align-items: center !important;
   justify-content: flex-start !important;
+  box-sizing: border-box;
   overflow: visible !important;
+  padding: 14px 16px !important;
   border-bottom: 1px solid #f1f5f9 !important;
   color: var(--app-text, #0f172a) !important;
+  font-size: 0.875rem;
+  line-height: 1.4;
   text-align: left !important;
   text-overflow: clip !important;
   white-space: normal !important;
@@ -265,6 +271,7 @@
   overflow-wrap: anywhere;
   text-overflow: clip !important;
   white-space: normal !important;
+  font-size: 0.875rem;
   line-height: 1.35;
 }
 
