@@ -1,4 +1,4 @@
-import React, { useId, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
@@ -6,9 +6,10 @@ import PriceChangeOutlinedIcon from "@mui/icons-material/PriceChangeOutlined";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
+import {
+  OpsModal as Dialog,
+  OpsModalContent as DialogContent,
+} from "@simplishelf/opscards";
 import type {
   SuperDataGridPriceBreakdownLine,
   SuperDataGridPriceBreakdownOptions,
@@ -85,7 +86,6 @@ export default function PriceBreakdownCell({
   options = {},
 }: Readonly<PriceBreakdownCellProps>) {
   const [open, setOpen] = useState(false);
-  const dialogId = useId().replace(/:/g, "");
   const record = asRecord(value);
   const currency = getCurrencyCode(value, options, row);
   const breakdown = useMemo(() => {
@@ -146,39 +146,38 @@ export default function PriceBreakdownCell({
         </span>
       </button>
       <Dialog
-        aria-labelledby={`${dialogId}-title`}
         onClose={() => setOpen(false)}
         open={open}
-        PaperProps={{ className: styles.breakdownDialogPaper }}
+        maxWidth="sm"
+        title={title}
       >
-        <DialogTitle className={styles.breakdownDialogTitle} id={`${dialogId}-title`}>
-          {title}
-        </DialogTitle>
-        <DialogContent className={styles.breakdownDialogContent}>
-          <div className={styles.breakdownGrandTotal}>
-            <span>Grand Total</span>
-            <strong>{formattedTotal}</strong>
-          </div>
-          <div className={styles.breakdownLines}>
-            {breakdown.lines.map(({ key, amount, icon }) => (
-              <div
-                className={`${styles.breakdownLine} ${key === "discount" ? styles.breakdownDiscount : ""}`}
-                key={key}
-              >
-                <span className={styles.breakdownLabel}>
-                  <span aria-hidden="true" className={styles.breakdownLineIcon}>{icon}</span>
-                  {options.labels?.[key] || LINE_LABELS[key]}
-                </span>
-                <strong>
-                  {key === "discount" ? "−" : ""}
-                  {formatAmount(Math.abs(amount ?? 0), currency, options.locale, options.minorUnits)}
-                </strong>
-              </div>
-            ))}
-          </div>
-          <div className={styles.breakdownTotalRow}>
-            <span>{options.labels?.grandTotal || LINE_LABELS.grandTotal}</span>
-            <strong>{formattedTotal}</strong>
+        <DialogContent>
+          <div className={styles.breakdownDialogContent}>
+            <div className={styles.breakdownGrandTotal}>
+              <span>Grand Total</span>
+              <strong>{formattedTotal}</strong>
+            </div>
+            <div className={styles.breakdownLines}>
+              {breakdown.lines.map(({ key, amount, icon }) => (
+                <div
+                  className={`${styles.breakdownLine} ${key === "discount" ? styles.breakdownDiscount : ""}`}
+                  key={key}
+                >
+                  <span className={styles.breakdownLabel}>
+                    <span aria-hidden="true" className={styles.breakdownLineIcon}>{icon}</span>
+                    {options.labels?.[key] || LINE_LABELS[key]}
+                  </span>
+                  <strong>
+                    {key === "discount" ? "−" : ""}
+                    {formatAmount(Math.abs(amount ?? 0), currency, options.locale, options.minorUnits)}
+                  </strong>
+                </div>
+              ))}
+            </div>
+            <div className={styles.breakdownTotalRow}>
+              <span>{options.labels?.grandTotal || LINE_LABELS.grandTotal}</span>
+              <strong>{formattedTotal}</strong>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

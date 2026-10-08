@@ -23,16 +23,17 @@ The example uses a mock server with 1,000 users and demonstrates server-side fil
 
 ## Install and import
 
-SuperDataGrid wraps MUI X DataGrid and generates its column definitions from a list of field names. Install it alongside its UI peer dependencies:
+SuperDataGrid wraps MUI X DataGrid and generates its column definitions from a list of field names. Its dialogs use the shared OpsCards modal shell. Install it alongside its UI peer dependencies:
 
 ```sh
-npm install @simplishelf/super-data-grid @mui/material @mui/x-data-grid @mui/icons-material @emotion/react @emotion/styled
+npm install @simplishelf/super-data-grid @simplishelf/opscards @mui/material @mui/x-data-grid @mui/icons-material @emotion/react @emotion/styled
 ```
 
 Your application should already include `react` and `react-dom`.
 
 ```tsx
 import SuperDataGrid from "@simplishelf/super-data-grid";
+import "@simplishelf/opscards/style.css";
 import "@simplishelf/super-data-grid/style.css";
 
 const columns = ["name", "category", "price"];

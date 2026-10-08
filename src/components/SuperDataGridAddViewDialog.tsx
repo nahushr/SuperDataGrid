@@ -1,15 +1,10 @@
 import React, { useEffect, useState } from "react";
 import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  TextField,
-  Typography,
-} from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+  OpsModal as Dialog,
+  OpsModalActions as DialogActions,
+  OpsModalContent as DialogContent,
+} from "@simplishelf/opscards";
+import { Button, TextField } from "@mui/material";
 import type { GridFilterModel } from "@mui/x-data-grid";
 import type { SuperDataGridView } from "../types";
 import type { SuperDataGridFilterField } from "../utils/filterFields";
@@ -66,63 +61,44 @@ export default function SuperDataGridAddViewDialog({
       onClose={onClose}
       maxWidth="sm"
       fullWidth
-      aria-labelledby="super-data-grid-view-dialog-title"
-      PaperProps={{ className: styles.paper }}
+      title={isEditing ? "Edit view" : "Add view"}
+      subtitle="Set a name, notes, and filters for this saved view. Its filters are managed here and stay independent of the grid filter."
+      closeButtonLabel="Close view dialog"
     >
       <form className={styles.form} onSubmit={saveView}>
-        <DialogTitle id="super-data-grid-view-dialog-title" className={styles.title}>
-          <div>
-            <Typography component="h2" className={styles.heading}>
-              {isEditing ? "Edit view" : "Add view"}
-            </Typography>
-            <Typography className={styles.description}>
-              Set a name, notes, and filters for this saved view. Its filters are
-              managed here and stay independent of the grid filter.
-            </Typography>
-          </div>
-          <IconButton
-            className={styles.closeButton}
-            onClick={onClose}
-            aria-label="Close view dialog"
-            size="small"
-          >
-            <CloseIcon fontSize="small" />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent className={styles.content}>
-          <TextField
-            autoFocus
-            required
-            fullWidth
-            label="View name"
-            className={styles.field}
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            inputProps={{ maxLength: 150 }}
-          />
-          <TextField
-            fullWidth
-            multiline
-            minRows={2}
-            label="Notes (optional)"
-            className={styles.field}
-            value={notes}
-            onChange={(event) => setNotes(event.target.value)}
-          />
-          {open && (
-            <SuperDataGridViewFilterBuilder
-              columns={columns}
-              initialModel={initialView?.filterModel ?? EMPTY_FILTER_MODEL}
-              onChange={setFilterModel}
+        <DialogContent>
+          <div className={styles.content}>
+            <TextField
+              autoFocus
+              required
+              fullWidth
+              label="View name"
+              className={styles.field}
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              inputProps={{ maxLength: 150 }}
             />
-          )}
+            <TextField
+              fullWidth
+              multiline
+              minRows={2}
+              label="Notes (optional)"
+              className={styles.field}
+              value={notes}
+              onChange={(event) => setNotes(event.target.value)}
+            />
+            {open && (
+              <SuperDataGridViewFilterBuilder
+                columns={columns}
+                initialModel={initialView?.filterModel ?? EMPTY_FILTER_MODEL}
+                onChange={setFilterModel}
+              />
+            )}
+          </div>
         </DialogContent>
-        <DialogActions className={styles.actions}>
-          <Button className={styles.actionButton} onClick={onClose}>
-            Cancel
-          </Button>
+        <DialogActions>
+          <Button onClick={onClose}>Cancel</Button>
           <Button
-            className={styles.actionButton}
             type="submit"
             variant="contained"
             disabled={name.trim().length === 0}

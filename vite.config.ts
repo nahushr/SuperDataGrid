@@ -14,7 +14,7 @@ export default defineConfig({
       cssFileName: "style",
     },
     rollupOptions: {
-      external: /^(react|react-dom|@emotion\/react|@emotion\/styled|@mui\/icons-material|@mui\/material|@mui\/x-data-grid|libphonenumber-js|write-excel-file)(\/|$)/,
+      external: /^(react|react-dom|@emotion\/react|@emotion\/styled|@mui\/icons-material|@mui\/material|@mui\/x-data-grid|@simplishelf\/opscards|libphonenumber-js|write-excel-file)(\/|$)/,
       output: {
         exports: "named",
       },

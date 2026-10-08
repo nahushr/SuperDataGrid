@@ -1,10 +1,11 @@
 import React from "react";
 import {
+  OpsModal as Dialog,
+  OpsModalActions as DialogActions,
+  OpsModalContent as DialogContent,
+} from "@simplishelf/opscards";
+import {
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Typography,
 } from "@mui/material";
 import styles from "../styles/export-scope.module.css";
@@ -34,40 +35,42 @@ export default function SuperDataGridExportScopeDialog({
       onClose={onClose}
       maxWidth="xs"
       fullWidth
+      title={`Export ${formatLabel}`}
     >
-      <DialogTitle className={styles.title}>Export {formatLabel}</DialogTitle>
-      <DialogContent className={styles.content}>
-        <Typography className={styles.description}>
-          Choose which rows to include in this export.
-        </Typography>
-        <Button
-          variant="outlined"
-          className={styles.scopeButton}
-          onClick={onCurrentView}
-        >
-          <span className={styles.scopeButtonContent}>
-            <strong>Current table view</strong>
-            <span>Export the rows on the current page.</span>
-          </span>
-        </Button>
-        <Button
-          variant="contained"
-          className={styles.scopeButton}
-          disabled={!canExportAllData}
-          onClick={onAllData}
-        >
-          <span className={styles.scopeButtonContent}>
-            <strong>All matching data</strong>
-            <span>Export every page using the current filters.</span>
-          </span>
-        </Button>
-        {!canExportAllData && (
-          <Typography className={styles.helperText}>
-            Add a getAllData callback to enable all-pages export.
+      <DialogContent>
+        <div className={styles.content}>
+          <Typography className={styles.description}>
+            Choose which rows to include in this export.
           </Typography>
-        )}
+          <Button
+            variant="outlined"
+            className={styles.scopeButton}
+            onClick={onCurrentView}
+          >
+            <span className={styles.scopeButtonContent}>
+              <strong>Current table view</strong>
+              <span>Export the rows on the current page.</span>
+            </span>
+          </Button>
+          <Button
+            variant="contained"
+            className={styles.scopeButton}
+            disabled={!canExportAllData}
+            onClick={onAllData}
+          >
+            <span className={styles.scopeButtonContent}>
+              <strong>All matching data</strong>
+              <span>Export every page using the current filters.</span>
+            </span>
+          </Button>
+          {!canExportAllData && (
+            <Typography className={styles.helperText}>
+              Add a getAllData callback to enable all-pages export.
+            </Typography>
+          )}
+        </div>
       </DialogContent>
-      <DialogActions className={styles.actions}>
+      <DialogActions>
         <Button className={styles.cancelButton} onClick={onClose}>
           Cancel
         </Button>

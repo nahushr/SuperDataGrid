@@ -1,11 +1,10 @@
-import React, { useId, useState } from "react";
+import React, { useState } from "react";
 import CollectionsOutlinedIcon from "@mui/icons-material/CollectionsOutlined";
 import OpenInFullOutlinedIcon from "@mui/icons-material/OpenInFullOutlined";
-import CloseIcon from "@mui/icons-material/Close";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-import IconButton from "@mui/material/IconButton";
+import {
+  OpsModal as Dialog,
+  OpsModalContent as DialogContent,
+} from "@simplishelf/opscards";
 import type { SuperDataGridImageOptions, SuperDataGridRow } from "../../types";
 import { getProductImages } from "../../utils/predefinedCellData";
 import ProductImageCarousel from "./ProductImageCarousel";
@@ -55,7 +54,6 @@ export default function ImagePreviewCell({
 }: Readonly<ImagePreviewCellProps>) {
   const [open, setOpen] = useState(false);
   const [failedThumbnailUrl, setFailedThumbnailUrl] = useState("");
-  const dialogTitleId = useId();
   const images = getProductImages(value, options);
   const mainImage =
     images.find((image) => image.label?.toLowerCase().includes("main")) ??
@@ -114,26 +112,18 @@ export default function ImagePreviewCell({
         </span>
       </button>
       <Dialog
-        aria-labelledby={dialogTitleId}
         onClose={() => setOpen(false)}
         open={open}
-        PaperProps={{ className: styles.productImageDialogPaper }}
-      >
-        <DialogTitle className={styles.productImageDialogTitle} id={dialogTitleId}>
+        maxWidth="lg"
+        title={(
           <span className={styles.productImageDialogHeading}>
             <span className={styles.productImageDialogEyebrow}>PRODUCT GALLERY</span>
             <span className={styles.productImageDialogName}>{title}</span>
           </span>
-          <IconButton
-            aria-label="Close image gallery"
-            className={styles.productImageDialogClose}
-            onClick={() => setOpen(false)}
-            size="small"
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent className={styles.productImageDialogContent}>
+        )}
+        closeButtonLabel="Close image gallery"
+      >
+        <DialogContent>
           {open && (
             <ProductImageCarousel images={images} fallbackLetter={fallbackLetter} />
           )}

@@ -1,14 +1,7 @@
-.title {
-  padding-bottom: 8px !important;
-  font-size: 1.2rem !important;
-  font-weight: 700 !important;
-}
-
 .content {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding-top: 8px !important;
 }
 
 .description,
@@ -39,10 +32,6 @@
 
 .helperText {
   margin: 0 !important;
-}
-
-.actions {
-  padding: 8px 24px 16px !important;
 }
 
 .cancelButton {

@@ -1,11 +1,10 @@
-import React, { useId } from "react";
+import React from "react";
+import {
+  OpsModal as Dialog,
+  OpsModalActions as DialogActions,
+  OpsModalContent as DialogContent,
+} from "@simplishelf/opscards";
 import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
 import Box from "@mui/material/Box";
 import styles from "../styles/error-dialog.module.css";
 
@@ -44,39 +43,24 @@ export function GridErrorDetailsDialog({
   className,
   classes = {},
 }: Readonly<GridErrorDetailsDialogProps>) {
-  const id = useId().replace(/:/g, "");
   const classNames = (base: string, override?: string) =>
     `${base} ${override ?? ""}`.trim();
 
   return (
     <Dialog
-      aria-labelledby={`grid-error-details-title-${id}`}
       className={className}
       onClose={onClose}
       open={open}
-      PaperProps={{
-        className: classNames(styles.paper, classes.paper),
-      }}
+      surfaceClassName={classes.paper}
       maxWidth="sm"
       fullWidth
+      title={title}
+      titleClassName={classes.title}
+      headerClassName={classes.header}
+      closeButtonLabel="Close error details"
+      closeButtonClassName={classes.closeButton}
     >
-      <Box className={classNames(styles.header, classes.header)}>
-        <DialogTitle
-          className={classNames(styles.title, classes.title)}
-          id={`grid-error-details-title-${id}`}
-        >
-          {title}
-        </DialogTitle>
-        <IconButton
-          aria-label="Close error details"
-          className={classNames(styles.closeButton, classes.closeButton)}
-          onClick={onClose}
-          size="small"
-        >
-          <CloseIcon fontSize="small" />
-        </IconButton>
-      </Box>
-      <DialogContent className={classNames(styles.content, classes.content)}>
+      <DialogContent className={classes.content}>
         {rowIdentifier && (
           <Box className={classNames(styles.identifier, classes.identifier)}>
             {rowIdentifier}
@@ -97,9 +81,10 @@ export function GridErrorDetailsDialog({
           ))}
         </Box>
       </DialogContent>
-      <DialogActions className={classNames(styles.footer, classes.footer)}>
+      <DialogActions className={classes.footer}>
         <Button
-          className={classNames(styles.closeAction, classes.closeAction)}
+          className={classes.closeAction}
+          variant="contained"
           onClick={onClose}
         >
           Close

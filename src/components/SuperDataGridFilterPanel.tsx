@@ -1,12 +1,13 @@
 import React from "react";
 import {
+  OpsModal as Dialog,
+  OpsModalActions as DialogActions,
+  OpsModalContent as DialogContent,
+} from "@simplishelf/opscards";
+import {
   Box,
   Button,
   Chip,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Divider,
   FormControl,
   IconButton,
@@ -19,7 +20,6 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import CheckIcon from "@mui/icons-material/Check";
-import CloseIcon from "@mui/icons-material/Close";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import {
   GridLogicOperator,
@@ -359,16 +359,10 @@ export default function SuperDataGridFilterPanel({
       onClose={onClose}
       maxWidth="md"
       fullWidth
-      PaperProps={{ className: styles.paper }}
+      title="Filter Data"
+      closeButtonLabel="Close filter dialog"
     >
-      <DialogTitle className={styles.title}>
-        Filter Data
-        <IconButton onClick={onClose} size="small" aria-label="Close filter dialog">
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
-      <Divider />
-      <DialogContent className={styles.content}>
+      <DialogContent>
         {filters.length > 1 && (
           <Box className={styles.matchRow}>
             <span>Match:</span>
@@ -409,7 +403,6 @@ export default function SuperDataGridFilterPanel({
           Add Filter
         </Button>
       </DialogContent>
-      <Divider />
       <DialogActions className={styles.actions}>
         <Button
           onClick={removeAll}

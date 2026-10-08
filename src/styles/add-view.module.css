@@ -1,46 +1,8 @@
-.paper {
-  width: calc(100% - 32px);
-  max-width: 576px !important;
-  max-height: 85vh;
-  overflow: hidden;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px !important;
-  box-shadow: 0 25px 50px -12px rgb(15 23 42 / 0.25) !important;
-}
-
 .form {
   display: flex;
   min-height: 0;
+  flex: 1 1 auto;
   flex-direction: column;
-}
-
-.title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 16px 24px !important;
-  border-bottom: 1px solid #164e63;
-  background: #083344;
-}
-
-.heading {
-  color: #ffffff;
-  font-size: 1rem !important;
-  font-weight: 600 !important;
-  letter-spacing: -0.025em;
-}
-
-.closeButton {
-  flex: 0 0 auto;
-  color: #a5f3fc !important;
-  border-radius: 8px !important;
-  transition: color 150ms ease, background-color 150ms ease;
-}
-
-.closeButton:hover {
-  color: #ffffff !important;
-  background: rgb(255 255 255 / 0.1) !important;
 }
 
 .content {
@@ -50,15 +12,6 @@
   flex-direction: column;
   gap: 16px;
   overflow-y: auto;
-  padding: 24px !important;
-}
-
-.description {
-  margin: 0;
-  margin-top: 2px !important;
-  color: rgb(204 251 241 / 0.78);
-  font-size: 0.75rem !important;
-  line-height: 1.45 !important;
 }
 
 .field :global(.MuiInputLabel-root) {
@@ -103,48 +56,4 @@
 .field :global(.MuiInputBase-input::placeholder) {
   color: #94a3b8;
   opacity: 1;
-}
-
-.actions {
-  gap: 10px;
-  padding: 14px 24px !important;
-  border-top: 1px solid #e2e8f0;
-  background: #f8fafc;
-}
-
-.actionButton {
-  min-height: 36px;
-  padding: 8px 16px !important;
-  border: 1px solid #cbd5e1 !important;
-  border-radius: 8px !important;
-  background: #ffffff !important;
-  color: #475569 !important;
-  font-size: 0.875rem !important;
-  text-transform: none !important;
-  font-weight: 600 !important;
-  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
-}
-
-.actionButton:hover {
-  background: #f1f5f9 !important;
-}
-
-.actionButton[type="submit"] {
-  border-color: transparent !important;
-  background: #06b6d4 !important;
-  color: #083344 !important;
-  font-weight: 700 !important;
-  box-shadow: 0 1px 2px rgb(15 23 42 / 0.12);
-}
-
-.actionButton[type="submit"]:hover {
-  background: #22d3ee !important;
-}
-
-.actionButton[type="submit"]:global(.Mui-disabled) {
-  border-color: #e2e8f0 !important;
-  background: #e2e8f0 !important;
-  color: #94a3b8 !important;
-  box-shadow: none;
-  cursor: not-allowed;
 }

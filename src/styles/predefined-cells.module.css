@@ -257,15 +257,6 @@
   color: #1976d2;
 }
 
-.jsonDialogPaper {
-  width: min(680px, calc(100vw - 32px));
-  max-height: min(78vh, 760px);
-}
-
-.jsonDialogContent {
-  overflow: auto;
-}
-
 .jsonBlock {
   margin: 0;
   padding: 16px;
@@ -280,14 +271,12 @@
 }
 
 .jsonDialogActions {
-  display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 12px;
-  padding: 12px 24px 20px;
 }
 
 .copiedMessage {
+  margin-right: auto;
   color: #166534;
   font-size: 13px;
 }
@@ -440,25 +429,6 @@
   color: #2563eb;
 }
 
-.productImageDialogPaper {
-  width: min(980px, calc(100vw - 32px));
-  max-width: min(980px, calc(100vw - 32px));
-  overflow: hidden;
-  border: 1px solid #e2e8f0;
-  border-radius: 22px;
-  background: #fff;
-  box-shadow: 0 24px 80px rgb(15 23 42 / 24%);
-}
-
-.productImageDialogTitle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  padding: 22px 26px 17px;
-  border-bottom: 1px solid #edf1f5;
-}
-
 .productImageDialogHeading {
   display: flex;
   flex-direction: column;
@@ -467,7 +437,7 @@
 }
 
 .productImageDialogEyebrow {
-  color: #2563eb;
+  color: #a5f3fc;
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.13em;
@@ -475,25 +445,11 @@
 
 .productImageDialogName {
   overflow: hidden;
-  color: #172033;
-  font-size: 20px;
+  color: #ffffff;
+  font-size: 16px;
   font-weight: 750;
   line-height: 1.25;
   text-overflow: ellipsis;
-}
-
-.productImageDialogClose {
-  flex: 0 0 auto;
-  color: #64748b;
-}
-
-.productImageDialogClose:hover {
-  background: #f1f5f9;
-  color: #0f172a;
-}
-
-.productImageDialogContent {
-  padding: 19px 24px 24px;
 }
 
 .carousel {
@@ -759,21 +715,6 @@
     font-size: 9px;
   }
 
-  .productImageDialogPaper {
-    width: calc(100vw - 20px);
-    max-width: calc(100vw - 20px);
-    margin: 10px;
-    border-radius: 16px;
-  }
-
-  .productImageDialogTitle {
-    padding: 16px 16px 13px;
-  }
-
-  .productImageDialogName {
-    font-size: 17px;
-  }
-
   .productImageDialogContent {
     padding: 14px 14px 17px;
   }
@@ -862,24 +803,10 @@
   font-weight: 600;
 }
 
-.breakdownDialogPaper {
-  width: min(540px, calc(100vw - 32px));
-  max-width: min(540px, calc(100vw - 32px));
-  border-radius: 16px;
-}
-
-.breakdownDialogTitle {
-  padding-bottom: 8px;
-  color: #0f172a;
-  font-size: 20px;
-  font-weight: 750;
-}
-
 .breakdownDialogContent {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding-top: 8px !important;
 }
 
 .breakdownGrandTotal {

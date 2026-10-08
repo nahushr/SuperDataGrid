@@ -1,10 +1,11 @@
-import React, { useId, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
+import {
+  OpsModal as Dialog,
+  OpsModalActions as DialogActions,
+  OpsModalContent as DialogContent,
+} from "@simplishelf/opscards";
 import type { SuperDataGridJsonOptions } from "../../types";
 import { toDisplayValue } from "../../utils/gridData";
 import styles from "../../styles/predefined-cells.module.css";
@@ -52,7 +53,6 @@ export default function JsonPreviewCell({
 }: Readonly<JsonPreviewCellProps>) {
   const [open, setOpen] = useState(false);
   const [copyMessage, setCopyMessage] = useState("");
-  const id = useId().replace(/:/g, "");
   const columnName = field ?? "value";
   const formatted = useMemo(() => formatJson(value), [value]);
   const compact = compactJson(value);
@@ -87,17 +87,15 @@ export default function JsonPreviewCell({
         <span className={styles.jsonPreviewText}>{preview}</span>
       </button>
       <Dialog
-        aria-labelledby={`${id}-title`}
-        className={styles.jsonDialog}
         onClose={() => setOpen(false)}
         open={open}
-        PaperProps={{ className: styles.jsonDialogPaper }}
+        maxWidth="sm"
+        title="JSON preview"
       >
-        <DialogTitle id={`${id}-title`}>JSON preview</DialogTitle>
-        <DialogContent className={styles.jsonDialogContent}>
+        <DialogContent>
           <pre className={styles.jsonBlock}>{formatted}</pre>
         </DialogContent>
-        <DialogActions className={styles.jsonDialogActions}>
+        <DialogActions>
           <span aria-live="polite" className={styles.copiedMessage}>
             {copyMessage}
           </span>

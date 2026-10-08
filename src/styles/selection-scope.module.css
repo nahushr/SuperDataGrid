@@ -1,15 +1,7 @@
-.title {
-  padding: 24px 24px 8px !important;
-  color: #0f172a;
-  font-size: 1.3rem !important;
-  font-weight: 600 !important;
-}
-
 .content {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 12px 24px 20px !important;
 }
 
 .description {
@@ -26,7 +18,6 @@
 
 .actions {
   gap: 8px;
-  padding: 8px 16px 16px !important;
 }
 
 .actionButton {

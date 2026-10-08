@@ -1,12 +1,13 @@
 import React from "react";
 import {
+  OpsModal as Dialog,
+  OpsModalActions as DialogActions,
+  OpsModalContent as DialogContent,
+} from "@simplishelf/opscards";
+import {
   Alert,
   Button,
   CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Typography,
 } from "@mui/material";
 import styles from "../styles/bulk-delete.module.css";
@@ -36,26 +37,22 @@ export default function SuperDataGridBulkDeleteDialog({
       className={muiControlUtilities}
       open={open}
       onClose={loading ? undefined : onClose}
-      aria-labelledby="super-data-grid-bulk-delete-title"
       aria-describedby="super-data-grid-bulk-delete-description"
       maxWidth="sm"
       fullWidth
+      title={`Delete selected ${itemLabel}?`}
     >
-      <DialogTitle
-        id="super-data-grid-bulk-delete-title"
-        className={styles.title}
-      >
-        Delete selected {itemLabel}?
-      </DialogTitle>
-      <DialogContent className={styles.content}>
-        <Typography
-          id="super-data-grid-bulk-delete-description"
-          className={styles.description}
-        >
-          This will delete {selectedCount} selected {itemLabel}. This action
-          cannot be undone.
-        </Typography>
-        {error && <Alert severity="error">{error}</Alert>}
+      <DialogContent>
+        <div className={styles.content}>
+          <Typography
+            id="super-data-grid-bulk-delete-description"
+            className={styles.description}
+          >
+            This will delete {selectedCount} selected {itemLabel}. This action
+            cannot be undone.
+          </Typography>
+          {error && <Alert severity="error">{error}</Alert>}
+        </div>
       </DialogContent>
       <DialogActions className={styles.actions}>
         <Button
