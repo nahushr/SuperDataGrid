@@ -274,9 +274,6 @@
 
 .gridRoot:global(.MuiDataGrid-autosizing)
   :global(.MuiDataGrid-cell *:not(svg):not(img)) {
-  width: max-content !important;
-  min-width: max-content !important;
-  max-width: none !important;
   overflow: visible !important;
   overflow-wrap: normal !important;
   text-overflow: clip !important;
