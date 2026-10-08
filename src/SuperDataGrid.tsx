@@ -544,6 +544,7 @@ export function SuperDataGrid<
   hideFooterSelectedRowCount = true,
   hideToolbar = false,
   dataGridSlots,
+  cardHeaderActions,
   beforeTable,
   toolbarActions,
   onResetToDefault,
@@ -1419,11 +1420,20 @@ export function SuperDataGrid<
           </div>
         </div>
       )}
-      <div className={styles.gridFrame}>
+      <div
+        className={`${styles.gridFrame} ${
+          cardHeaderActions != null ? styles.gridFrameWithCardHeaderActions : ""
+        }`}
+      >
+        {cardHeaderActions != null && (
+          <div className={styles.gridCardHeaderActions}>{cardHeaderActions}</div>
+        )}
         <SuperDataGridContext.Provider value={contextValue}>
           <DataGrid
             apiRef={apiRef}
-            className={`${styles.gridRoot} tw:font-sans tw:bg-white tw:text-slate-900 tw:[&_.MuiDataGrid-columnHeaders]:border-b tw:[&_.MuiDataGrid-columnHeaders]:border-[#155e75] tw:[&_.MuiDataGrid-columnHeaders]:bg-[#0e7490] tw:[&_.MuiDataGrid-columnHeaders]:text-white tw:[&_.MuiDataGrid-columnHeader]:bg-[#0e7490] tw:[&_.MuiDataGrid-columnHeader]:text-white tw:[&_.MuiDataGrid-columnSeparator]:text-[#155e75] tw:[&_.MuiDataGrid-columnHeaderTitle]:text-sm tw:[&_.MuiDataGrid-columnHeaderTitle]:font-bold tw:[&_.MuiDataGrid-columnHeaderTitle]:uppercase tw:[&_.MuiDataGrid-columnHeaderTitle]:tracking-wider tw:[&_.MuiDataGrid-columnHeaderTitle]:text-white tw:[&_.MuiDataGrid-columnHeader_.MuiDataGrid-sortIcon]:text-cyan-200 tw:[&_.MuiDataGrid-columnHeader_.MuiDataGrid-sortIcon]:h-4 tw:[&_.MuiDataGrid-columnHeader_.MuiDataGrid-sortIcon]:w-4 ${gridClassName ?? ""}`}
+            className={`${styles.gridRoot} ${
+              cardHeaderActions != null ? styles.gridRootWithCardHeaderActions : ""
+            } tw:font-sans tw:bg-white tw:text-slate-900 tw:[&_.MuiDataGrid-columnHeaders]:border-b tw:[&_.MuiDataGrid-columnHeaders]:border-[#155e75] tw:[&_.MuiDataGrid-columnHeaders]:bg-[#0e7490] tw:[&_.MuiDataGrid-columnHeaders]:text-white tw:[&_.MuiDataGrid-columnHeader]:bg-[#0e7490] tw:[&_.MuiDataGrid-columnHeader]:text-white tw:[&_.MuiDataGrid-columnSeparator]:text-[#155e75] tw:[&_.MuiDataGrid-columnHeaderTitle]:text-sm tw:[&_.MuiDataGrid-columnHeaderTitle]:font-bold tw:[&_.MuiDataGrid-columnHeaderTitle]:uppercase tw:[&_.MuiDataGrid-columnHeaderTitle]:tracking-wider tw:[&_.MuiDataGrid-columnHeader_.MuiDataGrid-sortIcon]:text-cyan-200 tw:[&_.MuiDataGrid-columnHeader_.MuiDataGrid-sortIcon]:h-4 tw:[&_.MuiDataGrid-columnHeader_.MuiDataGrid-sortIcon]:w-4 ${gridClassName ?? ""}`}
             classes={{
               ...(cellClassName ? { cell: cellClassName } : {}),
               ...(columnHeaderClassName ? { columnHeader: columnHeaderClassName } : {}),

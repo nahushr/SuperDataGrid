@@ -101,6 +101,22 @@
   box-shadow: 0 1px 2px rgb(15 23 42 / 4%);
 }
 
+.gridFrameWithCardHeaderActions {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+}
+
+.gridCardHeaderActions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 36px;
+  margin-bottom: 8px;
+  overflow: visible;
+}
+
 .gridRoot {
   font-family: "Inter", ui-sans-serif, system-ui, sans-serif !important;
   height: 100%;
@@ -111,6 +127,11 @@
   --DataGrid-containerBackground: #ffffff;
   --DataGrid-pinnedBackground: #ffffff;
   --DataGrid-rowBorderColor: rgb(226 232 240 / 80%);
+}
+
+.gridRootWithCardHeaderActions {
+  height: calc(100% - 44px);
+  min-height: 0;
 }
 
 .gridRoot :global(.MuiDataGrid-main),

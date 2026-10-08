@@ -285,6 +285,8 @@ export interface SuperDataGridProps<
   hideToolbar?: boolean;
   /** Optional host-provided empty and loading overlays. */
   dataGridSlots?: Partial<Pick<GridSlotsComponent, "noRowsOverlay" | "loadingOverlay">>;
+  /** Optional host actions rendered in a dedicated row inside the grid card. */
+  cardHeaderActions?: ReactNode;
   /** Optional content rendered after the toolbar and before the table. */
   beforeTable?: ReactNode;
   /** Optional host actions rendered at the right side of the main toolbar. */
