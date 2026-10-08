@@ -224,6 +224,7 @@ function createGridColumn<Row extends SuperDataGridRow>(
   field: string,
   data: readonly Row[],
   autoSizedWidths: Readonly<Record<string, number>>,
+  flexSizingReady: boolean,
   columnConfiguration: SuperDataGridProps<Row>["columnConfiguration"],
   columnTypes: SuperDataGridProps<Row>["columnTypes"],
   columnOptions: SuperDataGridProps<Row>["columnOptions"],
@@ -233,6 +234,11 @@ function createGridColumn<Row extends SuperDataGridRow>(
   const columnType = columnTypes?.[field];
   const options = columnOptions?.[field];
   const configuration = columnConfiguration?.[field];
+  const canFlex = configuration?.width == null;
+  const flex = canFlex && flexSizingReady
+    ? configuration?.flex ?? 1
+    : undefined;
+  const measuredWidth = autoSizedWidths[field];
   return {
     field,
     headerName: configuration?.headerName ?? toHeaderName(field),
@@ -242,14 +248,15 @@ function createGridColumn<Row extends SuperDataGridRow>(
     valueGetter: getGridValueGetter(field, columnType, options),
     align: configuration?.align ?? "left",
     headerAlign: configuration?.headerAlign ?? "left",
-    // Leave unconstrained columns out of flex sizing so MUI's content-based
-    // autosize can measure their rendered headers and cells after they mount.
-    // Consumers can still opt into proportional sizing with `flex`.
-    flex: configuration?.flex,
-    width: configuration?.width ?? autoSizedWidths[field],
-    // No package-wide width floor: autosizing uses the current page's rendered
-    // content and headers. Hosts can supply a minimum when their layout needs it.
-    minWidth: configuration?.minWidth,
+    // Measure unconstrained columns against the current page first, then use
+    // flex ratios to share the available grid width without clipping content.
+    flex,
+    width: configuration?.width ?? (
+      flexSizingReady && flex == null ? measuredWidth : undefined
+    ),
+    minWidth: flex == null
+      ? configuration?.minWidth
+      : Math.max(configuration?.minWidth ?? 0, measuredWidth ?? 0),
     maxWidth: configuration?.maxWidth,
     hideable: configuration?.hideable,
     renderCell: ({ value, row }) => renderGridCell(
@@ -298,9 +305,10 @@ function useAutoSizeColumns(
   dataKey: string,
   columnDefinitionsKey: string,
   onWidthsMeasured: (widths: Record<string, number>) => void,
-): boolean {
+): { isAutoSizing: boolean; measuredKey: string | null } {
   const lastAutoSizeKey = React.useRef<string | null>(null);
   const [isAutoSizing, setIsAutoSizing] = useState(false);
+  const [measuredKey, setMeasuredKey] = useState<string | null>(null);
 
   useEffect(() => {
     if (loading || columnFieldsKey.length === 0) {
@@ -338,9 +346,20 @@ function useAutoSizeColumns(
               api,
               columnFieldsKey.split("\u0000"),
             ));
-            if (!cancelled) lastAutoSizeKey.current = autoSizeKey;
+            if (!cancelled) {
+              lastAutoSizeKey.current = autoSizeKey;
+              setMeasuredKey(autoSizeKey);
+            }
           },
-          () => undefined,
+          () => {
+            if (cancelled) return;
+            onWidthsMeasured(resizeColumnsToRenderedContent(
+              api,
+              columnFieldsKey.split("\u0000"),
+            ));
+            lastAutoSizeKey.current = autoSizeKey;
+            setMeasuredKey(autoSizeKey);
+          },
         ).finally(() => {
           if (!cancelled) setIsAutoSizing(false);
         });
@@ -354,7 +373,7 @@ function useAutoSizeColumns(
     };
   }, [apiRef, columnDefinitionsKey, columnFieldsKey, dataKey, lastAutoSizeKey, loading, onWidthsMeasured]);
 
-  return isAutoSizing;
+  return { isAutoSizing, measuredKey };
 }
 
 /**
@@ -589,19 +608,47 @@ export function SuperDataGrid<
     [],
   );
 
+  const autoSizeColumnFields = useMemo(
+    () => columns.filter((field) =>
+      columnConfiguration?.[field]?.width == null,
+    ),
+    [columnConfiguration, columns],
+  );
+  const autoSizeColumnFieldsKey = autoSizeColumnFields.join("\u0000");
+  const autoSizeDataKey = useMemo(
+    () => getAutoSizeDataKey(data),
+    [data],
+  );
+  const autoSizeColumnDefinitionsKey = useMemo(
+    () => createUniqueId("columns"),
+    [cellComponents, columnConfiguration, columnOptions, columnTypes, columns],
+  );
+  const autoSizeKey = `${autoSizeColumnFieldsKey}\u0001${autoSizeDataKey}\u0001${autoSizeColumnDefinitionsKey}`;
+  const { isAutoSizing, measuredKey } = useAutoSizeColumns(
+    apiRef,
+    autoSizeColumnFieldsKey,
+    loading,
+    autoSizeDataKey,
+    autoSizeColumnDefinitionsKey,
+    updateAutoSizedWidths,
+  );
+  const flexSizingReady =
+    autoSizeColumnFields.length === 0 || measuredKey === autoSizeKey;
+
   const gridColumns = useMemo<GridColDef[]>(
     () =>
       columns.map((field) => createGridColumn(
         field,
         data,
         autoSizedWidths,
+        flexSizingReady,
         columnConfiguration,
         columnTypes,
         columnOptions,
         cellComponents,
         onAction,
       )),
-    [autoSizedWidths, cellComponents, columnConfiguration, columns, columnOptions, columnTypes, data, onAction],
+    [autoSizedWidths, cellComponents, columnConfiguration, columns, columnOptions, columnTypes, data, flexSizingReady, onAction],
   );
 
   const filterFields = useMemo(
@@ -664,23 +711,6 @@ export function SuperDataGrid<
     [filterOnlyColumns, gridColumns],
   );
 
-  const autoSizeColumnFields = useMemo(
-    () => columns.filter((field) => {
-      const configuration = columnConfiguration?.[field];
-      return configuration?.width == null && configuration?.flex == null;
-    }),
-    [columnConfiguration, columns],
-  );
-  const autoSizeColumnFieldsKey = autoSizeColumnFields.join("\u0000");
-  const autoSizeDataKey = useMemo(
-    () => getAutoSizeDataKey(data),
-    [data],
-  );
-  const autoSizeColumnDefinitionsKey = useMemo(
-    () => createUniqueId("columns"),
-    [cellComponents, columnConfiguration, columnOptions, columnTypes, columns],
-  );
-
   const dataGridColumnVisibilityModel = useMemo(
     () => ({
       ...columnVisibilityModel,
@@ -709,15 +739,6 @@ export function SuperDataGrid<
         return { ...record, id: rowId };
       }),
     [data, getRowId, gridColumns],
-  );
-
-  const isAutoSizing = useAutoSizeColumns(
-    apiRef,
-    autoSizeColumnFieldsKey,
-    loading,
-    autoSizeDataKey,
-    autoSizeColumnDefinitionsKey,
-    updateAutoSizedWidths,
   );
 
   const filterModel = filterModelProp ?? internalFilterModel;

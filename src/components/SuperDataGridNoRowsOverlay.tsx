@@ -9,20 +9,32 @@ export default function SuperDataGridNoRowsOverlay() {
   const hasFilters = gridState?.filterModel.items.some(
     (filter) => filter.field !== "" && filter.operator !== "",
   ) ?? false;
+  const selectedView = gridState?.views.find(
+    (view) => view.id === gridState.selectedViewId,
+  );
+  const title = hasFilters
+    ? "No rows match these filters"
+    : selectedView != null
+      ? "Nothing in this view yet"
+      : "Your grid is empty";
+  const description = hasFilters
+    ? "These conditions returned no results. Adjust the filters to bring matching records back."
+    : selectedView != null
+      ? `“${selectedView.name}” currently has no matching records. Choose another view or adjust its conditions.`
+      : "There are no records to show right now. When data is available, it will appear here.";
 
   return (
     <output className={styles.overlay}>
-      <span aria-hidden="true" className={styles.icon}>
-        {hasFilters ? <FilterAltOffOutlinedIcon /> : <InboxOutlinedIcon />}
-      </span>
-      <strong className={styles.title}>
-        {hasFilters ? "No rows match these filters" : "No rows to display"}
-      </strong>
-      {hasFilters && (
-        <span className={styles.description}>
-          Adjust or clear the filter conditions to see matching records.
+      <span className={styles.emptyState}>
+        <span aria-hidden="true" className={styles.icon}>
+          {hasFilters ? <FilterAltOffOutlinedIcon /> : <InboxOutlinedIcon />}
         </span>
-      )}
+        <span className={styles.eyebrow}>
+          {selectedView != null ? selectedView.name : "GRID STATUS"}
+        </span>
+        <strong className={styles.title}>{title}</strong>
+        <span className={styles.description}>{description}</span>
+      </span>
     </output>
   );
 }
