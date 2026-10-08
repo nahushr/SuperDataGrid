@@ -37,7 +37,7 @@ import { exportGridData, type ExportFormat } from "../utils/export";
 import styles from "../styles/toolbar.module.css";
 
 const toolbarButtonClasses =
-  "tw:min-h-9 tw:rounded-xl tw:px-3 tw:py-1.5 tw:text-[13px] tw:font-semibold tw:normal-case tw:tracking-normal tw:shadow-sm tw:transition-all tw:duration-200 tw:focus-visible:outline-none tw:focus-visible:ring-2 tw:focus-visible:ring-[#cffafe] tw:disabled:cursor-not-allowed tw:disabled:opacity-50";
+  "tw:min-h-9 tw:rounded-xl tw:px-3 tw:py-1.5 tw:text-sm tw:font-medium tw:normal-case tw:tracking-normal tw:shadow-sm tw:transition-all tw:duration-200 tw:focus-visible:outline-none tw:focus-visible:ring-2 tw:focus-visible:ring-[#cffafe] tw:disabled:cursor-not-allowed tw:disabled:opacity-50";
 const outlinedToolbarButtonClasses =
   "tw:border-[#cffafe] tw:bg-white tw:text-[#0e7490] tw:hover:-translate-y-px tw:hover:border-[#0e7490] tw:hover:bg-[#ecfeff] tw:hover:text-[#0e7490] tw:hover:shadow-md";
 const activeSecondaryToolbarButtonClasses =

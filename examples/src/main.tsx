@@ -31,15 +31,7 @@ const simpliShelfTheme = createTheme({
   },
   shape: { borderRadius: 8 },
   typography: {
-    fontFamily: [
-      "-apple-system",
-      "BlinkMacSystemFont",
-      '"Segoe UI"',
-      "Roboto",
-      '"Helvetica Neue"',
-      "Arial",
-      "sans-serif",
-    ].join(","),
+    fontFamily: '"Inter", ui-sans-serif, system-ui, sans-serif',
   },
 });
 

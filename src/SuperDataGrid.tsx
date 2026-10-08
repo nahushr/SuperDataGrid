@@ -141,6 +141,14 @@ function getGridColumnType<Row extends SuperDataGridRow>(
   return inferColumnType(field, data);
 }
 
+function usesMonospacedFont(
+  field: string,
+  columnType: SuperDataGridColumnType | undefined,
+): boolean {
+  return columnType === "date" || columnType === "dateTime" ||
+    /(?:id|code|timestamp|date|time|at)$/i.test(field);
+}
+
 function getGridValueGetter(
   field: string,
   columnType: SuperDataGridColumnType | undefined,
@@ -233,6 +241,7 @@ function createGridColumn<Row extends SuperDataGridRow>(
   const columnType = columnTypes?.[field];
   const options = columnOptions?.[field];
   const configuration = columnConfiguration?.[field];
+  const monospaceCell = usesMonospacedFont(field, columnType);
   const canFlex = configuration?.width == null;
   const flex = canFlex && flexSizingReady
     ? configuration?.flex ?? 1
@@ -258,6 +267,7 @@ function createGridColumn<Row extends SuperDataGridRow>(
       : Math.max(configuration?.minWidth ?? 0, measuredWidth ?? 0),
     maxWidth: configuration?.maxWidth,
     hideable: configuration?.hideable,
+    cellClassName: monospaceCell ? styles.monospaceCell : undefined,
     renderCell: ({ value, row }) => renderGridCell(
       field,
       columnType,
@@ -1290,7 +1300,7 @@ export function SuperDataGrid<
 
   return (
     <div
-      className={`super-data-grid ${styles.gridWorkspace} ${densityClass} ${muiControlUtilities} tw:relative tw:flex tw:w-full tw:items-stretch tw:gap-3.5 tw:py-3 tw:[&_.MuiPaginationItem-root]:rounded-lg tw:[&_.MuiPaginationItem-root]:font-semibold tw:[&_.MuiPaginationItem-root.Mui-selected]:border-blue-600 tw:[&_.MuiPaginationItem-root.Mui-selected]:bg-blue-600 tw:[&_.MuiPaginationItem-root.Mui-selected]:text-white tw:hover:[&_.MuiPaginationItem-root.Mui-selected]:bg-blue-700 ${
+      className={`super-data-grid ${styles.gridWorkspace} ${densityClass} ${muiControlUtilities} tw:font-sans tw:relative tw:flex tw:w-full tw:items-stretch tw:gap-3.5 tw:py-3 tw:[&_.MuiPaginationItem-root]:rounded-lg tw:[&_.MuiPaginationItem-root]:font-semibold tw:[&_.MuiPaginationItem-root.Mui-selected]:border-blue-600 tw:[&_.MuiPaginationItem-root.Mui-selected]:bg-blue-600 tw:[&_.MuiPaginationItem-root.Mui-selected]:text-white tw:hover:[&_.MuiPaginationItem-root.Mui-selected]:bg-blue-700 ${
         !hideViews && !viewsOpen ? styles.gridWorkspaceViewsClosed : ""
       }`}
       style={workspaceStyle}
@@ -1337,7 +1347,7 @@ export function SuperDataGrid<
         <SuperDataGridContext.Provider value={contextValue}>
           <DataGrid
             apiRef={apiRef}
-            className={`${styles.gridRoot} tw:bg-white tw:text-slate-900 tw:[&_.MuiDataGrid-columnHeaders]:border-b tw:[&_.MuiDataGrid-columnHeaders]:border-[#155e75] tw:[&_.MuiDataGrid-columnHeaders]:bg-[#0e7490] tw:[&_.MuiDataGrid-columnHeaders]:text-white tw:[&_.MuiDataGrid-columnHeader]:bg-[#0e7490] tw:[&_.MuiDataGrid-columnHeader]:text-white tw:[&_.MuiDataGrid-columnSeparator]:text-[#155e75] tw:[&_.MuiDataGrid-columnHeaderTitle]:font-semibold tw:[&_.MuiDataGrid-columnHeaderTitle]:tracking-wide tw:[&_.MuiDataGrid-columnHeaderTitle]:text-white tw:[&_.MuiDataGrid-columnHeader_.MuiSvgIcon-root]:text-white`}
+            className={`${styles.gridRoot} tw:font-sans tw:bg-white tw:text-slate-900 tw:[&_.MuiDataGrid-columnHeaders]:border-b tw:[&_.MuiDataGrid-columnHeaders]:border-[#155e75] tw:[&_.MuiDataGrid-columnHeaders]:bg-[#0e7490] tw:[&_.MuiDataGrid-columnHeaders]:text-white tw:[&_.MuiDataGrid-columnHeader]:bg-[#0e7490] tw:[&_.MuiDataGrid-columnHeader]:text-white tw:[&_.MuiDataGrid-columnSeparator]:text-[#155e75] tw:[&_.MuiDataGrid-columnHeaderTitle]:text-xs tw:[&_.MuiDataGrid-columnHeaderTitle]:font-semibold tw:[&_.MuiDataGrid-columnHeaderTitle]:uppercase tw:[&_.MuiDataGrid-columnHeaderTitle]:tracking-wider tw:[&_.MuiDataGrid-columnHeaderTitle]:text-white/90 tw:[&_.MuiDataGrid-columnHeader_.MuiSvgIcon-root]:text-teal-200`}
             disableColumnSorting
             disableVirtualization={isAutoSizing}
             rows={rows}
