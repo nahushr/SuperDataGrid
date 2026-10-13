@@ -232,7 +232,7 @@
 .gridRoot :global(.MuiDataGrid-columnHeaderTitle) {
   display: block;
   overflow: visible !important;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
   text-align: left !important;
   text-overflow: clip !important;
   white-space: normal !important;
@@ -300,7 +300,7 @@
   width: 100%;
   min-height: 100%;
   overflow: visible !important;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
   text-overflow: clip !important;
   white-space: normal !important;
   font-size: 0.875rem;
@@ -314,7 +314,7 @@
   width: 100%;
   min-height: 52px;
   box-sizing: border-box;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
   white-space: normal;
   line-height: 1.35;
 }
@@ -322,7 +322,7 @@
 .cellTextValue {
   display: block;
   width: 100%;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
   white-space: normal;
   text-align: left;
 }

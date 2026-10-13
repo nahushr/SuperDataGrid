@@ -74,6 +74,7 @@ const shouldSizeColumnsToContent = (): boolean =>
   window.innerWidth < 1280 ||
   window.innerWidth >= 1536;
 const EMPTY_AUTO_SIZED_WIDTHS: Readonly<Record<string, number>> = Object.freeze({});
+const EMPTY_AUTO_SIZED_MIN_WIDTHS: Readonly<Record<string, number>> = Object.freeze({});
 
 export type {
   SuperDataGridActionRequest,
@@ -251,6 +252,7 @@ function createGridColumn<Row extends SuperDataGridRow>(
   field: string,
   data: readonly Row[],
   autoSizedWidths: Readonly<Record<string, number>>,
+  autoSizedMinWidths: Readonly<Record<string, number>>,
   flexSizingReady: boolean,
   sizeColumnsToContent: boolean,
   columnConfiguration: SuperDataGridProps<Row>["columnConfiguration"],
@@ -268,6 +270,7 @@ function createGridColumn<Row extends SuperDataGridRow>(
     ? configuration?.flex ?? 1
     : undefined;
   const measuredWidth = autoSizedWidths[field];
+  const measuredMinWidth = autoSizedMinWidths[field];
   const configuredCellClassName = configuration?.cellClassName;
   const cellBaseClassName = monospaceCell ? styles.monospaceCell : "";
   const cellClassName: GridColDef["cellClassName"] =
@@ -293,7 +296,7 @@ function createGridColumn<Row extends SuperDataGridRow>(
     minWidth: flex == null
       ? configuration?.minWidth
       : sizeColumnsToContent
-        ? Math.max(configuration?.minWidth ?? 0, measuredWidth ?? 0)
+        ? Math.max(configuration?.minWidth ?? 0, measuredMinWidth ?? 0)
         : configuration?.minWidth ?? 50,
     maxWidth: configuration?.maxWidth,
     hideable: configuration?.hideable,
@@ -344,7 +347,10 @@ function useAutoSizeColumns(
   loading: boolean,
   dataKey: string,
   columnDefinitionsKey: string,
-  onWidthsMeasured: (widths: Record<string, number>) => void,
+  onWidthsMeasured: (
+    widths: Record<string, number>,
+    minWidths: Record<string, number>,
+  ) => void,
 ): { isAutoSizing: boolean; measuredKey: string | null } {
   const lastAutoSizeKey = React.useRef<string | null>(null);
   const [isAutoSizing, setIsAutoSizing] = useState(false);
@@ -382,10 +388,11 @@ function useAutoSizeColumns(
           disableColumnVirtualization: true,
         }).then(
           () => {
-            onWidthsMeasured(resizeColumnsToRenderedContent(
+            const measurements = resizeColumnsToRenderedContent(
               api,
               columnFieldsKey.split("\u0000"),
-            ));
+            );
+            onWidthsMeasured(measurements.widths, measurements.minWidths);
             if (!cancelled) {
               lastAutoSizeKey.current = autoSizeKey;
               setMeasuredKey(autoSizeKey);
@@ -393,10 +400,11 @@ function useAutoSizeColumns(
           },
           () => {
             if (cancelled) return;
-            onWidthsMeasured(resizeColumnsToRenderedContent(
+            const measurements = resizeColumnsToRenderedContent(
               api,
               columnFieldsKey.split("\u0000"),
-            ));
+            );
+            onWidthsMeasured(measurements.widths, measurements.minWidths);
             lastAutoSizeKey.current = autoSizeKey;
             setMeasuredKey(autoSizeKey);
           },
@@ -422,25 +430,107 @@ function useAutoSizeColumns(
  * each currently rendered cell's scroll width. At this point row
  * virtualization is disabled and `data` contains only the current page.
  */
+interface AutoSizedColumnMeasurements {
+  widths: Record<string, number>;
+  minWidths: Record<string, number>;
+}
+
+/**
+ * Measure a rendered cell's intrinsic minimum while allowing its text to wrap.
+ * The regular auto-size measurement intentionally measures max-content; using
+ * that value as a flex minimum makes the whole grid wider than its viewport.
+ */
+function measureMinContentWidth(
+  source: HTMLElement,
+  root: HTMLElement,
+  isHeader = false,
+): number {
+  const probe = source.cloneNode(true) as HTMLElement;
+  probe.setAttribute("aria-hidden", "true");
+  probe.setAttribute("inert", "");
+  const probeStyles: Record<string, string> = {
+    position: "fixed",
+    left: "-100000px",
+    top: "0",
+    width: "min-content",
+    "min-width": "0",
+    "max-width": "none",
+    height: "auto",
+    overflow: "visible",
+    visibility: "hidden",
+    "pointer-events": "none",
+    contain: "none",
+    transform: "none",
+    flex: "none",
+  };
+  Object.entries(probeStyles).forEach(([property, value]) => {
+    probe.style.setProperty(property, value, "important");
+  });
+
+  // During MUI's max-content measurement it temporarily prevents wrapping.
+  // Override that only on the inert clone so min-content reflects the real
+  // layout after the grid applies the available viewport width.
+  probe.querySelectorAll<HTMLElement>("*").forEach((element) => {
+    const directText = Array.from(element.childNodes)
+      .filter((node) => node.nodeType === Node.TEXT_NODE)
+      .map((node) => node.textContent ?? "")
+      .join(" ")
+      .trim();
+    const hasLongUnbrokenText = directText
+      .split(/\s+/)
+      .some((word) => word.length > 24);
+
+    element.style.setProperty("white-space", "normal", "important");
+    element.style.setProperty(
+      "overflow-wrap",
+      !isHeader && hasLongUnbrokenText ? "anywhere" : "normal",
+      "important",
+    );
+    element.style.setProperty("word-break", "normal", "important");
+  });
+  probe.querySelectorAll<HTMLElement>(
+    "button, [role='button'], .MuiButtonBase-root, .MuiChip-root",
+  ).forEach((control) => {
+    control.style.setProperty("width", "max-content", "important");
+    control.style.setProperty("min-width", "max-content", "important");
+    control.style.setProperty("max-width", "none", "important");
+    control.style.setProperty("white-space", "nowrap", "important");
+    control.querySelectorAll<HTMLElement>("*").forEach((child) => {
+      child.style.setProperty("white-space", "nowrap", "important");
+    });
+  });
+
+  root.appendChild(probe);
+  const width = Math.max(
+    probe.getBoundingClientRect().width,
+    probe.scrollWidth,
+  );
+  probe.remove();
+  return Math.ceil(width);
+}
+
 function resizeColumnsToRenderedContent(
   api: NonNullable<ReturnType<typeof useGridApiRef>["current"]>,
   fields: readonly string[],
-): Record<string, number> {
+): AutoSizedColumnMeasurements {
   const root = api.rootElementRef.current;
-  if (root == null) return {};
+  if (root == null) return { widths: {}, minWidths: {} };
 
   const cells = Array.from(
     root.querySelectorAll<HTMLElement>(`.MuiDataGrid-cell[data-field]`),
   );
   const widths: Record<string, number> = {};
+  const minWidths: Record<string, number> = {};
 
   for (const field of fields) {
     const column = api.getColumn(field);
     if (column == null) continue;
 
-    const cellWidth = cells.reduce((widest, cell) =>
-      cell.dataset.field === field ? Math.max(widest, cell.scrollWidth) : widest,
-    0);
+    const columnCells = cells.filter((cell) => cell.dataset.field === field);
+    const cellWidth = columnCells.reduce(
+      (widest, cell) => Math.max(widest, cell.scrollWidth),
+      0,
+    );
     const header = api.getColumnHeaderElement(field);
     if (header == null && cellWidth === 0) continue;
 
@@ -454,9 +544,17 @@ function resizeColumnsToRenderedContent(
     );
 
     widths[field] = measuredWidth;
+    const intrinsicMinimum = columnCells.reduce(
+      (widest, cell) => Math.max(widest, measureMinContentWidth(cell, root)),
+      header == null ? 0 : measureMinContentWidth(header, root, true),
+    );
+    minWidths[field] = Math.min(
+      maxWidth,
+      Math.max(column.minWidth ?? 0, intrinsicMinimum),
+    );
   }
 
-  return widths;
+  return { widths, minWidths };
 }
 
 function getAutoSizeValueSignature(value: unknown, depth = 0): string {
@@ -602,6 +700,7 @@ export function SuperDataGrid<
   const apiRef = useGridApiRef();
   const viewsSidebarId = useId();
   const [autoSizedWidths, setAutoSizedWidths] = useState<Record<string, number>>({});
+  const [autoSizedMinWidths, setAutoSizedMinWidths] = useState<Record<string, number>>({});
   const [internalDensity, setInternalDensity] =
     useState<GridDensity>("standard");
   const density = densityProp ?? internalDensity;
@@ -645,11 +744,25 @@ export function SuperDataGrid<
   });
   const selectionControllerRef = React.useRef<AbortController | null>(null);
   const updateAutoSizedWidths = useCallback(
-    (measuredWidths: Record<string, number>) => {
+    (
+      measuredWidths: Record<string, number>,
+      measuredMinWidths: Record<string, number>,
+    ) => {
       setAutoSizedWidths((currentWidths) => {
         let changed = false;
         const nextWidths = { ...currentWidths };
         for (const [field, width] of Object.entries(measuredWidths)) {
+          if (Math.abs((currentWidths[field] ?? 0) - width) > 1) {
+            nextWidths[field] = width;
+            changed = true;
+          }
+        }
+        return changed ? nextWidths : currentWidths;
+      });
+      setAutoSizedMinWidths((currentWidths) => {
+        let changed = false;
+        const nextWidths = { ...currentWidths };
+        for (const [field, width] of Object.entries(measuredMinWidths)) {
           if (Math.abs((currentWidths[field] ?? 0) - width) > 1) {
             nextWidths[field] = width;
             changed = true;
@@ -699,6 +812,7 @@ export function SuperDataGrid<
         field,
         data,
         widthsForCurrentViewport,
+        sizeColumnsToContent ? autoSizedMinWidths : EMPTY_AUTO_SIZED_MIN_WIDTHS,
         flexSizingReady,
         sizeColumnsToContent,
         columnConfiguration,
@@ -707,7 +821,7 @@ export function SuperDataGrid<
         cellComponents,
         onAction,
       )),
-    [cellComponents, columnConfiguration, columns, columnOptions, columnTypes, data, flexSizingReady, onAction, sizeColumnsToContent, widthsForCurrentViewport],
+    [autoSizedMinWidths, cellComponents, columnConfiguration, columns, columnOptions, columnTypes, data, flexSizingReady, onAction, sizeColumnsToContent, widthsForCurrentViewport],
   );
 
   const filterFields = useMemo(
