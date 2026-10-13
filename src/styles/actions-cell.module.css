@@ -10,10 +10,10 @@
 
 .actionsCellInline {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: flex-end;
-  gap: 8px;
+  gap: 6px;
   width: 100%;
   min-width: 0;
   padding: 2px 0;

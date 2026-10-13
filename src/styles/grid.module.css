@@ -285,6 +285,14 @@
   margin-block: auto;
 }
 
+/* MUI appends an empty flex cell after the final column. Let it collapse to
+   zero when content columns overflow so it does not create a false horizontal
+   scroll range; it can still expand normally when columns leave spare room. */
+.gridRoot :global(.MuiDataGrid-cellEmpty) {
+  min-width: 0 !important;
+  padding: 0 !important;
+}
+
 .gridRoot:global(.MuiDataGrid-autosizing)
   :global(.MuiDataGrid-cell *:not(svg):not(img)) {
   overflow: visible !important;
