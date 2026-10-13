@@ -54,7 +54,10 @@ export function GridActionsCell({
     : styles.actionsCell;
 
   return (
-    <Box className={`${rootClassName} ${classes.root ?? ""} ${className ?? ""}`.trim()}>
+    <Box
+      className={`${rootClassName} ${classes.root ?? ""} ${className ?? ""}`.trim()}
+      data-superdatagrid-actions-layout={layout}
+    >
       {actions.map((action) => {
         const actionIdentity = `${action.key} ${action.label}`;
         const isDestructive = action.color === "error" ||

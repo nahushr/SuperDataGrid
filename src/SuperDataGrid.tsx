@@ -500,6 +500,24 @@ function measureMinContentWidth(
     });
   });
 
+  // Inline action cells can wrap their controls to fit, but their preferred
+  // width is the complete action row. Measure that row without wrapping so a
+  // flex column does not collapse the actions into a vertical stack when the
+  // grid distributes the available viewport width.
+  probe.querySelectorAll<HTMLElement>(
+    '[data-superdatagrid-actions-layout="inline"]',
+  ).forEach((actions) => {
+    actions.style.setProperty("flex-wrap", "nowrap", "important");
+    actions.style.setProperty("width", "max-content", "important");
+    actions.style.setProperty("min-width", "max-content", "important");
+    actions.style.setProperty("flex", "none", "important");
+    actions.querySelectorAll<HTMLElement>(":scope > *").forEach((action) => {
+      action.style.setProperty("width", "max-content", "important");
+      action.style.setProperty("min-width", "max-content", "important");
+      action.style.setProperty("flex", "0 0 auto", "important");
+    });
+  });
+
   root.appendChild(probe);
   const width = Math.max(
     probe.getBoundingClientRect().width,
