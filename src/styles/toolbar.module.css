@@ -10,7 +10,9 @@
   width: 100%;
   gap: 0.5rem;
   overflow: visible;
-  padding-top: 0.75rem;
+  /* MUI's superscript filter badge extends above its trigger. Keep a clear top gutter so
+     the count remains inside the grid's toolbar viewport even when the DataGrid clips. */
+  padding-top: 1.125rem;
   padding-bottom: 0.5rem;
 }
 
@@ -23,6 +25,7 @@
   width: 100%;
   flex-wrap: wrap;
   gap: 0.75rem;
+  overflow: visible;
 }
 
 .actions {
@@ -33,6 +36,7 @@
   width: auto;
   flex-wrap: wrap;
   gap: 0.5rem;
+  overflow: visible;
 }
 
 .trailingActions {
@@ -64,7 +68,7 @@
 
 .filterBadge {
   position: relative;
-  z-index: 2;
+  z-index: 10;
   display: inline-flex;
   flex: 0 0 auto;
   overflow: visible;
