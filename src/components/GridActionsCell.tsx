@@ -28,7 +28,7 @@ export interface GridActionsCellClasses {
 export interface GridActionsCellProps {
   actions: GridActionDefinition[];
   emptyText?: string;
-  /** Render the actions in a compact inline row instead of a two-column grid. */
+  /** Render the actions in one inline row instead of the default two-column grid. */
   layout?: "grid" | "inline";
   className?: string;
   classes?: GridActionsCellClasses;
@@ -41,7 +41,7 @@ export interface GridActionsCellProps {
 export function GridActionsCell({
   actions,
   emptyText = "—",
-  layout = "inline",
+  layout = "grid",
   className,
   classes = {},
 }: Readonly<GridActionsCellProps>) {

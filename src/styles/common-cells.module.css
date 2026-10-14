@@ -148,6 +148,14 @@
   line-height: 1.35;
 }
 
+.auditPersonName {
+  flex: 0 0 auto;
+  min-width: max-content;
+  max-width: none;
+  overflow-wrap: normal;
+  white-space: nowrap;
+}
+
 .contactLink {
   color: #1976d2;
   text-decoration: underline;
@@ -246,7 +254,11 @@
 }
 
 .auditTimestampText {
-  flex: 1 1 auto;
+  flex: 0 0 auto;
+  min-width: max-content;
+  max-width: none;
+  overflow-wrap: normal;
+  white-space: nowrap;
 }
 
 .addressSubtext {

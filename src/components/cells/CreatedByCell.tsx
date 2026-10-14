@@ -24,6 +24,7 @@ export function CreatedByCell({
     <div className={`${styles.auditCell} ${className ?? ""}`.trim()} data-test-id={testId}>
       <UserContactCell
         {...contactProps}
+        nameClassName={`${contactProps.nameClassName ?? ""} ${styles.auditPersonName}`.trim()}
         showName
         showPhone={false}
         showEmptyFields={showEmptyFields}
@@ -35,6 +36,7 @@ export function CreatedByCell({
           value={created}
           formatString="do MMM yyyy, h:mm a"
           emptyText={createdEmptyText}
+          className={styles.auditTimestampText}
         />
       </div>
     </div>

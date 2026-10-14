@@ -1,11 +1,17 @@
 .actionsCell {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(max-content, 1fr));
   align-items: center;
+  justify-content: start;
+  align-content: center;
   gap: 4px;
   width: 100%;
   min-width: 0;
   padding: 2px 0;
+}
+
+.actionsCell > .actionWrapper:only-child {
+  grid-column: 1 / -1;
 }
 
 .actionsCellInline {
