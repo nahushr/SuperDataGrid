@@ -32,6 +32,8 @@ export type SuperDataGridColumnType =
   | "email"
   | "phone"
   | "longText"
+  | "badgeList"
+  | "countChip"
   | "json"
   | "image"
   | "priceBreakdown";
@@ -107,6 +109,30 @@ export interface SuperDataGridPhoneOptions {
 export interface SuperDataGridLongTextOptions {
   /** Maximum characters shown in the cell preview; the full text stays in a tooltip. */
   maxPreviewLength?: number;
+}
+
+export interface SuperDataGridBadgeListOptions {
+  /** Object property used as the chip label. Defaults to name, label, value, or id. */
+  labelField?: string;
+  /** Maximum number of chips shown before a compact remainder counter is added. */
+  maxItems?: number;
+  /** Named fallback chip color. */
+  color?: SuperDataGridBadgeColor;
+  /** Called when an interactive badge is selected. */
+  onItemClick?: (item: unknown, row: Readonly<Record<string, unknown>>) => void;
+}
+
+export interface SuperDataGridCountChipOptions {
+  /** Singular label, such as "Product" or "Package". */
+  label?: string;
+  /** Text shown when the count is zero. Defaults to "None". */
+  zeroLabel?: string;
+  /** Named chip tone. */
+  color?: SuperDataGridBadgeColor;
+  /** Optional accessible name for the chip. */
+  ariaLabel?: string;
+  /** Called when the count chip is selected. */
+  onClick?: (value: unknown, row: Readonly<Record<string, unknown>>) => void;
 }
 
 export interface SuperDataGridJsonOptions {
@@ -186,6 +212,10 @@ export interface SuperDataGridColumnOptions {
   email?: SuperDataGridEmailOptions;
   phone?: SuperDataGridPhoneOptions;
   longText?: SuperDataGridLongTextOptions;
+  badgeList?: SuperDataGridBadgeListOptions;
+  countChip?: SuperDataGridCountChipOptions;
+  /** Optional row-aware display value resolver for predefined cell renderers. */
+  valueGetter?: (value: unknown, row: Readonly<Record<string, unknown>>) => unknown;
   json?: SuperDataGridJsonOptions;
   image?: SuperDataGridImageOptions;
   priceBreakdown?: SuperDataGridPriceBreakdownOptions;

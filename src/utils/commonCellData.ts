@@ -262,6 +262,16 @@ export function getCommonCellSearchText(
       const record = toRecord(value);
       return toSafeText(record?.status ?? record?.value ?? record?.label ?? value);
     }
+    case "badgeList":
+      return (Array.isArray(value) ? value : [value])
+        .map((item) => {
+          const record = toRecord(item);
+          return toSafeText(record?.name ?? record?.label ?? record?.value ?? record?.id ?? item);
+        })
+        .filter(Boolean)
+        .join(" | ");
+    case "countChip":
+      return toSafeText(value);
     case "currency": {
       const record = toRecord(value);
       return toSafeText(record?.amount ?? record?.value ?? value);

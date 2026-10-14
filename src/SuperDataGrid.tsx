@@ -28,6 +28,8 @@ import SuperDataGridViewsSidebar from "./components/SuperDataGridViewsSidebar";
 import SuperDataGridSelectionScopeDialog from "./components/SuperDataGridSelectionScopeDialog";
 import ActionsCell from "./components/cells/ActionsCell";
 import AddressCell from "./components/cells/AddressCell";
+import BadgeListCell from "./components/cells/BadgeListCell";
+import CountChipCell from "./components/cells/CountChipCell";
 import AuditCell from "./components/cells/AuditCell";
 import CurrencyCell from "./components/cells/CurrencyCell";
 import DateCell from "./components/cells/DateCell";
@@ -89,6 +91,8 @@ export type {
   SuperDataGridColumnConfiguration,
   SuperDataGridBadgeColor,
   SuperDataGridBadgeOptions,
+  SuperDataGridBadgeListOptions,
+  SuperDataGridCountChipOptions,
   SuperDataGridColumnOptions,
   SuperDataGridCurrencyOptions,
   SuperDataGridDateOptions,
@@ -178,6 +182,20 @@ function getGridValueGetter(
   if (!columnType) return undefined;
   return (_value, row) => {
     const rawValue = (row as Record<string, unknown>)[field];
+    if (options?.valueGetter && (
+      columnType === "longText" ||
+      columnType === "badge" ||
+      columnType === "badgeList" ||
+      columnType === "countChip" ||
+      columnType === "peopleDetails"
+    )) {
+      return getCommonCellSearchText(
+        columnType,
+        options.valueGetter(rawValue, row as Record<string, unknown>),
+        row,
+        field,
+      );
+    }
     if (columnType === "currency") {
       return getCurrencyAmount(rawValue, options?.currency);
     }
@@ -207,18 +225,21 @@ function renderGridCell<Row extends SuperDataGridRow>(
   row: Row,
 ): React.ReactNode {
   const rawValue = (row as Record<string, unknown>)[field];
+  const resolvedValue = options?.valueGetter
+    ? options.valueGetter(rawValue, row as Record<string, unknown>)
+    : value;
   const CellComponent = components?.[field];
   if (CellComponent) return <CellComponent field={field} value={rawValue} row={row} />;
 
   switch (columnType) {
     case "peopleDetails":
-      return <PeopleDetailsCell value={rawValue} row={row} rowId={(row as GridValidRowModel).id} showAvatar />;
+      return <PeopleDetailsCell value={resolvedValue} row={row} rowId={(row as GridValidRowModel).id} showAvatar />;
     case "address":
       return <AddressCell value={rawValue} />;
     case "audit":
       return <AuditCell value={rawValue} row={row} field={field} />;
     case "badge":
-      return <StatusBadgeCell value={rawValue} options={options?.badge} />;
+      return <StatusBadgeCell value={resolvedValue} options={options?.badge} />;
     case "currency":
       return <CurrencyCell value={rawValue} row={row} options={options?.currency} />;
     case "date":
@@ -230,7 +251,11 @@ function renderGridCell<Row extends SuperDataGridRow>(
     case "phone":
       return <PhoneCell value={rawValue} options={options?.phone} />;
     case "longText":
-      return <LongTextCell value={rawValue} options={options?.longText} />;
+      return <LongTextCell value={resolvedValue} options={options?.longText} />;
+    case "badgeList":
+      return <BadgeListCell value={resolvedValue} row={row as Record<string, unknown>} options={options?.badgeList} />;
+    case "countChip":
+      return <CountChipCell value={resolvedValue} row={row as Record<string, unknown>} options={options?.countChip} />;
     case "json":
       return <JsonPreviewCell value={rawValue} field={field} options={options?.json} />;
     case "image":
