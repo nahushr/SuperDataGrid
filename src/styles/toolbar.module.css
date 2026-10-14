@@ -10,9 +10,7 @@
   width: 100%;
   gap: 0.5rem;
   overflow: visible;
-  /* MUI's superscript filter badge extends above its trigger. Keep a clear top gutter so
-     the count remains inside the grid's toolbar viewport even when the DataGrid clips. */
-  padding-top: 1.125rem;
+  padding-top: 0.75rem;
   padding-bottom: 0.5rem;
 }
 
@@ -73,6 +71,10 @@
   flex: 0 0 auto;
   overflow: visible;
   margin-inline-end: 0.25rem;
+}
+
+.filterBadge :global(.MuiBadge-badge) {
+  transform: translate(50%, -25%);
 }
 
 .clearSelectionButton,
