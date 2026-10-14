@@ -123,6 +123,9 @@ export default function SuperDataGridToolbar() {
   const toggleableColumns = gridState.columns.filter(
     (column) => column.hideable !== false,
   );
+  const selectedColumnCount = toggleableColumns.filter(
+    (column) => gridState.columnVisibilityModel[column.field] !== false,
+  ).length;
   const exportColumns = gridState.columns
     .filter((column) => gridState.columnVisibilityModel[column.field] !== false)
     .map((column) => ({ field: column.field, headerName: column.headerName }));
@@ -332,17 +335,26 @@ export default function SuperDataGridToolbar() {
             </Tooltip>
 
             {toggleableColumns.length > 0 && (
-              <Tooltip title="Show or hide columns">
+              <Tooltip title={`Show or hide columns (${selectedColumnCount} selected)`}>
                 <Button
                   size="small"
                   variant="outlined"
                   startIcon={<ViewColumnIcon />}
                   className={`${styles.toolbarButton} ${toolbarButtonClasses} ${utilityToolbarButtonClasses}`}
+                  aria-label={`Columns, ${selectedColumnCount} selected`}
                   aria-haspopup="true"
                   aria-expanded={columnsAnchor ? "true" : undefined}
                   onClick={(event) => setColumnsAnchor(event.currentTarget)}
                 >
-                  Columns
+                  <span className="tw:inline-flex tw:items-center tw:gap-2">
+                    <span>Columns</span>
+                    <span
+                      aria-hidden="true"
+                      className="tw:inline-flex tw:min-w-5 tw:items-center tw:justify-center tw:rounded-full tw:border tw:border-[#a5f3fc] tw:bg-[#cffafe] tw:px-1.5 tw:py-0.5 tw:text-[11px] tw:font-bold tw:leading-none tw:text-[#0e7490]"
+                    >
+                      {selectedColumnCount}
+                    </span>
+                  </span>
                 </Button>
               </Tooltip>
             )}

@@ -112,12 +112,20 @@ describe("grid toolbar", () => {
     expect(context.onFilterClick).toHaveBeenCalledOnce();
     expect(context.onClearSelection).toHaveBeenCalledOnce();
 
-    fireEvent.click(screen.getByRole("button", { name: "Show or hide columns" }));
+    expect(screen.getByRole("button", { name: "Columns, 1 selected" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Columns, 1 selected" }));
     expect(screen.getByRole("checkbox", { name: "Name" })).toBeChecked();
     expect(screen.getByRole("checkbox", { name: "Email" })).not.toBeChecked();
     expect(screen.queryByRole("checkbox", { name: "Internal" })).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("checkbox", { name: "Email" }));
     expect(context.onColumnVisibilityModelChange).toHaveBeenCalledWith({});
+    const updatedContext = { ...context, columnVisibilityModel: {} };
+    gridView.rerender(
+      <SuperDataGridContext.Provider value={updatedContext}>
+        <SuperDataGridToolbar />
+      </SuperDataGridContext.Provider>,
+    );
+    expect(screen.getByRole("button", { name: "Columns, 2 selected" })).toBeInTheDocument();
     fireEvent.keyDown(screen.getByRole("menu"), { key: "Escape" });
     await waitFor(() => expect(screen.queryByRole("menu")).not.toBeInTheDocument());
 
