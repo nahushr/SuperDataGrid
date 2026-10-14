@@ -293,6 +293,21 @@
   padding: 0 !important;
 }
 
+/* MUI's empty row filler keeps flex-grow: 1 when the columns overflow. That
+   adds a phantom scrollbar range after the last real column (most visible
+   after Actions). Collapse it only while horizontal scrolling is active so
+   grids whose columns fit can still use the filler to span the viewport. */
+.gridRoot
+  :global(.MuiDataGrid-virtualScroller--hasScrollX)
+  :global(.MuiDataGrid-cellEmpty) {
+  flex: 0 0 0 !important;
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
+  padding: 0 !important;
+  border-right: 0 !important;
+}
+
 .gridRoot:global(.MuiDataGrid-autosizing)
   :global(.MuiDataGrid-cell *:not(svg):not(img)) {
   overflow: visible !important;
