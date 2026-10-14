@@ -270,7 +270,7 @@
   justify-content: flex-start !important;
   box-sizing: border-box;
   overflow: visible !important;
-  padding: 14px 16px !important;
+  padding: 6px 12px !important;
   border-bottom: 1px solid #f1f5f9 !important;
   color: var(--app-text, #0f172a) !important;
   font-size: 0.875rem;

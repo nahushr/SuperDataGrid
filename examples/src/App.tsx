@@ -308,6 +308,7 @@ export default function App() {
           columnTypes={columnTypes}
           columnOptions={columnOptions}
           data={data}
+          uniformRowHeight
           beforeTable={<DemoActionJsonPanel value={actionJson} />}
           toolbarActions={(
             <GridActionBar surface="dark">

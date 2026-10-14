@@ -269,6 +269,8 @@ export interface SuperDataGridProps<
   columnGroupingModel?: GridColumnGroupingModel;
   /** Fixed row height when `getRowHeight` is not provided. */
   rowHeight?: number;
+  /** Measure the tallest row on the current page and apply that height to every row. */
+  uniformRowHeight?: boolean;
   /** Dynamic row height resolver for host-rendered cells. */
   getRowHeight?: (params: GridRowHeightParams) => number | "auto" | null | undefined;
   /** Approximation used while automatic row heights are being measured. */

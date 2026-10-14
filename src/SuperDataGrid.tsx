@@ -652,6 +652,7 @@ export function SuperDataGrid<
   height,
   columnGroupingModel,
   rowHeight,
+  uniformRowHeight = false,
   getRowHeight,
   getEstimatedRowHeight,
   getRowClassName,
@@ -945,6 +946,97 @@ export function SuperDataGrid<
   const sortModel = sortModelProp ?? internalSortModel;
   const resolvedPaginationModel =
     paginationModelProp ?? internalPaginationModel;
+  const uniformHeightKey = useMemo(
+    () =>
+      [
+        autoSizeKey,
+        JSON.stringify(widthsForCurrentViewport),
+        JSON.stringify(columnVisibilityModel),
+        JSON.stringify(resolvedPaginationModel),
+        JSON.stringify(sortModel),
+        JSON.stringify(filterModel),
+        density,
+      ].join("\u0001"),
+    [
+      autoSizeKey,
+      columnVisibilityModel,
+      density,
+      filterModel,
+      resolvedPaginationModel,
+      sortModel,
+      widthsForCurrentViewport,
+    ],
+  );
+  const [measuredUniformHeight, setMeasuredUniformHeight] = useState<{
+    key: string;
+    height: number;
+  } | null>(null);
+  const currentUniformHeight =
+    measuredUniformHeight?.key === uniformHeightKey
+      ? measuredUniformHeight.height
+      : undefined;
+  const measureUniformRowHeight = useCallback(() => "auto" as const, []);
+  const getMeasuredUniformRowHeight = useCallback(
+    () => currentUniformHeight ?? 52,
+    [currentUniformHeight],
+  );
+
+  useEffect(() => {
+    if (
+      !uniformRowHeight ||
+      loading ||
+      !flexSizingReady ||
+      measuredUniformHeight?.key === uniformHeightKey
+    ) {
+      return undefined;
+    }
+
+    let cancelled = false;
+    let firstFrame = 0;
+    let secondFrame = 0;
+    let thirdFrame = 0;
+    const measure = (): void => {
+      if (cancelled) return;
+      const root = apiRef.current?.rootElementRef.current;
+      const renderedRows = root?.querySelectorAll<HTMLElement>(
+        ".MuiDataGrid-row:not(.MuiDataGrid-row--skeleton)",
+      );
+      const tallestRow = Array.from(renderedRows ?? []).reduce(
+        (maxHeight, row) =>
+          Math.max(
+            maxHeight,
+            row.getBoundingClientRect().height,
+            row.scrollHeight,
+          ),
+        52,
+      );
+
+      setMeasuredUniformHeight({
+        key: uniformHeightKey,
+        height: Math.ceil(tallestRow),
+      });
+    };
+
+    firstFrame = window.requestAnimationFrame(() => {
+      secondFrame = window.requestAnimationFrame(() => {
+        thirdFrame = window.requestAnimationFrame(measure);
+      });
+    });
+
+    return () => {
+      cancelled = true;
+      window.cancelAnimationFrame(firstFrame);
+      window.cancelAnimationFrame(secondFrame);
+      window.cancelAnimationFrame(thirdFrame);
+    };
+  }, [
+    apiRef,
+    flexSizingReady,
+    loading,
+    measuredUniformHeight,
+    uniformHeightKey,
+    uniformRowHeight,
+  ]);
   const views = viewsProp ?? internalViews;
   const selectedViewId =
     selectedViewIdProp === undefined
@@ -1572,12 +1664,15 @@ export function SuperDataGrid<
               ...(rowClassName ? { row: rowClassName } : {}),
             }}
             disableColumnSorting
-            disableVirtualization={isAutoSizing}
+            disableVirtualization={
+              isAutoSizing ||
+              (uniformRowHeight && currentUniformHeight === undefined)
+            }
             rows={rows}
             columns={dataGridColumns}
             columnGroupingModel={columnGroupingModel}
             columnHeaderHeight={getColumnHeaderHeight(gridColumns)}
-            rowHeight={rowHeight}
+            rowHeight={uniformRowHeight ? undefined : rowHeight}
             density={density}
             sortingMode={sortingMode}
             sortModel={sortModel}
@@ -1590,8 +1685,18 @@ export function SuperDataGrid<
               paginationMode === "server" ? rowCount ?? data.length : undefined
             }
             loading={loading}
-            getRowHeight={getRowHeight}
-            getEstimatedRowHeight={getEstimatedRowHeight}
+            getRowHeight={
+              uniformRowHeight
+                ? currentUniformHeight === undefined
+                  ? measureUniformRowHeight
+                  : getMeasuredUniformRowHeight
+                : getRowHeight
+            }
+            getEstimatedRowHeight={
+              uniformRowHeight
+                ? getEstimatedRowHeight ?? (() => 76)
+                : getEstimatedRowHeight
+            }
             hideFooter={hideFooter}
             hideFooterSelectedRowCount={hideFooterSelectedRowCount}
             showToolbar={!hideToolbar}
