@@ -34,6 +34,7 @@ export type SuperDataGridColumnType =
   | "phone"
   | "longText"
   | "badgeList"
+  | "metricList"
   | "countChip"
   | "titleDescription"
   | "companyDetails"
@@ -147,6 +148,53 @@ export interface SuperDataGridTitleDescriptionOptions {
   descriptionField?: string;
 }
 
+export type SuperDataGridMetricFormat =
+  | "text"
+  | "number"
+  | "currency"
+  | "percent"
+  | "currencyOrPercent"
+  | "date"
+  | "dateRangeStatus"
+  | "boolean";
+
+/** A row-backed value rendered as one item in a compact metric summary cell. */
+export interface SuperDataGridMetricField {
+  field: string;
+  label: string;
+  format?: SuperDataGridMetricFormat;
+  tone?: SuperDataGridBadgeColor;
+  trueTone?: SuperDataGridBadgeColor;
+  falseTone?: SuperDataGridBadgeColor;
+  currencyField?: string;
+  percentField?: string;
+  unit?: string;
+  unitPlural?: string;
+  trueLabel?: string;
+  falseLabel?: string;
+  emptyText?: string;
+  /** Let a metric occupy the complete row in a multi-column metric list. */
+  fullWidth?: boolean;
+  /** Date fields used to derive an Active, Scheduled, Expired, or Inactive state. */
+  startDateField?: string;
+  endDateField?: string;
+  inactiveField?: string;
+  activeLabel?: string;
+  scheduledLabel?: string;
+  expiredLabel?: string;
+  inactiveLabel?: string;
+  activeTone?: SuperDataGridBadgeColor;
+  scheduledTone?: SuperDataGridBadgeColor;
+  expiredTone?: SuperDataGridBadgeColor;
+  inactiveTone?: SuperDataGridBadgeColor;
+}
+
+/** Options for the package-owned, compact metric summary renderer. */
+export interface SuperDataGridMetricListOptions {
+  fields: readonly SuperDataGridMetricField[];
+  columns?: 1 | 2 | 3;
+}
+
 export interface SuperDataGridPeopleDetailsOptions {
   /** Render the address included in the people value beneath its contact details. */
   showAddress?: boolean;
@@ -255,6 +303,7 @@ export interface SuperDataGridColumnOptions {
   phone?: SuperDataGridPhoneOptions;
   longText?: SuperDataGridLongTextOptions;
   badgeList?: SuperDataGridBadgeListOptions;
+  metricList?: SuperDataGridMetricListOptions;
   countChip?: SuperDataGridCountChipOptions;
   titleDescription?: SuperDataGridTitleDescriptionOptions;
   peopleDetails?: SuperDataGridPeopleDetailsOptions;

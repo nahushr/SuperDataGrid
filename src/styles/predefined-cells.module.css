@@ -963,6 +963,149 @@
   padding: 3px 0;
 }
 
+.metricList {
+  display: grid;
+  align-content: center;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+  padding: 4px 0;
+}
+
+.metricListOneColumn {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.metricListTwoColumns {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.metricListThreeColumns {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.metricItem {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+  padding: 5px 8px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.metricItemWide {
+  grid-column: 1 / -1;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.metricItemWide .metricLabel {
+  flex: 0 0 auto;
+}
+
+.metricItemWide .metricValue {
+  text-align: right;
+}
+
+.metricLabel {
+  overflow: hidden;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.035em;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.metricValue {
+  overflow: hidden;
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  text-overflow: ellipsis;
+}
+
+.metricToneCyan {
+  border-color: #a5f3fc;
+  background: #ecfeff;
+}
+
+.metricToneCyan .metricValue {
+  color: #0e7490;
+}
+
+.metricToneBlue {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+}
+
+.metricToneBlue .metricValue {
+  color: #1d4ed8;
+}
+
+.metricToneGreen {
+  border-color: #a7f3d0;
+  background: #ecfdf5;
+}
+
+.metricToneGreen .metricValue {
+  color: #047857;
+}
+
+.metricToneAmber {
+  border-color: #fde68a;
+  background: #fffbeb;
+}
+
+.metricToneAmber .metricValue {
+  color: #92400e;
+}
+
+.metricToneRose {
+  border-color: #fecdd3;
+  background: #fff1f2;
+}
+
+.metricToneRose .metricValue {
+  color: #be123c;
+}
+
+.metricTonePurple {
+  border-color: #ddd6fe;
+  background: #f5f3ff;
+}
+
+.metricTonePurple .metricValue {
+  color: #6d28d9;
+}
+
+.metricToneTeal {
+  border-color: #99f6e4;
+  background: #f0fdfa;
+}
+
+.metricToneTeal .metricValue {
+  color: #0f766e;
+}
+
+.metricToneSlate {
+  border-color: #e2e8f0;
+  background: #f8fafc;
+}
+
+.metricToneSlate .metricValue {
+  color: #475569;
+}
+
 .listChip {
   display: inline-flex;
   align-items: center;

@@ -49,6 +49,7 @@ export { default as EmailCell } from "./components/cells/EmailCell";
 export { default as PhoneCell } from "./components/cells/PhoneCell";
 export { default as LongTextCell } from "./components/cells/LongTextCell";
 export { default as BadgeListCell } from "./components/cells/BadgeListCell";
+export { default as MetricListCell } from "./components/cells/MetricListCell";
 export { default as JsonPreviewCell } from "./components/cells/JsonPreviewCell";
 export { default as ImagePreviewCell } from "./components/cells/ImagePreviewCell";
 export { default as ProductImageCarousel } from "./components/cells/ProductImageCarousel";
@@ -72,6 +73,9 @@ export type {
   SuperDataGridBadgeColor,
   SuperDataGridBadgeOptions,
   SuperDataGridBadgeListOptions,
+  SuperDataGridMetricField,
+  SuperDataGridMetricFormat,
+  SuperDataGridMetricListOptions,
   SuperDataGridCountChipOptions,
   SuperDataGridTitleDescriptionOptions,
   SuperDataGridPeopleDetailsOptions,

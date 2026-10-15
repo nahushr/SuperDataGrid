@@ -272,6 +272,12 @@ export function getCommonCellSearchText(
         .join(" | ");
     case "countChip":
       return toSafeText(value);
+    case "metricList": {
+      const record = toRecord(value);
+      return record == null
+        ? toSafeText(value)
+        : Object.values(record).map(toSafeText).filter(Boolean).join(" | ");
+    }
     case "titleDescription":
       return toSafeText(value);
     case "companyDetails": {

@@ -40,6 +40,7 @@ import EmailCell from "./components/cells/EmailCell";
 import ImagePreviewCell from "./components/cells/ImagePreviewCell";
 import JsonPreviewCell from "./components/cells/JsonPreviewCell";
 import LongTextCell from "./components/cells/LongTextCell";
+import MetricListCell from "./components/cells/MetricListCell";
 import PriceBreakdownCell from "./components/cells/PriceBreakdownCell";
 import PeopleDetailsCell from "./components/cells/PeopleDetailsCell";
 import PeopleAuditPairCell from "./components/cells/PeopleAuditPairCell";
@@ -108,6 +109,9 @@ export type {
   SuperDataGridImageOptions,
   SuperDataGridJsonOptions,
   SuperDataGridLongTextOptions,
+  SuperDataGridMetricField,
+  SuperDataGridMetricFormat,
+  SuperDataGridMetricListOptions,
   SuperDataGridPhoneOptions,
   SuperDataGridPriceBreakdown,
   SuperDataGridPriceBreakdownOptions,
@@ -192,6 +196,8 @@ interface DefaultColumnSizing {
 const DEFAULT_COLUMN_SIZING: Partial<Record<SuperDataGridColumnType, DefaultColumnSizing>> = {
   peopleDetails: { flex: 2.2, minWidth: 360 },
   badgeList: { flex: 1.3, minWidth: 190 },
+  metricList: { flex: 1.5, minWidth: 250 },
+  titleDescription: { flex: 2.1, minWidth: 290 },
   companyDetails: { flex: 1.7, minWidth: 270 },
   peopleAuditPair: { flex: 2.6, minWidth: 600 },
 };
@@ -216,6 +222,7 @@ function getGridValueGetter(
       columnType === "longText" ||
       columnType === "badge" ||
       columnType === "badgeList" ||
+      columnType === "metricList" ||
       columnType === "countChip" ||
       columnType === "titleDescription" ||
       columnType === "peopleDetails" ||
@@ -289,6 +296,8 @@ function renderGridCell<Row extends SuperDataGridRow>(
       return <LongTextCell value={resolvedValue} options={options?.longText} />;
     case "badgeList":
       return <BadgeListCell value={rawValue} row={row as Record<string, unknown>} options={options?.badgeList} />;
+    case "metricList":
+      return <MetricListCell value={resolvedValue} options={options?.metricList} />;
     case "countChip":
       return <CountChipCell value={resolvedValue} row={row as Record<string, unknown>} options={options?.countChip} />;
     case "titleDescription":
