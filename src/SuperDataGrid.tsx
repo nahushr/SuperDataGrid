@@ -41,6 +41,11 @@ import ImagePreviewCell from "./components/cells/ImagePreviewCell";
 import JsonPreviewCell from "./components/cells/JsonPreviewCell";
 import LongTextCell from "./components/cells/LongTextCell";
 import MetricListCell from "./components/cells/MetricListCell";
+import {
+  PromotionDetailsCell,
+  PromotionLifecycleCell,
+  PromotionPricingRedemptionCell,
+} from "./components/cells/PromotionCells";
 import PriceBreakdownCell from "./components/cells/PriceBreakdownCell";
 import PeopleDetailsCell from "./components/cells/PeopleDetailsCell";
 import PeopleAuditPairCell from "./components/cells/PeopleAuditPairCell";
@@ -198,6 +203,9 @@ const DEFAULT_COLUMN_SIZING: Partial<Record<SuperDataGridColumnType, DefaultColu
   badgeList: { flex: 1.3, minWidth: 190 },
   metricList: { flex: 1.5, minWidth: 250 },
   titleDescription: { flex: 2.1, minWidth: 290 },
+  promotionDetails: { flex: 1.7, minWidth: 250 },
+  promotionPricingRedemption: { flex: 1.5, minWidth: 250 },
+  promotionLifecycle: { flex: 1.5, minWidth: 250 },
   companyDetails: { flex: 1.7, minWidth: 270 },
   peopleAuditPair: { flex: 2.6, minWidth: 600 },
 };
@@ -302,6 +310,12 @@ function renderGridCell<Row extends SuperDataGridRow>(
       return <CountChipCell value={resolvedValue} row={row as Record<string, unknown>} options={options?.countChip} />;
     case "titleDescription":
       return <TitleDescriptionCell value={resolvedValue} row={row as Record<string, unknown>} options={options?.titleDescription} />;
+    case "promotionDetails":
+      return <PromotionDetailsCell row={row as Record<string, unknown>} />;
+    case "promotionPricingRedemption":
+      return <PromotionPricingRedemptionCell row={row as Record<string, unknown>} />;
+    case "promotionLifecycle":
+      return <PromotionLifecycleCell row={row as Record<string, unknown>} />;
     case "companyDetails":
       return <CompanyDetailsCell value={resolvedValue} options={options?.companyDetails} />;
     case "json":

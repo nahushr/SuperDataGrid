@@ -280,6 +280,32 @@ export function getCommonCellSearchText(
     }
     case "titleDescription":
       return toSafeText(value);
+    case "promotionDetails": {
+      const record = toRecord(row);
+      return [record?.promoCode, record?.description]
+        .map(toSafeText)
+        .filter(Boolean)
+        .join(" | ");
+    }
+    case "promotionPricingRedemption": {
+      const record = toRecord(row);
+      if (!record) return toSafeText(value);
+      return [
+        record.discountValue,
+        record.currency,
+        record.isPercent,
+        record.usageLimit,
+        record.refundGeneratedVoucher,
+      ].map(toSafeText).filter(Boolean).join(" | ");
+    }
+    case "promotionLifecycle": {
+      const record = toRecord(row);
+      if (!record) return toSafeText(value);
+      return [record.startDate, record.expiryDate, record.isDeleted]
+        .map(toSafeText)
+        .filter(Boolean)
+        .join(" | ");
+    }
     case "companyDetails": {
       const record = toRecord(value);
       return record == null
