@@ -34,6 +34,7 @@ export type SuperDataGridColumnType =
   | "longText"
   | "badgeList"
   | "countChip"
+  | "titleDescription"
   | "json"
   | "image"
   | "priceBreakdown";
@@ -129,10 +130,17 @@ export interface SuperDataGridCountChipOptions {
   zeroLabel?: string;
   /** Named chip tone. */
   color?: SuperDataGridBadgeColor;
+  /** Optional leading icon, such as a users or groups glyph. */
+  icon?: ReactNode;
   /** Optional accessible name for the chip. */
   ariaLabel?: string;
   /** Called when the count chip is selected. */
   onClick?: (value: unknown, row: Readonly<Record<string, unknown>>) => void;
+}
+
+export interface SuperDataGridTitleDescriptionOptions {
+  /** Row field shown under the primary cell value. */
+  descriptionField?: string;
 }
 
 export interface SuperDataGridJsonOptions {
@@ -214,6 +222,7 @@ export interface SuperDataGridColumnOptions {
   longText?: SuperDataGridLongTextOptions;
   badgeList?: SuperDataGridBadgeListOptions;
   countChip?: SuperDataGridCountChipOptions;
+  titleDescription?: SuperDataGridTitleDescriptionOptions;
   /** Optional row-aware display value resolver for predefined cell renderers. */
   valueGetter?: (value: unknown, row: Readonly<Record<string, unknown>>) => unknown;
   json?: SuperDataGridJsonOptions;

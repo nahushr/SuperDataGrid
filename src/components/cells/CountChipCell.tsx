@@ -1,6 +1,7 @@
 import React from "react";
 import GridChip, { type GridChipTone } from "../GridChip";
 import type { SuperDataGridBadgeColor, SuperDataGridCountChipOptions } from "../../types";
+import styles from "../../styles/predefined-cells.module.css";
 
 interface CountChipCellProps {
   value: unknown;
@@ -32,10 +33,16 @@ export default function CountChipCell({ value, row, options = {} }: Readonly<Cou
     : label
       ? `${count} ${label}${count === 1 ? "" : "s"}`
       : String(count);
+  const chipLabel = options.icon ? (
+    <span className={styles.countChipContent}>
+      <span aria-hidden="true" className={styles.countChipIcon}>{options.icon}</span>
+      <span>{text}</span>
+    </span>
+  ) : text;
 
   return (
     <GridChip
-      label={text}
+      label={chipLabel}
       tone={CHIP_TONES[options.color ?? "cyan"]}
       disabled={count <= 0 || options.onClick == null}
       aria-label={options.ariaLabel ?? text}

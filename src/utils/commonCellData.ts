@@ -272,6 +272,8 @@ export function getCommonCellSearchText(
         .join(" | ");
     case "countChip":
       return toSafeText(value);
+    case "titleDescription":
+      return toSafeText(value);
     case "currency": {
       const record = toRecord(value);
       return toSafeText(record?.amount ?? record?.value ?? value);

@@ -30,6 +30,7 @@ import ActionsCell from "./components/cells/ActionsCell";
 import AddressCell from "./components/cells/AddressCell";
 import BadgeListCell from "./components/cells/BadgeListCell";
 import CountChipCell from "./components/cells/CountChipCell";
+import TitleDescriptionCell from "./components/cells/TitleDescriptionCell";
 import AuditCell from "./components/cells/AuditCell";
 import CurrencyCell from "./components/cells/CurrencyCell";
 import DateCell from "./components/cells/DateCell";
@@ -93,6 +94,7 @@ export type {
   SuperDataGridBadgeOptions,
   SuperDataGridBadgeListOptions,
   SuperDataGridCountChipOptions,
+  SuperDataGridTitleDescriptionOptions,
   SuperDataGridColumnOptions,
   SuperDataGridCurrencyOptions,
   SuperDataGridDateOptions,
@@ -187,6 +189,7 @@ function getGridValueGetter(
       columnType === "badge" ||
       columnType === "badgeList" ||
       columnType === "countChip" ||
+      columnType === "titleDescription" ||
       columnType === "peopleDetails"
     )) {
       return getCommonCellSearchText(
@@ -256,6 +259,8 @@ function renderGridCell<Row extends SuperDataGridRow>(
       return <BadgeListCell value={resolvedValue} row={row as Record<string, unknown>} options={options?.badgeList} />;
     case "countChip":
       return <CountChipCell value={resolvedValue} row={row as Record<string, unknown>} options={options?.countChip} />;
+    case "titleDescription":
+      return <TitleDescriptionCell value={resolvedValue} row={row as Record<string, unknown>} options={options?.titleDescription} />;
     case "json":
       return <JsonPreviewCell value={rawValue} field={field} options={options?.json} />;
     case "image":
