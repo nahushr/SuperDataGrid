@@ -40,6 +40,11 @@ export type SuperDataGridColumnType =
   | "promotionDetails"
   | "promotionPricingRedemption"
   | "promotionLifecycle"
+  | "packageDetails"
+  | "packagePrice"
+  | "packageWeight"
+  | "packageImageGallery"
+  | "editableNumber"
   | "companyDetails"
   | "json"
   | "image"
@@ -228,12 +233,29 @@ export interface SuperDataGridCompanyDetailsOptions {
   revenueLabel?: string;
 }
 
+/** Shared presentation options for package dimensions and type labels. */
+export interface SuperDataGridPackageDetailsOptions {
+  /** Unit appended to dimensions. Defaults to `cm`. */
+  dimensionUnit?: string;
+  /** Display labels keyed by normalized package type. */
+  typeLabels?: Readonly<Record<string, string>>;
+}
+
+export interface SuperDataGridEditableNumberOptions {
+  min?: number;
+  placeholder?: string;
+  showWhenEmpty?: boolean;
+  onChange?: (value: number, row: Readonly<Record<string, unknown>>) => void;
+}
+
 export interface SuperDataGridJsonOptions {
   /** Maximum characters shown before the user opens the formatted JSON dialog. */
   maxPreviewLength?: number;
 }
 
 export interface SuperDataGridImageOptions {
+  /** Singular entity name used in image preview labels. Defaults to `product`. */
+  entityLabel?: string;
   thumbnailAlt?: string;
   /** Row property to use as the product title in the cell and image gallery. */
   titleField?: string;
@@ -311,6 +333,8 @@ export interface SuperDataGridColumnOptions {
   titleDescription?: SuperDataGridTitleDescriptionOptions;
   peopleDetails?: SuperDataGridPeopleDetailsOptions;
   companyDetails?: SuperDataGridCompanyDetailsOptions;
+  packageDetails?: SuperDataGridPackageDetailsOptions;
+  editableNumber?: SuperDataGridEditableNumberOptions;
   /** Optional row-aware display value resolver for predefined cell renderers. */
   valueGetter?: (value: unknown, row: Readonly<Record<string, unknown>>) => unknown;
   json?: SuperDataGridJsonOptions;

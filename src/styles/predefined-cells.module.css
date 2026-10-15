@@ -1221,6 +1221,121 @@
   -webkit-line-clamp: 2;
 }
 
+.packageDetails {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  padding: 3px 0;
+  white-space: normal;
+}
+
+.packageDetailsNameRow {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 7px;
+}
+
+.packageDetailsIcon {
+  width: 16px !important;
+  height: 16px !important;
+  flex: 0 0 auto;
+  color: #0e7490;
+}
+
+.packageDetailsName {
+  overflow: hidden;
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+}
+
+.packageTypeBadge {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.035em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.packageTypeCyan { border-color: #a5f3fc; background: #ecfeff; color: #0e7490; }
+.packageTypeAmber { border-color: #fde68a; background: #fffbeb; color: #92400e; }
+.packageTypePurple { border-color: #ddd6fe; background: #f5f3ff; color: #6d28d9; }
+.packageTypeTeal { border-color: #99f6e4; background: #f0fdfa; color: #0f766e; }
+.packageTypeBlue { border-color: #bfdbfe; background: #eff6ff; color: #1d4ed8; }
+.packageTypeIndigo { border-color: #c7d2fe; background: #eef2ff; color: #4338ca; }
+.packageTypeSlate { border-color: #e2e8f0; background: #f8fafc; color: #475569; }
+
+.packageDimensions {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  gap: 5px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+  font-variant-numeric: tabular-nums;
+}
+
+.packageWeight {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  color: #0f172a;
+  font-variant-numeric: tabular-nums;
+}
+
+.packageWeightValue {
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+.packageWeightUnit {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.editableNumberInput {
+  width: 82px;
+  height: 34px;
+  box-sizing: border-box;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 5px 9px;
+  background: #ffffff;
+  color: #0f172a;
+  font-family: "JetBrains Mono", "Roboto Mono", ui-monospace, monospace;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  outline: none;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.editableNumberInput:focus {
+  border-color: #0e7490;
+  box-shadow: 0 0 0 3px rgb(6 182 212 / 18%);
+}
+
+.packageDetailsMetaIcon {
+  width: 14px !important;
+  height: 14px !important;
+  flex: 0 0 auto;
+  color: #94a3b8;
+}
+
 .companyDetails {
   display: flex;
   width: 100%;

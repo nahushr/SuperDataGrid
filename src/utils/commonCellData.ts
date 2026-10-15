@@ -115,10 +115,23 @@ export function getAuditPeopleDetailsParts(
   if (rowRecord == null) return { name: "", email: "", phone: "" };
 
   const normalizedField = field.toLowerCase();
-  const auditPerson = findAuditPerson(rowRecord, getAuditPersonKeys(normalizedField));
+  const personKeys = getAuditPersonKeys(normalizedField);
+  const auditPerson = findAuditPerson(rowRecord, personKeys);
   if (auditPerson) return auditPerson;
 
   const actorPrefix = getAuditActorPrefix(normalizedField);
+  for (const key of ["_package", "pickupLocation", "product", "entity", "data"] as const) {
+    const nested = toRecord(rowRecord[key]);
+    if (nested == null) continue;
+    const nestedPerson = findAuditPerson(nested, personKeys);
+    if (nestedPerson) return nestedPerson;
+  }
+  for (const key of ["_package", "pickupLocation", "product", "entity", "data"] as const) {
+    const nested = toRecord(rowRecord[key]);
+    if (nested == null) continue;
+    const fallback = getAuditActorFallback(nested, actorPrefix);
+    if (fallback.name || fallback.email || fallback.phone) return fallback;
+  }
   return getAuditActorFallback(rowRecord, actorPrefix);
 }
 
@@ -306,6 +319,32 @@ export function getCommonCellSearchText(
         .filter(Boolean)
         .join(" | ");
     }
+    case "packageDetails": {
+      const record = toRecord(row);
+      const packageRecord = toRecord(record?._package) ?? record;
+      if (!packageRecord) return toSafeText(value);
+      return [
+        packageRecord.packageName,
+        packageRecord.packageType,
+        packageRecord.length,
+        packageRecord.breadth ?? packageRecord.width,
+        packageRecord.height,
+      ].map(toSafeText).filter(Boolean).join(" | ");
+    }
+    case "packageWeight": {
+      const record = toRecord(row);
+      const packageRecord = toRecord(record?._package) ?? record;
+      const packageField = field ?? "";
+      return toSafeText(record?.[packageField] ?? packageRecord?.[packageField]);
+    }
+    case "packagePrice": {
+      const record = toRecord(row);
+      const packageRecord = toRecord(record?._package) ?? record;
+      const packageField = field ?? "";
+      return toSafeText(record?.[packageField] ?? packageRecord?.[packageField]);
+    }
+    case "editableNumber":
+      return toSafeText(value);
     case "companyDetails": {
       const record = toRecord(value);
       return record == null
@@ -480,7 +519,7 @@ function findNestedAuditTimestamp(
   record: Record<string, unknown>,
   keys: readonly string[],
 ): unknown {
-  for (const key of ["product", "entity", "data"] as const) {
+  for (const key of ["_package", "pickupLocation", "product", "entity", "data"] as const) {
     const nested = toRecord(record[key]);
     if (nested == null) continue;
     const timestamp = findAuditTimestamp(nested, keys);

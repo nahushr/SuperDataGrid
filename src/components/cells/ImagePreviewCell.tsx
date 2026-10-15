@@ -23,7 +23,7 @@ function getRowTitle(
 ): string | undefined {
   if (!row) return undefined;
   const record = row as Record<string, unknown>;
-  const candidates = [titleField, "productName", "productTitle", "title", "name"]
+  const candidates = [titleField, "productName", "productTitle", "packageName", "title", "name"]
     .filter((field): field is string => Boolean(field));
 
   for (const candidate of candidates) {
@@ -61,9 +61,10 @@ export default function ImagePreviewCell({
   const fallbackLetter = options.fallbackLetter?.slice(0, 1) || "P";
   const rowTitle = getRowTitle(row, options.titleField);
   const title = rowTitle || formatFieldName(field);
-  let imageButtonLabel = "Product has no image";
+  const entityLabel = options.entityLabel?.trim() || "product";
+  let imageButtonLabel = `${entityLabel[0]?.toUpperCase()}${entityLabel.slice(1)} has no image`;
   if (mainImage) {
-    imageButtonLabel = `View ${images.length} product images`;
+    imageButtonLabel = `View ${images.length} ${entityLabel} image${images.length === 1 ? "" : "s"}`;
     if (rowTitle) imageButtonLabel += ` for ${rowTitle}`;
   }
 

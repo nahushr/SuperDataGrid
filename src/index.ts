@@ -56,6 +56,11 @@ export { default as ProductImageCarousel } from "./components/cells/ProductImage
 export { default as PriceBreakdownCell } from "./components/cells/PriceBreakdownCell";
 export { default as TitleDescriptionCell } from "./components/cells/TitleDescriptionCell";
 export { default as CompanyDetailsCell } from "./components/cells/CompanyDetailsCell";
+export { default as PackageDetailsCell } from "./components/cells/PackageDetailsCell";
+export { default as PackageImageGalleryCell } from "./components/cells/PackageImageGalleryCell";
+export { default as PackageWeightCell } from "./components/cells/PackageWeightCell";
+export { default as PackagePriceCell } from "./components/cells/PackagePriceCell";
+export { default as EditableNumberCell } from "./components/cells/EditableNumberCell";
 export type {
   SuperDataGridExportFormat,
   SuperDataGridExportRequest,
@@ -82,6 +87,8 @@ export type {
   SuperDataGridAuditPerson,
   SuperDataGridPeopleAuditPairValue,
   SuperDataGridCompanyDetailsOptions,
+  SuperDataGridPackageDetailsOptions,
+  SuperDataGridEditableNumberOptions,
   SuperDataGridColumnOptions,
   SuperDataGridCurrencyOptions,
   SuperDataGridDateOptions,

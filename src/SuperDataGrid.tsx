@@ -46,6 +46,11 @@ import {
   PromotionLifecycleCell,
   PromotionPricingRedemptionCell,
 } from "./components/cells/PromotionCells";
+import PackageDetailsCell from "./components/cells/PackageDetailsCell";
+import PackageImageGalleryCell from "./components/cells/PackageImageGalleryCell";
+import PackageWeightCell from "./components/cells/PackageWeightCell";
+import PackagePriceCell from "./components/cells/PackagePriceCell";
+import EditableNumberCell from "./components/cells/EditableNumberCell";
 import PriceBreakdownCell from "./components/cells/PriceBreakdownCell";
 import PeopleDetailsCell from "./components/cells/PeopleDetailsCell";
 import PeopleAuditPairCell from "./components/cells/PeopleAuditPairCell";
@@ -107,6 +112,8 @@ export type {
   SuperDataGridPeopleDetailsOptions,
   SuperDataGridPeopleAuditPairValue,
   SuperDataGridCompanyDetailsOptions,
+  SuperDataGridPackageDetailsOptions,
+  SuperDataGridEditableNumberOptions,
   SuperDataGridColumnOptions,
   SuperDataGridCurrencyOptions,
   SuperDataGridDateOptions,
@@ -176,7 +183,13 @@ function getGridColumnType<Row extends SuperDataGridRow>(
   columnType: SuperDataGridColumnType | undefined,
   data: readonly Row[],
 ): GridColDef["type"] {
-  if (columnType === "currency" || columnType === "priceBreakdown") return "number";
+  if (
+    columnType === "currency" ||
+    columnType === "priceBreakdown" ||
+    columnType === "packagePrice" ||
+    columnType === "packageWeight" ||
+    columnType === "editableNumber"
+  ) return "number";
   if (columnType === "date") return "date";
   if (columnType === "dateTime") return "dateTime";
   if (columnType) return "string";
@@ -206,6 +219,10 @@ const DEFAULT_COLUMN_SIZING: Partial<Record<SuperDataGridColumnType, DefaultColu
   promotionDetails: { flex: 1.7, minWidth: 250 },
   promotionPricingRedemption: { flex: 1.5, minWidth: 250 },
   promotionLifecycle: { flex: 1.5, minWidth: 250 },
+  packageDetails: { flex: 1.8, minWidth: 270 },
+  packagePrice: { flex: 0.8, minWidth: 145 },
+  packageWeight: { flex: 0.65, minWidth: 125 },
+  packageImageGallery: { flex: 0.9, minWidth: 150 },
   companyDetails: { flex: 1.7, minWidth: 270 },
   peopleAuditPair: { flex: 2.6, minWidth: 600 },
 };
@@ -235,7 +252,10 @@ function getGridValueGetter(
       columnType === "titleDescription" ||
       columnType === "peopleDetails" ||
       columnType === "peopleAuditPair" ||
-      columnType === "companyDetails"
+      columnType === "companyDetails" ||
+      columnType === "packageDetails" ||
+      columnType === "currency" ||
+      columnType === "editableNumber"
     )) {
       return getCommonCellSearchText(
         columnType,
@@ -291,7 +311,7 @@ function renderGridCell<Row extends SuperDataGridRow>(
     case "badge":
       return <StatusBadgeCell value={resolvedValue} options={options?.badge} />;
     case "currency":
-      return <CurrencyCell value={rawValue} row={row} options={options?.currency} />;
+      return <CurrencyCell value={resolvedValue} row={row} options={options?.currency} />;
     case "date":
       return <DateCell value={rawValue} options={options?.date} />;
     case "dateTime":
@@ -303,7 +323,7 @@ function renderGridCell<Row extends SuperDataGridRow>(
     case "longText":
       return <LongTextCell value={resolvedValue} options={options?.longText} />;
     case "badgeList":
-      return <BadgeListCell value={rawValue} row={row as Record<string, unknown>} options={options?.badgeList} />;
+      return <BadgeListCell value={resolvedValue} row={row as Record<string, unknown>} options={options?.badgeList} />;
     case "metricList":
       return <MetricListCell value={resolvedValue} options={options?.metricList} />;
     case "countChip":
@@ -316,6 +336,16 @@ function renderGridCell<Row extends SuperDataGridRow>(
       return <PromotionPricingRedemptionCell row={row as Record<string, unknown>} />;
     case "promotionLifecycle":
       return <PromotionLifecycleCell row={row as Record<string, unknown>} />;
+    case "packageDetails":
+      return <PackageDetailsCell row={row as Record<string, unknown>} options={options?.packageDetails} />;
+    case "packagePrice":
+      return <PackagePriceCell row={row} field={field} />;
+    case "packageWeight":
+      return <PackageWeightCell row={row} field={field} />;
+    case "packageImageGallery":
+      return <PackageImageGalleryCell row={row} />;
+    case "editableNumber":
+      return <EditableNumberCell value={resolvedValue} row={row as Record<string, unknown>} options={options?.editableNumber} />;
     case "companyDetails":
       return <CompanyDetailsCell value={resolvedValue} options={options?.companyDetails} />;
     case "json":

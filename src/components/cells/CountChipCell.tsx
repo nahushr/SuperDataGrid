@@ -46,7 +46,10 @@ export default function CountChipCell({ value, row, options = {} }: Readonly<Cou
       tone={CHIP_TONES[options.color ?? "cyan"]}
       disabled={count <= 0 || options.onClick == null}
       aria-label={options.ariaLabel ?? text}
-      onClick={options.onClick ? () => options.onClick?.(value, row) : undefined}
+      onClick={options.onClick ? (event) => {
+        event.stopPropagation();
+        options.onClick?.(value, row);
+      } : undefined}
     />
   );
 }
