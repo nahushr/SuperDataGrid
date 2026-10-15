@@ -227,10 +227,18 @@ const DEFAULT_COLUMN_SIZING: Partial<Record<SuperDataGridColumnType, DefaultColu
   peopleAuditPair: { flex: 2.6, minWidth: 600 },
 };
 
+// A Created (UTC) cell contains both its actor and timestamp, so keep the same
+// 300px minimum across entity grids regardless of the cell renderer used.
+const CREATED_AT_COLUMN_SIZING: DefaultColumnSizing = {
+  flex: 1.25,
+  minWidth: 300,
+};
+
 function getDefaultColumnSizing(
   field: string,
   columnType: SuperDataGridColumnType | undefined,
 ): DefaultColumnSizing | undefined {
+  if (field === "createdAt") return CREATED_AT_COLUMN_SIZING;
   if (columnType) return DEFAULT_COLUMN_SIZING[columnType];
   return field === "actions" ? { flex: 1.2, minWidth: 240 } : undefined;
 }
