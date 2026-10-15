@@ -1,6 +1,6 @@
 .actionsCell {
   display: grid;
-  grid-template-columns: repeat(2, minmax(max-content, 1fr));
+  grid-template-columns: repeat(2, max-content);
   align-items: center;
   justify-content: start;
   align-content: center;
