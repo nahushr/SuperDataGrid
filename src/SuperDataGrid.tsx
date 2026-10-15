@@ -182,6 +182,28 @@ function usesMonospacedFont(
     /(?:id|code|timestamp|date|time|at)$/i.test(field);
 }
 
+interface DefaultColumnSizing {
+  flex: number;
+  minWidth: number;
+}
+
+// Semantic cell types have useful out-of-the-box proportions. Consumers can
+// still override either value through `columnConfiguration`.
+const DEFAULT_COLUMN_SIZING: Partial<Record<SuperDataGridColumnType, DefaultColumnSizing>> = {
+  peopleDetails: { flex: 2.2, minWidth: 360 },
+  badgeList: { flex: 1.3, minWidth: 190 },
+  companyDetails: { flex: 1.7, minWidth: 270 },
+  peopleAuditPair: { flex: 2.6, minWidth: 470 },
+};
+
+function getDefaultColumnSizing(
+  field: string,
+  columnType: SuperDataGridColumnType | undefined,
+): DefaultColumnSizing | undefined {
+  if (columnType) return DEFAULT_COLUMN_SIZING[columnType];
+  return field === "actions" ? { flex: 1.2, minWidth: 240 } : undefined;
+}
+
 function getGridValueGetter(
   field: string,
   columnType: SuperDataGridColumnType | undefined,
@@ -266,7 +288,7 @@ function renderGridCell<Row extends SuperDataGridRow>(
     case "longText":
       return <LongTextCell value={resolvedValue} options={options?.longText} />;
     case "badgeList":
-      return <BadgeListCell value={resolvedValue} row={row as Record<string, unknown>} options={options?.badgeList} />;
+      return <BadgeListCell value={rawValue} row={row as Record<string, unknown>} options={options?.badgeList} />;
     case "countChip":
       return <CountChipCell value={resolvedValue} row={row as Record<string, unknown>} options={options?.countChip} />;
     case "titleDescription":
@@ -306,10 +328,11 @@ function createGridColumn<Row extends SuperDataGridRow>(
   const columnType = columnTypes?.[field];
   const options = columnOptions?.[field];
   const configuration = columnConfiguration?.[field];
+  const defaultSizing = getDefaultColumnSizing(field, columnType);
   const monospaceCell = usesMonospacedFont(field, columnType);
   const canFlex = configuration?.width == null;
   const flex = canFlex && flexSizingReady
-    ? configuration?.flex ?? 1
+    ? configuration?.flex ?? defaultSizing?.flex ?? 1
     : undefined;
   const measuredWidth = autoSizedWidths[field];
   const measuredMinWidth = autoSizedMinWidths[field];
@@ -336,10 +359,10 @@ function createGridColumn<Row extends SuperDataGridRow>(
       flexSizingReady && flex == null ? measuredWidth : undefined
     ),
     minWidth: flex == null
-      ? configuration?.minWidth
+      ? configuration?.minWidth ?? defaultSizing?.minWidth
       : sizeColumnsToContent
-        ? Math.max(configuration?.minWidth ?? 0, measuredMinWidth ?? 0)
-        : configuration?.minWidth ?? 50,
+        ? Math.max(configuration?.minWidth ?? defaultSizing?.minWidth ?? 0, measuredMinWidth ?? 0)
+        : configuration?.minWidth ?? defaultSizing?.minWidth ?? 50,
     maxWidth: configuration?.maxWidth,
     hideable: configuration?.hideable,
     cellClassName,

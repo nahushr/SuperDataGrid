@@ -117,6 +117,8 @@ export interface SuperDataGridLongTextOptions {
 export interface SuperDataGridBadgeListOptions {
   /** Object property used as the chip label. Defaults to name, label, value, or id. */
   labelField?: string;
+  /** Object property displayed as the chip tooltip. Defaults to description. */
+  titleField?: string;
   /** Maximum number of chips shown before a compact remainder counter is added. */
   maxItems?: number;
   /** Named fallback chip color. */

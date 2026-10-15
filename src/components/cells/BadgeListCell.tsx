@@ -61,6 +61,45 @@ function getLabel(item: unknown, labelField?: string): string {
   return "";
 }
 
+function getText(item: unknown, field?: string): string | undefined {
+  if (!field || typeof item !== "object" || item === null || Array.isArray(item)) {
+    return undefined;
+  }
+  const candidate = (item as Record<string, unknown>)[field];
+  return typeof candidate === "string" && candidate.trim()
+    ? candidate.trim()
+    : undefined;
+}
+
+function getCustomColorStyle(color: unknown): React.CSSProperties | undefined {
+  if (typeof color !== "string" || !/^#(?:[\da-f]{3}|[\da-f]{6})$/i.test(color.trim())) {
+    return undefined;
+  }
+
+  const hex = color.trim().slice(1);
+  const normalizedHex = hex.length === 3
+    ? hex.split("").map((channel) => `${channel}${channel}`).join("")
+    : hex;
+  const channels = [0, 2, 4].map(
+    (offset) => Number.parseInt(normalizedHex.slice(offset, offset + 2), 16) / 255,
+  );
+  const luminance = channels.reduce(
+    (total, channel, index) =>
+      total +
+      (channel <= 0.03928
+        ? channel / 12.92
+        : ((channel + 0.055) / 1.055) ** 2.4) *
+        [0.2126, 0.7152, 0.0722][index],
+    0,
+  );
+
+  return {
+    backgroundColor: `#${normalizedHex}`,
+    color: luminance > 0.45 ? "#172033" : "#FFFFFF",
+    borderColor: `#${normalizedHex}`,
+  };
+}
+
 export default function BadgeListCell({ value, options = {}, row }: Readonly<BadgeListCellProps>) {
   const items = Array.isArray(value)
     ? value
@@ -82,11 +121,14 @@ export default function BadgeListCell({ value, options = {}, row }: Readonly<Bad
   return (
     <div className={styles.badgeList}>
       {visible.map(({ item, label }, index) => {
+        const title = getText(item, options.titleField ?? "description");
         const candidateColor =
           typeof item === "object" && item !== null && !Array.isArray(item)
             ? (item as Record<string, unknown>).color
             : undefined;
-        const color = typeof candidateColor === "string" && candidateColor in COLOR_CLASSES
+        const hasNamedColor = typeof candidateColor === "string" && candidateColor in COLOR_CLASSES;
+        const customColorStyle = hasNamedColor ? undefined : getCustomColorStyle(candidateColor);
+        const color = hasNamedColor
           ? candidateColor as SuperDataGridBadgeColor
           : options.color ?? "cyan";
         return options.onItemClick ? (
@@ -94,10 +136,17 @@ export default function BadgeListCell({ value, options = {}, row }: Readonly<Bad
             key={`${label}-${index}`}
             label={label}
             tone={GRID_CHIP_TONES[color]}
+            title={title}
+            style={customColorStyle}
             onClick={() => options.onItemClick?.(item, row)}
           />
         ) : (
-          <span className={`${styles.listChip} ${COLOR_CLASSES[color]}`} key={`${label}-${index}`}>
+          <span
+            className={`${styles.listChip} ${COLOR_CLASSES[color]}`}
+            key={`${label}-${index}`}
+            title={title}
+            style={customColorStyle}
+          >
             {label}
           </span>
         );

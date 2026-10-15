@@ -10,6 +10,8 @@ export interface GridChipProps {
   disabled?: boolean;
   testId?: string;
   className?: string;
+  title?: string;
+  style?: React.CSSProperties;
   "aria-label"?: string;
 }
 
@@ -32,6 +34,8 @@ export default function GridChip({
   disabled = false,
   testId = "super-data-grid-chip",
   className,
+  title,
+  style,
   "aria-label": ariaLabel,
 }: Readonly<GridChipProps>) {
   const toneClass = TONE_CLASSES[tone];
@@ -42,6 +46,8 @@ export default function GridChip({
         className={`${styles.listChip} ${toneClass} ${className ?? ""}`.trim()}
         data-test-id={testId}
         aria-label={ariaLabel}
+        title={title}
+        style={style}
       >
         {label}
       </span>
@@ -56,6 +62,8 @@ export default function GridChip({
       disabled={disabled}
       data-test-id={testId}
       aria-label={ariaLabel}
+      title={title}
+      style={style}
     >
       {label}
     </button>
