@@ -42,6 +42,7 @@ import JsonPreviewCell from "./components/cells/JsonPreviewCell";
 import LongTextCell from "./components/cells/LongTextCell";
 import PriceBreakdownCell from "./components/cells/PriceBreakdownCell";
 import PeopleDetailsCell from "./components/cells/PeopleDetailsCell";
+import PeopleAuditPairCell from "./components/cells/PeopleAuditPairCell";
 import PhoneCell from "./components/cells/PhoneCell";
 import StatusBadgeCell from "./components/cells/StatusBadgeCell";
 import { SuperDataGridContext } from "./context/SuperDataGridContext";
@@ -91,12 +92,14 @@ export type {
   SuperDataGridCellProps,
   SuperDataGridColumnType,
   SuperDataGridColumnConfiguration,
+  SuperDataGridAuditPerson,
   SuperDataGridBadgeColor,
   SuperDataGridBadgeOptions,
   SuperDataGridBadgeListOptions,
   SuperDataGridCountChipOptions,
   SuperDataGridTitleDescriptionOptions,
   SuperDataGridPeopleDetailsOptions,
+  SuperDataGridPeopleAuditPairValue,
   SuperDataGridCompanyDetailsOptions,
   SuperDataGridColumnOptions,
   SuperDataGridCurrencyOptions,
@@ -194,6 +197,7 @@ function getGridValueGetter(
       columnType === "countChip" ||
       columnType === "titleDescription" ||
       columnType === "peopleDetails" ||
+      columnType === "peopleAuditPair" ||
       columnType === "companyDetails"
     )) {
       return getCommonCellSearchText(
@@ -241,6 +245,8 @@ function renderGridCell<Row extends SuperDataGridRow>(
   switch (columnType) {
     case "peopleDetails":
       return <PeopleDetailsCell value={resolvedValue} row={row} rowId={(row as GridValidRowModel).id} showAvatar options={options?.peopleDetails} />;
+    case "peopleAuditPair":
+      return <PeopleAuditPairCell value={resolvedValue} />;
     case "address":
       return <AddressCell value={rawValue} />;
     case "audit":

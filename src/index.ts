@@ -4,6 +4,7 @@ export { SuperDataGrid as default, SuperDataGrid } from "./SuperDataGrid";
 export { default as CustomNoRowsOverlay } from "./components/SuperDataGridNoRowsOverlay";
 export { default as AddressCell } from "./components/cells/AddressCell";
 export { default as CreatedByCell } from "./components/cells/CreatedByCell";
+export { default as PeopleAuditPairCell } from "./components/cells/PeopleAuditPairCell";
 export { default as UserContactCell } from "./components/cells/UserContactCell";
 export { default as UTCTimestampCell } from "./components/cells/UTCTimestampCell";
 export { default as RenderLongCellItem } from "./components/cells/RenderLongCellItem";
@@ -74,6 +75,8 @@ export type {
   SuperDataGridCountChipOptions,
   SuperDataGridTitleDescriptionOptions,
   SuperDataGridPeopleDetailsOptions,
+  SuperDataGridAuditPerson,
+  SuperDataGridPeopleAuditPairValue,
   SuperDataGridCompanyDetailsOptions,
   SuperDataGridColumnOptions,
   SuperDataGridCurrencyOptions,

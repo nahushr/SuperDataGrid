@@ -306,6 +306,16 @@ export function getCommonCellSearchText(
         ...Object.values(getAddressParts(record?.address)),
       ].filter(Boolean).join(" | ");
     }
+    case "peopleAuditPair": {
+      const record = toRecord(value);
+      const personText = (person: unknown): string => {
+        const parts = getPeopleDetailsParts(person);
+        return [parts.name, parts.email].filter(Boolean).join(" ");
+      };
+      return [personText(record?.assignedTo), personText(record?.createdBy)]
+        .filter(Boolean)
+        .join(" | ");
+    }
     case "address":
       return Object.values(getAddressParts(value)).filter(Boolean).join(" | ");
     default:

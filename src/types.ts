@@ -22,6 +22,7 @@ export type SuperDataGridRow = object;
 /** Built-in renderers modeled after SimpliShelf's shared data-grid cells. */
 export type SuperDataGridColumnType =
   | "peopleDetails"
+  | "peopleAuditPair"
   | "address"
   | "audit"
   | "actions"
@@ -149,6 +150,22 @@ export interface SuperDataGridPeopleDetailsOptions {
   showAddress?: boolean;
   /** Property in the people value containing the address object. Defaults to `address`. */
   addressField?: string;
+}
+
+/** A person shown in one side of a two-person assignment and audit cell. */
+export interface SuperDataGridAuditPerson {
+  name?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  email?: string | null;
+  loginName?: string | null;
+  createdAt?: string | Date | null;
+}
+
+/** Values rendered by the `peopleAuditPair` cell type. */
+export interface SuperDataGridPeopleAuditPairValue {
+  assignedTo?: SuperDataGridAuditPerson | null;
+  createdBy?: SuperDataGridAuditPerson | null;
 }
 
 export interface SuperDataGridCompanyDetailsOptions {

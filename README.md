@@ -146,6 +146,7 @@ Additional built-in cell types cover common values. Configure the renderer with 
 | Type | Behavior | Per-column options |
 |---|---|---|
 | `badge` | Status or category pill with per-value label, background, text color, and optional React icon. | `labels`, `colors`, `fontColors`, `icons`, `fallbackLabel`, `fallbackColor` |
+| `peopleAuditPair` | Two package-styled person profiles side by side for assignment and creation audit details. Pass `{ assignedTo, createdBy }`, with each person containing `firstName`, `lastName`, and `email` or `loginName`; `createdBy.createdAt` adds its UTC timestamp. | — |
 | `companyDetails` | Styled company profile with a prominent company name, role, employee count, and annual revenue. Pass `{ company, title, companySize, annualRevenue }` as the cell value. | `employeeLabel`, `revenueLabel` |
 | `currency` | Grouped, locale-aware currency display with a prominent total; supports row-specific currency codes and integer minor units. | `currency`, `currencyField`, `locale`, `amountInMinorUnits`, `minorUnits`, `showIcon` |
 | `date` / `dateTime` | Localized date or date-time with a calendar icon and optional time zone. | `locale`, `timeZone`, `formatOptions`, `showIcon` |
