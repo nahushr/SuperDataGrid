@@ -193,7 +193,7 @@ const DEFAULT_COLUMN_SIZING: Partial<Record<SuperDataGridColumnType, DefaultColu
   peopleDetails: { flex: 2.2, minWidth: 360 },
   badgeList: { flex: 1.3, minWidth: 190 },
   companyDetails: { flex: 1.7, minWidth: 270 },
-  peopleAuditPair: { flex: 2.6, minWidth: 470 },
+  peopleAuditPair: { flex: 2.6, minWidth: 600 },
 };
 
 function getDefaultColumnSizing(
