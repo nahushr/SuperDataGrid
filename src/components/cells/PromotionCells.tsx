@@ -26,16 +26,6 @@ const PROMOTION_PRICING_OPTIONS: SuperDataGridMetricListOptions = {
       unitPlural: "uses",
       tone: "info",
     },
-    {
-      field: "refundGeneratedVoucher",
-      label: "Voucher",
-      format: "boolean",
-      trueLabel: "Generated",
-      falseLabel: "Not generated",
-      fullWidth: true,
-      trueTone: "warning",
-      falseTone: "slate",
-    },
   ],
 };
 
@@ -86,7 +76,7 @@ export function PromotionDetailsCell({ row }: Readonly<PromotionCellProps>) {
   );
 }
 
-/** Formats a promotion's discount, usage limit, and generated-voucher setting. */
+/** Formats a promotion's discount and usage limit. */
 export function PromotionPricingRedemptionCell({ row }: Readonly<PromotionCellProps>) {
   return <MetricListCell value={row} options={PROMOTION_PRICING_OPTIONS} />;
 }
