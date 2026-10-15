@@ -35,6 +35,7 @@ export type SuperDataGridColumnType =
   | "badgeList"
   | "countChip"
   | "titleDescription"
+  | "companyDetails"
   | "json"
   | "image"
   | "priceBreakdown";
@@ -143,6 +144,20 @@ export interface SuperDataGridTitleDescriptionOptions {
   descriptionField?: string;
 }
 
+export interface SuperDataGridPeopleDetailsOptions {
+  /** Render the address included in the people value beneath its contact details. */
+  showAddress?: boolean;
+  /** Property in the people value containing the address object. Defaults to `address`. */
+  addressField?: string;
+}
+
+export interface SuperDataGridCompanyDetailsOptions {
+  /** Label used for the employee-count metric. Defaults to `employees`. */
+  employeeLabel?: string;
+  /** Label used for the revenue metric. Defaults to `Annual revenue`. */
+  revenueLabel?: string;
+}
+
 export interface SuperDataGridJsonOptions {
   /** Maximum characters shown before the user opens the formatted JSON dialog. */
   maxPreviewLength?: number;
@@ -223,6 +238,8 @@ export interface SuperDataGridColumnOptions {
   badgeList?: SuperDataGridBadgeListOptions;
   countChip?: SuperDataGridCountChipOptions;
   titleDescription?: SuperDataGridTitleDescriptionOptions;
+  peopleDetails?: SuperDataGridPeopleDetailsOptions;
+  companyDetails?: SuperDataGridCompanyDetailsOptions;
   /** Optional row-aware display value resolver for predefined cell renderers. */
   valueGetter?: (value: unknown, row: Readonly<Record<string, unknown>>) => unknown;
   json?: SuperDataGridJsonOptions;

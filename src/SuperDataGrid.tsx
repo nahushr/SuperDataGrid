@@ -29,6 +29,7 @@ import SuperDataGridSelectionScopeDialog from "./components/SuperDataGridSelecti
 import ActionsCell from "./components/cells/ActionsCell";
 import AddressCell from "./components/cells/AddressCell";
 import BadgeListCell from "./components/cells/BadgeListCell";
+import CompanyDetailsCell from "./components/cells/CompanyDetailsCell";
 import CountChipCell from "./components/cells/CountChipCell";
 import TitleDescriptionCell from "./components/cells/TitleDescriptionCell";
 import AuditCell from "./components/cells/AuditCell";
@@ -190,7 +191,8 @@ function getGridValueGetter(
       columnType === "badgeList" ||
       columnType === "countChip" ||
       columnType === "titleDescription" ||
-      columnType === "peopleDetails"
+      columnType === "peopleDetails" ||
+      columnType === "companyDetails"
     )) {
       return getCommonCellSearchText(
         columnType,
@@ -236,7 +238,7 @@ function renderGridCell<Row extends SuperDataGridRow>(
 
   switch (columnType) {
     case "peopleDetails":
-      return <PeopleDetailsCell value={resolvedValue} row={row} rowId={(row as GridValidRowModel).id} showAvatar />;
+      return <PeopleDetailsCell value={resolvedValue} row={row} rowId={(row as GridValidRowModel).id} showAvatar options={options?.peopleDetails} />;
     case "address":
       return <AddressCell value={rawValue} />;
     case "audit":
@@ -261,6 +263,8 @@ function renderGridCell<Row extends SuperDataGridRow>(
       return <CountChipCell value={resolvedValue} row={row as Record<string, unknown>} options={options?.countChip} />;
     case "titleDescription":
       return <TitleDescriptionCell value={resolvedValue} row={row as Record<string, unknown>} options={options?.titleDescription} />;
+    case "companyDetails":
+      return <CompanyDetailsCell value={resolvedValue} options={options?.companyDetails} />;
     case "json":
       return <JsonPreviewCell value={rawValue} field={field} options={options?.json} />;
     case "image":

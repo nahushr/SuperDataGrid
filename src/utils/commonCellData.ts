@@ -274,6 +274,12 @@ export function getCommonCellSearchText(
       return toSafeText(value);
     case "titleDescription":
       return toSafeText(value);
+    case "companyDetails": {
+      const record = toRecord(value);
+      return record == null
+        ? toSafeText(value)
+        : Object.values(record).map(toSafeText).filter(Boolean).join(" | ");
+    }
     case "currency": {
       const record = toRecord(value);
       return toSafeText(record?.amount ?? record?.value ?? value);
@@ -293,8 +299,13 @@ export function getCommonCellSearchText(
       return toSafeText(value);
     case "image":
       return getImageSearchText(value);
-    case "peopleDetails":
-      return Object.values(getPeopleDetailsParts(value)).filter(Boolean).join(" | ");
+    case "peopleDetails": {
+      const record = toRecord(value);
+      return [
+        ...Object.values(getPeopleDetailsParts(value)),
+        ...Object.values(getAddressParts(record?.address)),
+      ].filter(Boolean).join(" | ");
+    }
     case "address":
       return Object.values(getAddressParts(value)).filter(Boolean).join(" | ");
     default:

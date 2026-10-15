@@ -4,6 +4,8 @@ import PersonIcon from "@mui/icons-material/Person";
 import type { GridRowId } from "@mui/x-data-grid";
 import { getPeopleAvatarParts, getPeopleDetailsParts } from "../../utils/commonCellData";
 import { getAvatarColorIndex } from "../../utils/avatar";
+import type { SuperDataGridPeopleDetailsOptions } from "../../types";
+import AddressCell from "./AddressCell";
 import EmailCell from "./EmailCell";
 import PhoneCell from "./PhoneCell";
 import styles from "../../styles/common-cells.module.css";
@@ -29,6 +31,7 @@ interface PeopleDetailsCellProps {
   showPhone?: boolean;
   showEmptyFields?: boolean;
   showAvatar?: boolean;
+  options?: SuperDataGridPeopleDetailsOptions;
 }
 
 export default function PeopleDetailsCell({
@@ -39,13 +42,21 @@ export default function PeopleDetailsCell({
   showPhone = true,
   showEmptyFields = false,
   showAvatar = false,
+  options = {},
 }: Readonly<PeopleDetailsCellProps>) {
   const { name, email, phone } = getPeopleDetailsParts(value);
+  const valueRecord =
+    typeof value === "object" && value !== null && !Array.isArray(value)
+      ? (value as Record<string, unknown>)
+      : null;
+  const address = options.showAddress
+    ? valueRecord?.[options.addressField ?? "address"]
+    : undefined;
   const avatar = getPeopleAvatarParts(value, row);
   const avatarColorIndex = getAvatarColorIndex(rowId ?? "unknown");
   const avatarColorClass = AVATAR_COLOR_CLASSES[avatarColorIndex];
 
-  if (!name && !email && !(showPhone && phone) && !showEmptyFields) {
+  if (!name && !email && !(showPhone && phone) && address == null && !showEmptyFields) {
     return <span className={styles.emptyValue}>{emptyText}</span>;
   }
 
@@ -76,6 +87,13 @@ export default function PeopleDetailsCell({
         <span className={styles.emptyContactValue}>{emptyText}</span>
       ))}
       {showPhone && phone && <PhoneCell value={phone} wrap />}
+      {address != null && (
+        <AddressCell
+          value={address}
+          showContactInfo={false}
+          testId="people-details-address"
+        />
+      )}
     </div>
   );
 }
