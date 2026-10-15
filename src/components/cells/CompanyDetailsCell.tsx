@@ -42,7 +42,11 @@ export default function CompanyDetailsCell({
   const company = readText(record, ["company", "companyName", "name"]);
   const title = readText(record, ["title", "jobTitle", "role"]);
   const employeeCount = readText(record, ["companySize", "employeeCount", "employees"]);
-  const annualRevenue = readText(record, ["annualRevenue", "revenue"]);
+  const revenueValue = readText(record, ["annualRevenue", "revenue"]);
+  const revenueNumber = Number(revenueValue);
+  const annualRevenue = revenueValue && Number.isFinite(revenueNumber)
+    ? revenueNumber.toLocaleString("en-US")
+    : revenueValue;
 
   if (!company && !title && !employeeCount && !annualRevenue) {
     return <span className={styles.emptyValue}>—</span>;

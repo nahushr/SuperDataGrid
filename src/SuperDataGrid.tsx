@@ -96,6 +96,8 @@ export type {
   SuperDataGridBadgeListOptions,
   SuperDataGridCountChipOptions,
   SuperDataGridTitleDescriptionOptions,
+  SuperDataGridPeopleDetailsOptions,
+  SuperDataGridCompanyDetailsOptions,
   SuperDataGridColumnOptions,
   SuperDataGridCurrencyOptions,
   SuperDataGridDateOptions,

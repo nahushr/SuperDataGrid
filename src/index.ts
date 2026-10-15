@@ -53,6 +53,7 @@ export { default as ImagePreviewCell } from "./components/cells/ImagePreviewCell
 export { default as ProductImageCarousel } from "./components/cells/ProductImageCarousel";
 export { default as PriceBreakdownCell } from "./components/cells/PriceBreakdownCell";
 export { default as TitleDescriptionCell } from "./components/cells/TitleDescriptionCell";
+export { default as CompanyDetailsCell } from "./components/cells/CompanyDetailsCell";
 export type {
   SuperDataGridExportFormat,
   SuperDataGridExportRequest,
@@ -72,6 +73,8 @@ export type {
   SuperDataGridBadgeListOptions,
   SuperDataGridCountChipOptions,
   SuperDataGridTitleDescriptionOptions,
+  SuperDataGridPeopleDetailsOptions,
+  SuperDataGridCompanyDetailsOptions,
   SuperDataGridColumnOptions,
   SuperDataGridCurrencyOptions,
   SuperDataGridDateOptions,
