@@ -293,6 +293,15 @@ export function getCommonCellSearchText(
     }
     case "titleDescription":
       return toSafeText(value);
+    case "imageDetails": {
+      const record = toRecord(value);
+      if (!record) return toSafeText(value);
+      return [record.title, record.description, record.badges, record.metadata]
+        .flatMap((part) => Array.isArray(part) ? part : [part])
+        .map(toSafeText)
+        .filter(Boolean)
+        .join(" | ");
+    }
     case "promotionDetails": {
       const record = toRecord(row);
       return [record?.promoCode, record?.description]

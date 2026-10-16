@@ -69,10 +69,10 @@ export default function ImagePreviewCell({
   }
 
   return (
-    <div className={styles.productImageCell}>
+    <div className={`${styles.productImageCell} ${options.thumbnailOnly ? styles.productImageCellThumbnailOnly : ""}`}>
       <button
         aria-label={imageButtonLabel}
-        className={styles.productImageCard}
+        className={`${styles.productImageCard} ${options.thumbnailOnly ? styles.productImageCardThumbnailOnly : ""}`}
         disabled={!mainImage}
         onClick={(event) => {
           event.stopPropagation();
@@ -104,13 +104,15 @@ export default function ImagePreviewCell({
             </span>
           )}
         </span>
-        <span className={styles.productImageCardMeta}>
-          <span className={styles.productImageCardTitle}>{title}</span>
-          <span className={styles.productImageCardHint}>
-            <CollectionsOutlinedIcon aria-hidden="true" />
-            {mainImage ? `${images.length} photos · View` : "No photos"}
+        {!options.thumbnailOnly && (
+          <span className={styles.productImageCardMeta}>
+            <span className={styles.productImageCardTitle}>{title}</span>
+            <span className={styles.productImageCardHint}>
+              <CollectionsOutlinedIcon aria-hidden="true" />
+              {mainImage ? `${images.length} photos · View` : "No photos"}
+            </span>
           </span>
-        </span>
+        )}
       </button>
       <Dialog
         onClose={() => setOpen(false)}

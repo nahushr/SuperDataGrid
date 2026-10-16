@@ -38,6 +38,7 @@ import DateCell from "./components/cells/DateCell";
 import DateTimeCell from "./components/cells/DateTimeCell";
 import EmailCell from "./components/cells/EmailCell";
 import ImagePreviewCell from "./components/cells/ImagePreviewCell";
+import ImageDetailsCell from "./components/cells/ImageDetailsCell";
 import JsonPreviewCell from "./components/cells/JsonPreviewCell";
 import LongTextCell from "./components/cells/LongTextCell";
 import MetricListCell from "./components/cells/MetricListCell";
@@ -119,6 +120,7 @@ export type {
   SuperDataGridDateOptions,
   SuperDataGridEmailOptions,
   SuperDataGridImageOptions,
+  SuperDataGridImageDetailsValue,
   SuperDataGridJsonOptions,
   SuperDataGridLongTextOptions,
   SuperDataGridMetricField,
@@ -216,6 +218,7 @@ const DEFAULT_COLUMN_SIZING: Partial<Record<SuperDataGridColumnType, DefaultColu
   badgeList: { flex: 1.3, minWidth: 190 },
   metricList: { flex: 1.5, minWidth: 250 },
   titleDescription: { flex: 2.1, minWidth: 290 },
+  imageDetails: { flex: 2.6, minWidth: 370 },
   promotionDetails: { flex: 1.7, minWidth: 250 },
   promotionPricingRedemption: { flex: 1.5, minWidth: 250 },
   promotionLifecycle: { flex: 1.5, minWidth: 250 },
@@ -258,6 +261,7 @@ function getGridValueGetter(
       columnType === "metricList" ||
       columnType === "countChip" ||
       columnType === "titleDescription" ||
+      columnType === "imageDetails" ||
       columnType === "peopleDetails" ||
       columnType === "peopleAuditPair" ||
       columnType === "companyDetails" ||
@@ -360,6 +364,8 @@ function renderGridCell<Row extends SuperDataGridRow>(
       return <JsonPreviewCell value={rawValue} field={field} options={options?.json} />;
     case "image":
       return <ImagePreviewCell value={rawValue} field={field} row={row} options={options?.image} />;
+    case "imageDetails":
+      return <ImageDetailsCell value={resolvedValue} field={field} options={options?.imageDetails} />;
     case "priceBreakdown":
       return <PriceBreakdownCell value={rawValue} row={row} options={options?.priceBreakdown} />;
     case "actions":

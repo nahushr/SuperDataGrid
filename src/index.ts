@@ -52,6 +52,7 @@ export { default as BadgeListCell } from "./components/cells/BadgeListCell";
 export { default as MetricListCell } from "./components/cells/MetricListCell";
 export { default as JsonPreviewCell } from "./components/cells/JsonPreviewCell";
 export { default as ImagePreviewCell } from "./components/cells/ImagePreviewCell";
+export { default as ImageDetailsCell } from "./components/cells/ImageDetailsCell";
 export { default as ProductImageCarousel } from "./components/cells/ProductImageCarousel";
 export { default as PriceBreakdownCell } from "./components/cells/PriceBreakdownCell";
 export { default as TitleDescriptionCell } from "./components/cells/TitleDescriptionCell";
@@ -94,6 +95,7 @@ export type {
   SuperDataGridDateOptions,
   SuperDataGridEmailOptions,
   SuperDataGridImageOptions,
+  SuperDataGridImageDetailsValue,
   SuperDataGridJsonOptions,
   SuperDataGridLongTextOptions,
   SuperDataGridPhoneOptions,

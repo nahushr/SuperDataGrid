@@ -46,6 +46,7 @@ export type SuperDataGridColumnType =
   | "packageImageGallery"
   | "editableNumber"
   | "companyDetails"
+  | "imageDetails"
   | "json"
   | "image"
   | "priceBreakdown";
@@ -265,12 +266,23 @@ export interface SuperDataGridImageOptions {
   labelField?: string;
   /** Letter shown in the square fallback tile when the image list is empty. */
   fallbackLetter?: string;
+  /** Render only the interactive thumbnail when composing it with another cell. */
+  thumbnailOnly?: boolean;
 }
 
 export interface SuperDataGridProductImage {
   url: string;
   label?: string;
   alt?: string;
+}
+
+/** Content rendered by the reusable image-and-details cell. */
+export interface SuperDataGridImageDetailsValue {
+  title?: string;
+  description?: string;
+  images?: readonly SuperDataGridProductImage[];
+  badges?: readonly string[];
+  metadata?: readonly string[];
 }
 
 /** Common purchase-order totals accepted by the `priceBreakdown` cell type. */
@@ -339,6 +351,7 @@ export interface SuperDataGridColumnOptions {
   valueGetter?: (value: unknown, row: Readonly<Record<string, unknown>>) => unknown;
   json?: SuperDataGridJsonOptions;
   image?: SuperDataGridImageOptions;
+  imageDetails?: SuperDataGridImageOptions;
   priceBreakdown?: SuperDataGridPriceBreakdownOptions;
 }
 
