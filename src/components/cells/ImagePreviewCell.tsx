@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import CollectionsOutlinedIcon from "@mui/icons-material/CollectionsOutlined";
 import OpenInFullOutlinedIcon from "@mui/icons-material/OpenInFullOutlined";
-import { PolyFormModal } from "@simplishelf/polyform";
+import { OpsModalDialog } from "@simplishelf/opscards";
 import type {
   SuperDataGridImageOptions,
   SuperDataGridImageVariant,
@@ -125,7 +125,7 @@ export default function ImagePreviewCell({
           </span>
         )}
       </button>
-      <PolyFormModal
+      <OpsModalDialog
         onClose={() => setOpen(false)}
         open={open}
         maxWidth="lg"
@@ -162,7 +162,7 @@ export default function ImagePreviewCell({
             />
           </>
         )}
-      </PolyFormModal>
+      </OpsModalDialog>
     </div>
   );
 }

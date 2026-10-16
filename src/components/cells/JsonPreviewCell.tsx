@@ -1,9 +1,6 @@
 import React, { useMemo, useState } from "react";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import {
-  PolyFormModal,
-  PolyFormModalButton,
-} from "@simplishelf/polyform";
+import { OpsModalButton, OpsModalDialog } from "@simplishelf/opscards";
 import type { SuperDataGridJsonOptions } from "../../types";
 import { toDisplayValue } from "../../utils/gridData";
 import styles from "../../styles/predefined-cells.module.css";
@@ -84,7 +81,7 @@ export default function JsonPreviewCell({
       >
         <span className={styles.jsonPreviewText}>{preview}</span>
       </button>
-      <PolyFormModal
+      <OpsModalDialog
         onClose={() => setOpen(false)}
         open={open}
         maxWidth="sm"
@@ -94,21 +91,21 @@ export default function JsonPreviewCell({
             <span aria-live="polite" className={styles.copiedMessage}>
               {copyMessage}
             </span>
-            <PolyFormModalButton
+            <OpsModalButton
               dataTestId="copy-json-preview"
               onClick={() => void copyJson()}
               startIcon={<ContentCopyIcon />}
             >
               Copy JSON
-            </PolyFormModalButton>
-            <PolyFormModalButton onClick={() => setOpen(false)} appearance="primary">
+            </OpsModalButton>
+            <OpsModalButton onClick={() => setOpen(false)} appearance="primary">
               Close
-            </PolyFormModalButton>
+            </OpsModalButton>
           </>
         )}
       >
         <pre className={styles.jsonBlock}>{formatted}</pre>
-      </PolyFormModal>
+      </OpsModalDialog>
     </>
   );
 }

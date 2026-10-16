@@ -1,9 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Box } from "@mui/material";
-import {
-  PolyFormModal,
-  PolyFormModalButton,
-} from "@simplishelf/polyform";
+import { OpsModalButton, OpsModalDialog } from "@simplishelf/opscards";
 import {
   GridLogicOperator,
 } from "@mui/x-data-grid";
@@ -60,7 +57,7 @@ export default function SuperDataGridFilterPanel({
   };
 
   return (
-    <PolyFormModal
+    <OpsModalDialog
       open={open}
       onClose={onClose}
       maxWidth="lg"
@@ -71,27 +68,27 @@ export default function SuperDataGridFilterPanel({
       classNames={{ content: styles.dialogContent, actions: styles.actions }}
       actions={(
         <>
-          <PolyFormModalButton
+          <OpsModalButton
             dataTestId="clear-grid-filters"
             onClick={clearFilters}
             appearance="danger"
           >
             Remove all
-          </PolyFormModalButton>
+          </OpsModalButton>
           <Box className={styles.actionsSpacer} />
-          <PolyFormModalButton
+          <OpsModalButton
             dataTestId="cancel-grid-filters"
             onClick={onClose}
           >
             Cancel
-          </PolyFormModalButton>
-          <PolyFormModalButton
+          </OpsModalButton>
+          <OpsModalButton
             dataTestId="apply-grid-filters"
             onClick={applyFilters}
             appearance="primary"
           >
             Apply filters
-          </PolyFormModalButton>
+          </OpsModalButton>
         </>
       )}
     >
@@ -106,6 +103,6 @@ export default function SuperDataGridFilterPanel({
           keepOneCondition
         />
       </div>
-    </PolyFormModal>
+    </OpsModalDialog>
   );
 }

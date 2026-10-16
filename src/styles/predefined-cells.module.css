@@ -113,7 +113,7 @@
 .dateValue,
 .timestamp {
   color: #475569;
-  font-family: "JetBrains Mono", "Roboto Mono", ui-monospace, monospace;
+  font-family: var(--ops-font-mono, ui-monospace, monospace);
   font-size: 0.875rem;
   font-variant-numeric: tabular-nums;
   line-height: 1.4;
@@ -207,7 +207,7 @@
 
 .phoneContactLink {
   color: #0d9488;
-  font-family: "JetBrains Mono", "Roboto Mono", ui-monospace, monospace;
+  font-family: var(--ops-font-mono, ui-monospace, monospace);
   text-decoration-color: #5eead4;
 }
 
@@ -305,7 +305,7 @@
   width: 100%;
   overflow: hidden;
   color: inherit;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--ops-font-mono, ui-monospace, monospace);
   font-size: 12px;
   line-height: 1.45;
   overflow-wrap: anywhere;
@@ -322,7 +322,7 @@
   border-radius: 8px;
   background: #f1f5f9;
   color: #0f172a;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--ops-font-mono, ui-monospace, monospace);
   font-size: 13px;
   line-height: 1.5;
   overflow-wrap: anywhere;
@@ -1507,7 +1507,7 @@
   padding: 5px 9px;
   background: #ffffff;
   color: #0f172a;
-  font-family: "JetBrains Mono", "Roboto Mono", ui-monospace, monospace;
+  font-family: var(--ops-font-mono, ui-monospace, monospace);
   font-size: 13px;
   font-variant-numeric: tabular-nums;
   outline: none;

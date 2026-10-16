@@ -1,5 +1,5 @@
 .gridWorkspace {
-  font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--ops-font-sans, ui-sans-serif, system-ui, sans-serif);
   --super-data-grid-min-height: 800px;
   position: relative;
   display: flex;
@@ -118,7 +118,7 @@
 }
 
 .gridRoot {
-  font-family: "Inter", ui-sans-serif, system-ui, sans-serif !important;
+  font-family: var(--ops-font-sans, ui-sans-serif, system-ui, sans-serif) !important;
   height: 100%;
   border: none !important;
   outline: none !important;
@@ -252,7 +252,7 @@
 
 .gridRoot :global(.MuiDataGrid-cell).monospaceCell {
   color: var(--app-text-secondary, #475569) !important;
-  font-family: "JetBrains Mono", "Roboto Mono", ui-monospace, monospace !important;
+  font-family: var(--ops-font-mono, ui-monospace, monospace) !important;
   font-size: 0.75rem;
 }
 

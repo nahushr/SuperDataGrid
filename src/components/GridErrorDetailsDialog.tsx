@@ -1,5 +1,5 @@
 import React from "react";
-import { PolyFormModal, PolyFormModalButton } from "@simplishelf/polyform";
+import { OpsModalButton, OpsModalDialog } from "@simplishelf/opscards";
 import Box from "@mui/material/Box";
 import styles from "../styles/error-dialog.module.css";
 
@@ -42,7 +42,7 @@ export function GridErrorDetailsDialog({
     `${base} ${override ?? ""}`.trim();
 
   return (
-    <PolyFormModal
+    <OpsModalDialog
       onClose={onClose}
       open={open}
       maxWidth="sm"
@@ -58,14 +58,14 @@ export function GridErrorDetailsDialog({
         actions: classes.footer,
       }}
       actions={(
-        <PolyFormModalButton
+        <OpsModalButton
           className={classes.closeAction}
           dataTestId="close-grid-error-details"
           appearance="primary"
           onClick={onClose}
         >
           Close
-        </PolyFormModalButton>
+        </OpsModalButton>
       )}
     >
       <>
@@ -89,7 +89,7 @@ export function GridErrorDetailsDialog({
           ))}
         </Box>
       </>
-    </PolyFormModal>
+    </OpsModalDialog>
   );
 }
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { PolyFormModal, PolyFormModalButton } from "@simplishelf/polyform";
+import { OpsModalButton, OpsModalDialog } from "@simplishelf/opscards";
 import {
   Alert,
   CircularProgress,
@@ -34,7 +34,7 @@ export default function SuperDataGridSelectionScopeDialog({
   onSelectAll,
 }: Readonly<SuperDataGridSelectionScopeDialogProps>) {
   return (
-    <PolyFormModal
+    <OpsModalDialog
       open={open}
       onClose={() => { if (!selectingAll) onClose(); }}
       maxWidth="sm"
@@ -45,21 +45,21 @@ export default function SuperDataGridSelectionScopeDialog({
       classNames={{ actions: styles.actions }}
       actions={(
         <>
-          <PolyFormModalButton
+          <OpsModalButton
             dataTestId="cancel-row-selection"
             onClick={onClose}
             disabled={selectingAll}
           >
             Cancel
-          </PolyFormModalButton>
-          <PolyFormModalButton
+          </OpsModalButton>
+          <OpsModalButton
             dataTestId="select-current-page"
             onClick={onSelectCurrentPage}
             disabled={selectingAll}
           >
             Current page
-          </PolyFormModalButton>
-          <PolyFormModalButton
+          </OpsModalButton>
+          <OpsModalButton
             dataTestId="select-all-matching"
             appearance="primary"
             onClick={onSelectAll}
@@ -67,7 +67,7 @@ export default function SuperDataGridSelectionScopeDialog({
             startIcon={selectingAll ? <CircularProgress size={16} color="inherit" /> : undefined}
           >
             {selectingAll ? "Selecting…" : "Select all"}
-          </PolyFormModalButton>
+          </OpsModalButton>
         </>
       )}
     >
@@ -83,6 +83,6 @@ export default function SuperDataGridSelectionScopeDialog({
             </Typography>
           )}
         </div>
-    </PolyFormModal>
+    </OpsModalDialog>
   );
 }

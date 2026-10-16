@@ -2,10 +2,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import {
   FieldType,
   PolyForm,
-  PolyFormModal,
-  PolyFormModalButton,
   type FormCardConfig,
 } from "@simplishelf/polyform";
+import { OpsModalButton, OpsModalDialog } from "@simplishelf/opscards";
 import { useForm } from "react-hook-form";
 import type { SuperDataGridFilterModel, SuperDataGridView } from "../types";
 import type { SuperDataGridFilterField } from "../utils/filterFields";
@@ -98,7 +97,7 @@ export default function SuperDataGridAddViewDialog({
   const isEditing = initialView != null;
 
   return (
-    <PolyFormModal
+    <OpsModalDialog
       open={open}
       onClose={onClose}
       maxWidth="lg"
@@ -109,13 +108,13 @@ export default function SuperDataGridAddViewDialog({
       classNames={{ content: styles.dialogContent, actions: styles.actions }}
       actions={(
         <>
-          <PolyFormModalButton
+          <OpsModalButton
             dataTestId="cancel-saved-view"
             onClick={onClose}
           >
             Cancel
-          </PolyFormModalButton>
-          <PolyFormModalButton
+          </OpsModalButton>
+          <OpsModalButton
             dataTestId="save-saved-view"
             type="submit"
             form="super-data-grid-saved-view-form"
@@ -123,7 +122,7 @@ export default function SuperDataGridAddViewDialog({
             disabled={name.trim().length === 0}
           >
             {isEditing ? "Save changes" : "Save view"}
-          </PolyFormModalButton>
+          </OpsModalButton>
         </>
       )}
     >
@@ -147,6 +146,6 @@ export default function SuperDataGridAddViewDialog({
             )}
           </div>
       </form>
-    </PolyFormModal>
+    </OpsModalDialog>
   );
 }

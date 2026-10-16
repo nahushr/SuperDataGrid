@@ -1,5 +1,5 @@
 import React from "react";
-import { PolyFormModal, PolyFormModalButton } from "@simplishelf/polyform";
+import { OpsModalButton, OpsModalDialog } from "@simplishelf/opscards";
 import {
   Alert,
   CircularProgress,
@@ -28,7 +28,7 @@ export default function SuperDataGridBulkDeleteDialog({
   onConfirm,
 }: Readonly<SuperDataGridBulkDeleteDialogProps>) {
   return (
-    <PolyFormModal
+    <OpsModalDialog
       open={open}
       onClose={() => { if (!loading) onClose(); }}
       maxWidth="sm"
@@ -40,14 +40,14 @@ export default function SuperDataGridBulkDeleteDialog({
       classNames={{ actions: styles.actions }}
       actions={(
         <>
-          <PolyFormModalButton
+          <OpsModalButton
             dataTestId="cancel-bulk-delete"
             onClick={onClose}
             disabled={loading}
           >
             Cancel
-          </PolyFormModalButton>
-          <PolyFormModalButton
+          </OpsModalButton>
+          <OpsModalButton
             dataTestId="confirm-bulk-delete"
             appearance="danger"
             onClick={onConfirm}
@@ -55,7 +55,7 @@ export default function SuperDataGridBulkDeleteDialog({
             startIcon={loading ? <CircularProgress size={16} color="inherit" /> : undefined}
           >
             {loading ? "Deleting…" : "Delete"}
-          </PolyFormModalButton>
+          </OpsModalButton>
         </>
       )}
     >
@@ -65,6 +65,6 @@ export default function SuperDataGridBulkDeleteDialog({
         </Typography>
         {error && <Alert severity="error">{error}</Alert>}
       </div>
-    </PolyFormModal>
+    </OpsModalDialog>
   );
 }

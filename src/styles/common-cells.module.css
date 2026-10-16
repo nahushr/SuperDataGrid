@@ -200,7 +200,7 @@
 
 .phoneContactLink {
   color: #0d9488;
-  font-family: "JetBrains Mono", "Roboto Mono", ui-monospace, monospace;
+  font-family: var(--ops-font-mono, ui-monospace, monospace);
   text-decoration-color: #5eead4;
 }
 

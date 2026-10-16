@@ -1,5 +1,5 @@
 import React from "react";
-import { PolyFormModal, PolyFormModalButton } from "@simplishelf/polyform";
+import { OpsModalButton, OpsModalDialog } from "@simplishelf/opscards";
 import { Button, Typography } from "@mui/material";
 import styles from "../styles/export-scope.module.css";
 import { muiControlUtilities } from "../styles/tailwindClasses";
@@ -22,7 +22,7 @@ export default function SuperDataGridExportScopeDialog({
   onAllData,
 }: Readonly<SuperDataGridExportScopeDialogProps>) {
   return (
-    <PolyFormModal
+    <OpsModalDialog
       open={open}
       onClose={onClose}
       maxWidth="xs"
@@ -30,9 +30,9 @@ export default function SuperDataGridExportScopeDialog({
       title={`Export ${formatLabel}`}
       classNames={{ actions: styles.actions }}
       actions={(
-        <PolyFormModalButton dataTestId="cancel-grid-export" onClick={onClose}>
+        <OpsModalButton dataTestId="cancel-grid-export" onClick={onClose}>
           Cancel
-        </PolyFormModalButton>
+        </OpsModalButton>
       )}
     >
         <div className={styles.content}>
@@ -66,6 +66,6 @@ export default function SuperDataGridExportScopeDialog({
             </Typography>
           )}
         </div>
-    </PolyFormModal>
+    </OpsModalDialog>
   );
 }
