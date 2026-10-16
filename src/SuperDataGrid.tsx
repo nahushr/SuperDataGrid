@@ -230,18 +230,29 @@ const DEFAULT_COLUMN_SIZING: Partial<Record<SuperDataGridColumnType, DefaultColu
   peopleAuditPair: { flex: 2.6, minWidth: 600 },
 };
 
-// A Created (UTC) cell contains both its actor and timestamp, so keep the same
-// 300px minimum across entity grids regardless of the cell renderer used.
-const CREATED_AT_COLUMN_SIZING: DefaultColumnSizing = {
+// Created/audit cells stack an actor and timestamp, so keep enough room for
+// both across entity grids regardless of the cell renderer used.
+const CREATED_AUDIT_COLUMN_SIZING: DefaultColumnSizing = {
   flex: 1.25,
-  minWidth: 300,
+  minWidth: 360,
 };
+
+const CREATED_AUDIT_FIELDS = new Set([
+  "createdAt",
+  "createdBy",
+  "createdByUser",
+  "createdByUserInfo",
+]);
+
+function isCreatedAuditField(field: string): boolean {
+  return CREATED_AUDIT_FIELDS.has(field);
+}
 
 function getDefaultColumnSizing(
   field: string,
   columnType: SuperDataGridColumnType | undefined,
 ): DefaultColumnSizing | undefined {
-  if (field === "createdAt") return CREATED_AT_COLUMN_SIZING;
+  if (isCreatedAuditField(field)) return CREATED_AUDIT_COLUMN_SIZING;
   if (columnType) return DEFAULT_COLUMN_SIZING[columnType];
   return field === "actions" ? { flex: 1.2, minWidth: 240 } : undefined;
 }
@@ -404,6 +415,10 @@ function createGridColumn<Row extends SuperDataGridRow>(
   const measuredWidth = autoSizedWidths[field];
   const measuredMinWidth = autoSizedMinWidths[field];
   const configuredCellClassName = configuration?.cellClassName;
+  const auditColumn = isCreatedAuditField(field);
+  const minimumWidth = auditColumn
+    ? Math.max(configuration?.minWidth ?? 0, defaultSizing?.minWidth ?? 0)
+    : configuration?.minWidth ?? defaultSizing?.minWidth;
   const cellBaseClassName = monospaceCell ? styles.monospaceCell : "";
   const cellClassName: GridColDef["cellClassName"] =
     typeof configuredCellClassName === "function"
@@ -426,10 +441,10 @@ function createGridColumn<Row extends SuperDataGridRow>(
       flexSizingReady && flex == null ? measuredWidth : undefined
     ),
     minWidth: flex == null
-      ? configuration?.minWidth ?? defaultSizing?.minWidth
+      ? minimumWidth
       : sizeColumnsToContent
-        ? Math.max(configuration?.minWidth ?? defaultSizing?.minWidth ?? 0, measuredMinWidth ?? 0)
-        : configuration?.minWidth ?? defaultSizing?.minWidth ?? 50,
+        ? Math.max(minimumWidth ?? 0, measuredMinWidth ?? 0)
+        : minimumWidth ?? 50,
     maxWidth: configuration?.maxWidth,
     hideable: configuration?.hideable,
     cellClassName,
