@@ -1,11 +1,9 @@
 import React, { useMemo, useState } from "react";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import Button from "@mui/material/Button";
 import {
-  OpsModal as Dialog,
-  OpsModalActions as DialogActions,
-  OpsModalContent as DialogContent,
-} from "@simplishelf/opscards";
+  PolyFormModal,
+  PolyFormModalButton,
+} from "@simplishelf/polyform";
 import type { SuperDataGridJsonOptions } from "../../types";
 import { toDisplayValue } from "../../utils/gridData";
 import styles from "../../styles/predefined-cells.module.css";
@@ -86,31 +84,31 @@ export default function JsonPreviewCell({
       >
         <span className={styles.jsonPreviewText}>{preview}</span>
       </button>
-      <Dialog
+      <PolyFormModal
         onClose={() => setOpen(false)}
         open={open}
         maxWidth="sm"
         title="JSON preview"
+        actions={(
+          <>
+            <span aria-live="polite" className={styles.copiedMessage}>
+              {copyMessage}
+            </span>
+            <PolyFormModalButton
+              dataTestId="copy-json-preview"
+              onClick={() => void copyJson()}
+              startIcon={<ContentCopyIcon />}
+            >
+              Copy JSON
+            </PolyFormModalButton>
+            <PolyFormModalButton onClick={() => setOpen(false)} appearance="primary">
+              Close
+            </PolyFormModalButton>
+          </>
+        )}
       >
-        <DialogContent>
-          <pre className={styles.jsonBlock}>{formatted}</pre>
-        </DialogContent>
-        <DialogActions>
-          <span aria-live="polite" className={styles.copiedMessage}>
-            {copyMessage}
-          </span>
-          <Button
-            onClick={(event) => {
-              event.stopPropagation();
-              void copyJson();
-            }}
-            startIcon={<ContentCopyIcon />}
-          >
-            Copy JSON
-          </Button>
-          <Button onClick={() => setOpen(false)}>Close</Button>
-        </DialogActions>
-      </Dialog>
+        <pre className={styles.jsonBlock}>{formatted}</pre>
+      </PolyFormModal>
     </>
   );
 }

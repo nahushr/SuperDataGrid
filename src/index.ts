@@ -106,7 +106,13 @@ export type {
   SuperDataGridProductImage,
   SuperDataGridProps,
   SuperDataGridFilterField,
+  SuperDataGridFilterDataType,
+  SuperDataGridFilterCombinator,
+  SuperDataGridFilterGroup,
+  SuperDataGridFilterModel,
+  SuperDataGridFilterRule,
   SuperDataGridRow,
+  SuperDataGridRowClassNameParams,
   SuperDataGridView,
 } from "./SuperDataGrid";
 

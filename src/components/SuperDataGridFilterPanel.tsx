@@ -1,28 +1,26 @@
 import React, { useCallback, useEffect, useState } from "react";
+import { Box } from "@mui/material";
 import {
-  OpsModal as Dialog,
-  OpsModalActions as DialogActions,
-  OpsModalContent as DialogContent,
-} from "@simplishelf/opscards";
-import { Box, Button } from "@mui/material";
+  PolyFormModal,
+  PolyFormModalButton,
+} from "@simplishelf/polyform";
 import {
   GridLogicOperator,
-  type GridFilterModel,
 } from "@mui/x-data-grid";
+import type { SuperDataGridFilterModel } from "../types";
 import type { SuperDataGridFilterField } from "../utils/filterFields";
 import SuperDataGridPolyFilterForm from "./SuperDataGridPolyFilterForm";
 import styles from "../styles/filter-panel.module.css";
-import { muiControlUtilities } from "../styles/tailwindClasses";
 
 interface FilterPanelProps {
   open: boolean;
   columns: SuperDataGridFilterField[];
-  filterModel: GridFilterModel;
+  filterModel: SuperDataGridFilterModel;
   onClose: () => void;
-  onApply: (model: GridFilterModel) => void;
+  onApply: (model: SuperDataGridFilterModel) => void;
 }
 
-const EMPTY_FILTER_MODEL: GridFilterModel = {
+const EMPTY_FILTER_MODEL: SuperDataGridFilterModel = {
   items: [],
   logicOperator: GridLogicOperator.And,
 };
@@ -34,8 +32,8 @@ export default function SuperDataGridFilterPanel({
   onClose,
   onApply,
 }: Readonly<FilterPanelProps>) {
-  const [draftModel, setDraftModel] = useState<GridFilterModel>(filterModel);
-  const [resetModel, setResetModel] = useState<GridFilterModel>(filterModel);
+  const [draftModel, setDraftModel] = useState<SuperDataGridFilterModel>(filterModel);
+  const [resetModel, setResetModel] = useState<SuperDataGridFilterModel>(filterModel);
   const [resetKey, setResetKey] = useState(0);
 
   useEffect(() => {
@@ -45,7 +43,7 @@ export default function SuperDataGridFilterPanel({
     setResetKey((revision) => revision + 1);
   }, [filterModel, open]);
 
-  const handleDraftChange = useCallback((model: GridFilterModel) => {
+  const handleDraftChange = useCallback((model: SuperDataGridFilterModel) => {
     setDraftModel(model);
   }, []);
 
@@ -62,8 +60,7 @@ export default function SuperDataGridFilterPanel({
   };
 
   return (
-    <Dialog
-      className={muiControlUtilities}
+    <PolyFormModal
       open={open}
       onClose={onClose}
       maxWidth="lg"
@@ -71,8 +68,34 @@ export default function SuperDataGridFilterPanel({
       title="Filter Data"
       subtitle="Build filters from the columns shown in this grid."
       closeButtonLabel="Close filter dialog"
+      classNames={{ content: styles.dialogContent, actions: styles.actions }}
+      actions={(
+        <>
+          <PolyFormModalButton
+            dataTestId="clear-grid-filters"
+            onClick={clearFilters}
+            appearance="danger"
+          >
+            Remove all
+          </PolyFormModalButton>
+          <Box className={styles.actionsSpacer} />
+          <PolyFormModalButton
+            dataTestId="cancel-grid-filters"
+            onClick={onClose}
+          >
+            Cancel
+          </PolyFormModalButton>
+          <PolyFormModalButton
+            dataTestId="apply-grid-filters"
+            onClick={applyFilters}
+            appearance="primary"
+          >
+            Apply filters
+          </PolyFormModalButton>
+        </>
+      )}
     >
-      <DialogContent className={styles.dialogContent}>
+      <div>
         <SuperDataGridPolyFilterForm
           columns={columns}
           initialModel={resetModel}
@@ -82,28 +105,7 @@ export default function SuperDataGridFilterPanel({
           startWithBlankCondition
           keepOneCondition
         />
-      </DialogContent>
-      <DialogActions className={styles.actions}>
-        <Button
-          data-testid="clear-grid-filters"
-          onClick={clearFilters}
-          variant="outlined"
-          color="secondary"
-        >
-          Remove all
-        </Button>
-        <Box className={styles.actionsSpacer} />
-        <Button data-testid="cancel-grid-filters" onClick={onClose} variant="outlined">
-          Cancel
-        </Button>
-        <Button
-          data-testid="apply-grid-filters"
-          onClick={applyFilters}
-          variant="contained"
-        >
-          Apply filters
-        </Button>
-      </DialogActions>
-    </Dialog>
+      </div>
+    </PolyFormModal>
   );
 }

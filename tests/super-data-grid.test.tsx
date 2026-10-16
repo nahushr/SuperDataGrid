@@ -1,7 +1,9 @@
 import React, { createElement, useContext } from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { GridLogicOperator } from "@mui/x-data-grid";
 import type { GridColDef, GridFilterModel, GridRowSelectionModel } from "@mui/x-data-grid";
+import type { SuperDataGridView } from "../src/types";
 
 const mocks = vi.hoisted(() => ({ DataGrid: vi.fn() }));
 
@@ -83,9 +85,111 @@ function TestGrid(props: MockGridProps) {
 beforeEach(() => {
   lastGridProps = undefined;
   mocks.DataGrid.mockImplementation(TestGrid);
+  Object.defineProperty(window, "innerWidth", { configurable: true, value: 1024 });
 });
 
 describe("SuperDataGrid integration", () => {
+  it("populates Filter Data with the selected saved view conditions", async () => {
+    const onFilterModelChange = vi.fn();
+    const selectedView: SuperDataGridView = {
+      id: "active-users",
+      name: "Active Users",
+      filterModel: {
+        items: [
+          {
+            id: "name-condition",
+            field: "name",
+            operator: "contains",
+            value: "Ada",
+          },
+        ],
+        logicOperator: GridLogicOperator.And,
+        filterQuery: {
+          id: "root",
+          combinator: "and",
+          rules: [
+            {
+              id: "name-condition",
+              field: "name",
+              operator: "contains",
+              value: "Ada",
+            },
+          ],
+        },
+      },
+    };
+
+    render(
+      <SuperDataGrid
+        columns={["name"]}
+        data={[]}
+        views={[selectedView]}
+        separateViewFilters
+        onFilterModelChange={onFilterModelChange}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Toggle views" }));
+    fireEvent.click(screen.getByRole("button", { name: "Active Users" }));
+    await waitFor(() =>
+      expect(onFilterModelChange).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          items: [expect.objectContaining({ field: "name", value: "Ada" })],
+          filterQuery: expect.objectContaining({ combinator: "and" }),
+        }),
+      ),
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Open filters" }));
+    expect(await screen.findByText("Filter Data")).toBeInTheDocument();
+    expect(screen.getAllByRole("textbox", { name: "Value" })[0]).toHaveValue("Ada");
+  });
+
+  it("does not reapply selected-view filters when a host callback changes identity", async () => {
+    const selectedView: SuperDataGridView = {
+      id: "active-users",
+      name: "Active Users",
+      filterModel: {
+        items: [
+          {
+            id: "name-condition",
+            field: "name",
+            operator: "contains",
+            value: "Ada",
+          },
+        ],
+        logicOperator: GridLogicOperator.And,
+      },
+    };
+    const views = [selectedView];
+    const firstCallback = vi.fn();
+    const nextCallback = vi.fn();
+    const grid = render(
+      <SuperDataGrid
+        columns={["name"]}
+        data={[]}
+        views={views}
+        selectedViewId="active-users"
+        separateViewFilters
+        onFilterModelChange={firstCallback}
+      />,
+    );
+
+    await waitFor(() => expect(firstCallback).toHaveBeenCalledTimes(1));
+    grid.rerender(
+      <SuperDataGrid
+        columns={["name"]}
+        data={[]}
+        views={views}
+        selectedViewId="active-users"
+        separateViewFilters
+        onFilterModelChange={nextCallback}
+      />,
+    );
+
+    expect(nextCallback).not.toHaveBeenCalled();
+  });
+
   it("builds grid columns, typed cells, row ids, and sends grid state callbacks", () => {
     const onDensityChange = vi.fn();
     const onSortModelChange = vi.fn();
@@ -158,6 +262,7 @@ describe("SuperDataGrid integration", () => {
   });
 
   it("applies and preserves filters, and independently adds, edits, selects, and deletes views", async () => {
+    Object.defineProperty(window, "innerWidth", { configurable: true, value: 1600 });
     const onFilterModelChange = vi.fn();
     const onViewsChange = vi.fn();
     const onViewAdded = vi.fn();
@@ -184,7 +289,7 @@ describe("SuperDataGrid integration", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Open filters" }));
     expect(screen.getByText("Filter Data")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Remove All" }));
+    fireEvent.click(screen.getByRole("button", { name: "Remove all" }));
     fireEvent.click(screen.getByRole("button", { name: "Close filter dialog" }));
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
     expect(onFilterPanelOpenChange).toHaveBeenCalledWith(true);
@@ -213,7 +318,7 @@ describe("SuperDataGrid integration", () => {
     expect(onViewDeleted).toHaveBeenCalledWith(expect.objectContaining({ id: created.id, name: "Staff Plus" }));
     expect(onViewsOpenChange).not.toHaveBeenCalled();
     fireEvent.click(screen.getByRole("button", { name: "Toggle views" }));
-    expect(onViewsOpenChange).toHaveBeenCalledWith(false);
+    expect(onViewsOpenChange).toHaveBeenLastCalledWith(false);
   });
 
   it("selects selectable rows across server pages and aborts an in-flight select on pagehide", async () => {

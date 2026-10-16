@@ -19,6 +19,36 @@ import type {
 /** A row passed to SuperDataGrid. */
 export type SuperDataGridRow = object;
 
+export type SuperDataGridFilterCombinator = "and" | "or";
+
+/** Data semantics used by filter controls and server filter expressions. */
+export type SuperDataGridFilterDataType =
+  | "string"
+  | "number"
+  | "boolean"
+  | "list"
+  | "date"
+  | "dateTime"
+  | "time";
+
+export interface SuperDataGridFilterRule {
+  id?: string;
+  field: string;
+  operator: string;
+  value?: unknown;
+}
+
+export interface SuperDataGridFilterGroup {
+  id?: string;
+  combinator: SuperDataGridFilterCombinator;
+  rules: Array<SuperDataGridFilterRule | SuperDataGridFilterGroup>;
+}
+
+/** MUI's flat filter items plus the package-owned nested filter expression. */
+export type SuperDataGridFilterModel = GridFilterModel & {
+  filterQuery?: SuperDataGridFilterGroup;
+};
+
 /** Built-in renderers modeled after SimpliShelf's shared data-grid cells. */
 export type SuperDataGridColumnType =
   | "peopleDetails"
@@ -377,16 +407,25 @@ export interface SuperDataGridColumnConfiguration {
   sortable?: boolean;
   hideable?: boolean;
   /** Optional consumer class applied to the column's body cells. */
-  cellClassName?: GridColDef["cellClassName"];
+  cellClassName?: string;
   /** Optional consumer class applied to the column header. */
-  headerClassName?: GridColDef["headerClassName"];
+  headerClassName?: string;
+}
+
+/** Minimal row metadata exposed to host callbacks without leaking MUI types. */
+export interface SuperDataGridRowClassNameParams<
+  Row extends SuperDataGridRow = GridValidRowModel,
+> {
+  row: Row;
+  indexRelativeToCurrentPage: number;
 }
 
 /** A filterable row field, including nested values not shown as grid columns. */
 export interface SuperDataGridFilterField {
   field: string;
   headerName: string;
-  type?: GridColDef["type"];
+  /** Required so the filter builder offers operators appropriate to the value. */
+  type: SuperDataGridFilterDataType;
   filterable?: boolean;
   parentField?: string;
   nestedPath?: string;
@@ -449,7 +488,7 @@ export interface SuperDataGridProps<
   /** Approximation used while automatic row heights are being measured. */
   getEstimatedRowHeight?: (params: GridRowHeightParams) => number;
   /** Host row classes, for example to mark soft-deleted records. */
-  getRowClassName?: (params: GridRowClassNameParams) => string;
+  getRowClassName?: (params: SuperDataGridRowClassNameParams<Row>) => string;
   /** Supported page-size choices; defaults to 10, 25, 50, 100, and 500. */
   pageSizeOptions?: number[];
   /** Hide the pagination footer for embedded and selection grids. */
@@ -487,9 +526,9 @@ export interface SuperDataGridProps<
   /** Called when the rows-per-page value changes. */
   onPageSizeChange?: (pageSize: number) => void;
   /** Controlled filter model for server-side or externally managed grids. */
-  filterModel?: GridFilterModel;
+  filterModel?: SuperDataGridFilterModel;
   /** Called when the filter model changes. */
-  onFilterModelChange?: (model: GridFilterModel) => void;
+  onFilterModelChange?: (model: SuperDataGridFilterModel) => void;
   /** Whether sorting is performed by the grid or by the host application. */
   sortingMode?: GridFeatureMode;
   /** Controlled sort model for server-side or externally managed grids. */
@@ -541,7 +580,7 @@ export interface SuperDataGridProps<
   onFilterPanelOpenChange?: (open: boolean) => void;
   /** Controlled selected saved view ID; `null` selects all rows. */
   selectedViewId?: string | null;
-  /** Keep saved-view selection independent from the standalone Filter model. */
+  /** Keep a selected view active while standalone filters are adjusted; selecting a view loads its saved conditions into Filter Data. */
   separateViewFilters?: boolean;
   /** Called when the selected saved view changes. */
   onSelectedViewChange?: (viewId: string | null) => void;
@@ -588,7 +627,7 @@ export interface SuperDataGridBulkDeleteRequest<
   /** MUI selection model; an `exclude` model means all matching rows except these IDs. */
   rowSelectionModel: GridRowSelectionModel;
   /** Active filters, which define the scope of an `exclude` selection. */
-  filterModel: GridFilterModel;
+  filterModel: SuperDataGridFilterModel;
   /** Current page and page size at the time deletion was confirmed. */
   paginationModel: GridPaginationModel;
   /** Current Include Deleted state. */
@@ -619,21 +658,21 @@ export interface SuperDataGridExportRequest {
   format: SuperDataGridExportFormat;
   scope: SuperDataGridExportScope;
   columns: readonly string[];
-  filterModel: GridFilterModel;
+  filterModel: SuperDataGridFilterModel;
   paginationModel: GridPaginationModel;
   includeDeleted: boolean;
 }
 
 export interface SuperDataGridAllDataRequest {
   columns: readonly string[];
-  filterModel: GridFilterModel;
+  filterModel: SuperDataGridFilterModel;
   paginationModel: GridPaginationModel;
   includeDeleted: boolean;
   signal: AbortSignal;
 }
 
 export interface SuperDataGridAllRowsRequest {
-  filterModel: GridFilterModel;
+  filterModel: SuperDataGridFilterModel;
   paginationModel: GridPaginationModel;
   includeDeleted: boolean;
   signal: AbortSignal;
@@ -643,7 +682,7 @@ export interface SuperDataGridView {
   id: string;
   name: string;
   notes?: string;
-  filterModel: GridFilterModel;
+  filterModel: SuperDataGridFilterModel;
 }
 
 export type SuperDataGridAllDataFetcher = (

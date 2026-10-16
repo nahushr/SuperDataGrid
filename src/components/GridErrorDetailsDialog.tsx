@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  OpsModal as Dialog,
-  OpsModalActions as DialogActions,
-  OpsModalContent as DialogContent,
-} from "@simplishelf/opscards";
-import Button from "@mui/material/Button";
+import { PolyFormModal, PolyFormModalButton } from "@simplishelf/polyform";
 import Box from "@mui/material/Box";
 import styles from "../styles/error-dialog.module.css";
 
@@ -47,20 +42,33 @@ export function GridErrorDetailsDialog({
     `${base} ${override ?? ""}`.trim();
 
   return (
-    <Dialog
-      className={className}
+    <PolyFormModal
       onClose={onClose}
       open={open}
-      surfaceClassName={classes.paper}
       maxWidth="sm"
       fullWidth
       title={title}
-      titleClassName={classes.title}
-      headerClassName={classes.header}
       closeButtonLabel="Close error details"
-      closeButtonClassName={classes.closeButton}
+      classNames={{
+        paper: classNames(className ?? "", classes.paper),
+        title: classes.title,
+        header: classes.header,
+        closeButton: classes.closeButton,
+        content: classes.content,
+        actions: classes.footer,
+      }}
+      actions={(
+        <PolyFormModalButton
+          className={classes.closeAction}
+          dataTestId="close-grid-error-details"
+          appearance="primary"
+          onClick={onClose}
+        >
+          Close
+        </PolyFormModalButton>
+      )}
     >
-      <DialogContent className={classes.content}>
+      <>
         {rowIdentifier && (
           <Box className={classNames(styles.identifier, classes.identifier)}>
             {rowIdentifier}
@@ -80,17 +88,8 @@ export function GridErrorDetailsDialog({
             </Box>
           ))}
         </Box>
-      </DialogContent>
-      <DialogActions className={classes.footer}>
-        <Button
-          className={classes.closeAction}
-          variant="contained"
-          onClick={onClose}
-        >
-          Close
-        </Button>
-      </DialogActions>
-    </Dialog>
+      </>
+    </PolyFormModal>
   );
 }
 

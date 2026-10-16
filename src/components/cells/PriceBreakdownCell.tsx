@@ -6,10 +6,7 @@ import PriceChangeOutlinedIcon from "@mui/icons-material/PriceChangeOutlined";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
-import {
-  OpsModal as Dialog,
-  OpsModalContent as DialogContent,
-} from "@simplishelf/opscards";
+import { PolyFormModal } from "@simplishelf/polyform";
 import type {
   SuperDataGridPriceBreakdownLine,
   SuperDataGridPriceBreakdownOptions,
@@ -145,13 +142,12 @@ export default function PriceBreakdownCell({
           <span className={styles.breakdownTriggerLink}>View breakdown</span>
         </span>
       </button>
-      <Dialog
+      <PolyFormModal
         onClose={() => setOpen(false)}
         open={open}
         maxWidth="sm"
         title={title}
       >
-        <DialogContent>
           <div className={styles.breakdownDialogContent}>
             <div className={styles.breakdownGrandTotal}>
               <span>Grand Total</span>
@@ -179,8 +175,7 @@ export default function PriceBreakdownCell({
               <strong>{formattedTotal}</strong>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+      </PolyFormModal>
     </>
   );
 }

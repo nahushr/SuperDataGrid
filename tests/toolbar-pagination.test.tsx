@@ -125,9 +125,9 @@ describe("grid toolbar", () => {
         <SuperDataGridToolbar />
       </SuperDataGridContext.Provider>,
     );
-    expect(screen.getByRole("button", { name: "Columns, 2 selected" })).toBeInTheDocument();
     fireEvent.keyDown(screen.getByRole("menu"), { key: "Escape" });
     await waitFor(() => expect(screen.queryByRole("menu")).not.toBeInTheDocument());
+    expect(screen.getByRole("button", { name: "Columns, 2 selected" })).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Adjust row density" }));
     fireEvent.click(screen.getByRole("menuitem", { name: "Compact" }));

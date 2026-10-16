@@ -120,7 +120,7 @@ describe("saved view filters and sidebar", () => {
       expect.objectContaining({ field: "age", value: 18 }),
       expect.objectContaining({ field: "active", value: true }),
       expect.objectContaining({ field: "name", value: ["Ada", "Lin"] }),
-      expect.objectContaining({ field: "joined", value: expect.any(Date) }),
+      expect.objectContaining({ field: "joined", value: "2026-01-01" }),
       expect.objectContaining({ field: "age", operator: "isEmpty", value: "" }),
     ]) })));
     expect(screen.getAllByRole("combobox")).toHaveLength(11);
@@ -130,11 +130,11 @@ describe("saved view filters and sidebar", () => {
   it("adds, removes, switches match logic, and saves independent view filters", async () => {
     const onChange = vi.fn();
     render(<SuperDataGridViewFilterBuilder columns={fields} initialModel={{ items: [] }} onChange={onChange} />);
-    expect(screen.getByText(/currently has no filters/)).toBeInTheDocument();
+    expect(screen.getByText(/No conditions yet/)).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Add condition" }));
     expect(screen.getAllByRole("combobox")).toHaveLength(2);
     fireEvent.click(screen.getByRole("button", { name: "Remove condition 1" }));
-    expect(screen.getByText(/currently has no filters/)).toBeInTheDocument();
+    expect(screen.getByText(/No conditions yet/)).toBeInTheDocument();
 
     const savedView = {
       id: "admins", name: "Admins", notes: "Admins only",
@@ -191,12 +191,12 @@ describe("grid filter panel", () => {
     render(<SuperDataGridFilterPanel open columns={fields} filterModel={model} onClose={onClose} onApply={onApply} />);
     expect(screen.getByText("Filter Data")).toBeInTheDocument();
     expect(screen.getAllByRole("combobox")).toHaveLength(9);
-    fireEvent.click(screen.getByRole("button", { name: "Apply Filters" }));
+    fireEvent.click(screen.getByRole("button", { name: "Apply filters" }));
     await waitFor(() => expect(onApply).toHaveBeenCalledWith(expect.objectContaining({ logicOperator: GridLogicOperator.Or, items: expect.arrayContaining([
       expect.objectContaining({ field: "age", value: 22 }),
       expect.objectContaining({ field: "active", value: false }),
       expect.objectContaining({ field: "name", value: ["A", "B"] }),
-      expect.objectContaining({ field: "joined", value: expect.any(Date) }),
+      expect.objectContaining({ field: "joined", value: "2026-01-01" }),
     ]) })));
     expect(onClose).toHaveBeenCalledOnce();
   });
@@ -205,10 +205,10 @@ describe("grid filter panel", () => {
     const onApply = vi.fn();
     const onClose = vi.fn();
     render(<SuperDataGridFilterPanel open columns={fields} filterModel={{ items: [] }} onClose={onClose} onApply={onApply} />);
-    fireEvent.click(screen.getByRole("button", { name: "Add Filter" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add filter" }));
     expect(screen.getByText("AND")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Remove filter 2" }));
-    fireEvent.click(screen.getByRole("button", { name: "Remove All" }));
+    fireEvent.click(screen.getByRole("button", { name: "Remove condition 2" }));
+    fireEvent.click(screen.getByRole("button", { name: "Remove all" }));
     expect(onApply).toHaveBeenCalledWith({ items: [], logicOperator: GridLogicOperator.And });
     fireEvent.click(screen.getByRole("button", { name: "Close filter dialog" }));
     expect(onClose).toHaveBeenCalled();

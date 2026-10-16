@@ -1,13 +1,6 @@
 import React from "react";
-import {
-  OpsModal as Dialog,
-  OpsModalActions as DialogActions,
-  OpsModalContent as DialogContent,
-} from "@simplishelf/opscards";
-import {
-  Button,
-  Typography,
-} from "@mui/material";
+import { PolyFormModal, PolyFormModalButton } from "@simplishelf/polyform";
+import { Button, Typography } from "@mui/material";
 import styles from "../styles/export-scope.module.css";
 import { muiControlUtilities } from "../styles/tailwindClasses";
 
@@ -29,15 +22,19 @@ export default function SuperDataGridExportScopeDialog({
   onAllData,
 }: Readonly<SuperDataGridExportScopeDialogProps>) {
   return (
-    <Dialog
-      className={muiControlUtilities}
+    <PolyFormModal
       open={open}
       onClose={onClose}
       maxWidth="xs"
       fullWidth
       title={`Export ${formatLabel}`}
+      classNames={{ actions: styles.actions }}
+      actions={(
+        <PolyFormModalButton dataTestId="cancel-grid-export" onClick={onClose}>
+          Cancel
+        </PolyFormModalButton>
+      )}
     >
-      <DialogContent>
         <div className={styles.content}>
           <Typography className={styles.description}>
             Choose which rows to include in this export.
@@ -69,12 +66,6 @@ export default function SuperDataGridExportScopeDialog({
             </Typography>
           )}
         </div>
-      </DialogContent>
-      <DialogActions>
-        <Button className={styles.cancelButton} onClick={onClose}>
-          Cancel
-        </Button>
-      </DialogActions>
-    </Dialog>
+    </PolyFormModal>
   );
 }

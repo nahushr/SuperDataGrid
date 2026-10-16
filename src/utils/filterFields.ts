@@ -38,7 +38,8 @@ function valuesAtPath(value: unknown, path: string[]): unknown[] {
 function inferValueType(
   field: string,
   values: readonly unknown[],
-): GridColDef["type"] {
+): SuperDataGridFilterField["type"] {
+  if (values.some(Array.isArray)) return "list";
   const flatValues = values
     .flatMap((value) => (Array.isArray(value) ? value : [value]))
     .filter((value) => value != null);
@@ -48,6 +49,19 @@ function inferValueType(
   if (flatValues.length > 0 && flatValues.every((value) => typeof value === "number")) {
     return "number";
   }
+  const allTimes = flatValues.length > 0 && flatValues.every(
+    (value) => typeof value === "string" &&
+      /^(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d+)?)?$/.test(value),
+  );
+  if (allTimes && /(time|hour)$/i.test(field)) return "time";
+  const allDateTimes = flatValues.length > 0 && flatValues.every(
+    (value) => value instanceof Date || (
+      typeof value === "string" &&
+      /^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}/.test(value) &&
+      !Number.isNaN(Date.parse(value))
+    ),
+  );
+  if (allDateTimes && /(date|time|at|on|timestamp)$/i.test(field)) return "dateTime";
   const allDateValues =
     flatValues.length > 0 &&
     flatValues.every((value) => {
@@ -69,6 +83,29 @@ function inferValueType(
     return "date";
   }
   return "string";
+}
+
+function declaredFilterType(
+  declaredType: GridColDef["type"],
+  values: readonly unknown[],
+): SuperDataGridFilterField["type"] | undefined {
+  if (declaredType === "number" || declaredType === "boolean") return declaredType;
+  if (declaredType === "date") return "date";
+  if (declaredType === "dateTime") return "dateTime";
+  if (declaredType === "string" || declaredType === "singleSelect") return "string";
+  return values.length > 0 ? undefined : "string";
+}
+
+function columnFilterType(
+  column: GridColDef,
+  values: readonly unknown[],
+  columnType?: SuperDataGridColumnType,
+): SuperDataGridFilterField["type"] {
+  if (columnType === "date") return "date";
+  if (columnType === "dateTime") return "dateTime";
+  if (columnType === "currency" || columnType === "countChip") return "number";
+  if (columnType === "badgeList" || columnType === "metricList") return "list";
+  return declaredFilterType(column.type, values) ?? inferValueType(column.field, values);
 }
 
 function nestedLabel(column: GridColDef, nestedPath: string): string {
@@ -128,13 +165,17 @@ export function createFilterFields(
   data: readonly SuperDataGridRow[],
   columnTypes?: Partial<Record<string, SuperDataGridColumnType>>,
 ): SuperDataGridFilterField[] {
+  const rowRecords = data.map((row) => row as Record<string, unknown>);
   const fields: SuperDataGridFilterField[] = columns
     .filter((column) => column.filterable !== false)
-    .map((column) => ({
-      field: column.field,
-      headerName: column.headerName ?? toHeaderName(column.field),
-      type: column.type,
-    }));
+    .map((column) => {
+      const values = rowRecords.map((row) => row[column.field]);
+      return {
+        field: column.field,
+        headerName: column.headerName ?? toHeaderName(column.field),
+        type: columnFilterType(column, values, columnTypes?.[column.field]),
+      };
+    });
 
   for (const column of columns) {
     if (
@@ -145,8 +186,6 @@ export function createFilterFields(
     }
 
     const columnType = columnTypes?.[column.field];
-    const rowRecords = data.map((row) => row as Record<string, unknown>);
-
     if (columnType === "audit") {
       const auditParts = [
         ["fullName", "string"],

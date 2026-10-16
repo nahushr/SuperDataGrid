@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useId, useMemo, useState } from "react";
 import {
   DataGrid,
   GridLogicOperator,
-  type GridCellParams,
   type GridColDef,
   type GridColumnVisibilityModel,
   type GridDensity,
@@ -77,8 +76,11 @@ import type {
   SuperDataGridColumnOptions,
   SuperDataGridColumnType,
   SuperDataGridFilterField,
+  SuperDataGridFilterDataType,
+  SuperDataGridFilterModel,
   SuperDataGridProps,
   SuperDataGridRow,
+  SuperDataGridRowClassNameParams,
   SuperDataGridView,
 } from "./types";
 import styles from "./styles/grid.module.css";
@@ -121,8 +123,8 @@ export type {
   SuperDataGridEmailOptions,
   SuperDataGridImageOptions,
   SuperDataGridImageDetailsValue,
-  SuperDataGridJsonOptions,
   SuperDataGridImageVariant,
+  SuperDataGridJsonOptions,
   SuperDataGridLongTextOptions,
   SuperDataGridMetricField,
   SuperDataGridMetricFormat,
@@ -136,8 +138,14 @@ export type {
   SuperDataGridExportRequest,
   SuperDataGridExportScope,
   SuperDataGridFilterField,
+  SuperDataGridFilterDataType,
+  SuperDataGridFilterCombinator,
+  SuperDataGridFilterGroup,
+  SuperDataGridFilterModel,
+  SuperDataGridFilterRule,
   SuperDataGridProps,
   SuperDataGridRow,
+  SuperDataGridRowClassNameParams,
   SuperDataGridView,
 } from "./types";
 export type { GridActionAppearance, GridActionButtonProps } from "./components/GridActionButton";
@@ -422,10 +430,7 @@ function createGridColumn<Row extends SuperDataGridRow>(
     : configuration?.minWidth ?? defaultSizing?.minWidth;
   const cellBaseClassName = monospaceCell ? styles.monospaceCell : "";
   const cellClassName: GridColDef["cellClassName"] =
-    typeof configuredCellClassName === "function"
-      ? (params: GridCellParams) =>
-          [cellBaseClassName, configuredCellClassName(params)].filter(Boolean).join(" ")
-      : [cellBaseClassName, configuredCellClassName ?? ""].filter(Boolean).join(" ") || undefined;
+    [cellBaseClassName, configuredCellClassName ?? ""].filter(Boolean).join(" ") || undefined;
   return {
     field,
     headerName: configuration?.headerName ?? toHeaderName(field),
@@ -871,7 +876,7 @@ export function SuperDataGrid<
   const [internalDensity, setInternalDensity] =
     useState<GridDensity>("standard");
   const density = densityProp ?? internalDensity;
-  const [internalFilterModel, setInternalFilterModel] = useState<GridFilterModel>({
+  const [internalFilterModel, setInternalFilterModel] = useState<SuperDataGridFilterModel>({
     items: [],
     logicOperator: GridLogicOperator.And,
   });
@@ -1030,7 +1035,13 @@ export function SuperDataGrid<
           field: field.field,
           headerName: field.headerName,
           description: "Nested data filter field",
-          type: field.type,
+          type:
+            field.type === "number" ||
+            field.type === "boolean" ||
+            field.type === "date" ||
+            field.type === "dateTime"
+              ? field.type
+              : "string",
           width: 1,
           minWidth: 1,
           maxWidth: 1,
@@ -1088,6 +1099,16 @@ export function SuperDataGrid<
         return { ...record, id: rowId };
       }),
     [data, getRowId, gridColumns],
+  );
+  const resolveRowClassName = useCallback(
+    (params: GridRowClassNameParams<GridValidRowModel>): string =>
+      getRowClassName
+        ? getRowClassName({
+            row: params.row as Row,
+            indexRelativeToCurrentPage: params.indexRelativeToCurrentPage,
+          })
+        : getDefaultRowClassName(params),
+    [getRowClassName],
   );
 
   const filterModel = filterModelProp ?? internalFilterModel;
@@ -1201,12 +1222,14 @@ export function SuperDataGrid<
       : rowSelectionModel.ids.size;
 
   const updateFilterModel = useCallback(
-    (model: GridFilterModel) => {
+    (model: SuperDataGridFilterModel) => {
       if (filterModelProp === undefined) setInternalFilterModel(model);
       onFilterModelChange?.(model);
     },
     [filterModelProp, onFilterModelChange],
   );
+  const updateFilterModelRef = React.useRef(updateFilterModel);
+  updateFilterModelRef.current = updateFilterModel;
 
   const handleSortModelChange = useCallback(
     (model: GridSortModel) => {
@@ -1532,20 +1555,18 @@ export function SuperDataGrid<
         setInternalSelectedViewId(nextViewId);
       }
       onSelectedViewChange?.(nextViewId);
-      if (!separateViewFilters) {
-        updateFilterModel(
-          view?.filterModel ?? {
-            items: [],
-            logicOperator: GridLogicOperator.And,
-          },
-        );
-      }
+      updateFilterModel(
+        view?.filterModel ?? {
+          items: [],
+          logicOperator: GridLogicOperator.And,
+        },
+      );
     },
-    [onSelectedViewChange, selectedViewIdProp, separateViewFilters, updateFilterModel],
+    [onSelectedViewChange, selectedViewIdProp, updateFilterModel],
   );
 
   const handleAddView = useCallback(
-    (name: string, notes: string, viewFilterModel: GridFilterModel) => {
+    (name: string, notes: string, viewFilterModel: SuperDataGridFilterModel) => {
       if (!canAddViews) return;
       const view: SuperDataGridView = {
         id: createUniqueId("view"),
@@ -1573,7 +1594,7 @@ export function SuperDataGrid<
   );
 
   const handleUpdateView = useCallback(
-    (name: string, notes: string, viewFilterModel: GridFilterModel) => {
+    (name: string, notes: string, viewFilterModel: SuperDataGridFilterModel) => {
       if (!editingView || !canEditViews) return;
       const updatedView: SuperDataGridView = {
         ...editingView,
@@ -1605,7 +1626,7 @@ export function SuperDataGrid<
   );
 
   const handleSaveView = useCallback(
-    (name: string, notes: string, viewFilterModel: GridFilterModel) => {
+    (name: string, notes: string, viewFilterModel: SuperDataGridFilterModel) => {
       if (editingView) {
         handleUpdateView(name, notes, viewFilterModel);
       } else {
@@ -1625,20 +1646,30 @@ export function SuperDataGrid<
     [canDeleteViews, handleViewsChange, onViewDeleted, selectView, selectedViewId, views],
   );
 
+  const selectedViewForFilter =
+    selectedViewIdProp == null
+      ? null
+      : views.find((view) => view.id === selectedViewIdProp);
+  const selectedViewFilterSignature = JSON.stringify({
+    found: selectedViewIdProp == null || selectedViewForFilter != null,
+    filterModel: selectedViewForFilter?.filterModel ?? null,
+  });
+
   useEffect(() => {
-    if (selectedViewIdProp === undefined || separateViewFilters) return;
+    if (selectedViewIdProp === undefined) return;
     const selectedView =
       selectedViewIdProp == null
         ? null
         : views.find((view) => view.id === selectedViewIdProp);
     if (selectedViewIdProp != null && selectedView == null) return;
-    updateFilterModel(
+    if (separateViewFilters && selectedView == null) return;
+    updateFilterModelRef.current(
       selectedView?.filterModel ?? {
         items: [],
         logicOperator: GridLogicOperator.And,
       },
     );
-  }, [selectedViewIdProp, separateViewFilters, updateFilterModel, views]);
+  }, [selectedViewFilterSignature, selectedViewIdProp, separateViewFilters]);
 
   const contextValue = useMemo(
     () => ({
@@ -1801,7 +1832,7 @@ export function SuperDataGrid<
           <div className={styles.gridCardHeaderActions}>{cardHeaderActions}</div>
         )}
         <SuperDataGridContext.Provider value={contextValue}>
-          <DataGrid
+          <DataGrid<GridValidRowModel>
             apiRef={apiRef}
             className={`${styles.gridRoot} ${
               cardHeaderActions != null ? styles.gridRootWithCardHeaderActions : ""
@@ -1871,7 +1902,7 @@ export function SuperDataGrid<
             disableColumnMenu
             disableColumnResize
             slots={gridSlots}
-            getRowClassName={getRowClassName ?? getDefaultRowClassName}
+            getRowClassName={resolveRowClassName}
           />
         </SuperDataGridContext.Provider>
       </div>

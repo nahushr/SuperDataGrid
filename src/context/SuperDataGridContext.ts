@@ -3,13 +3,13 @@ import type {
   GridColDef,
   GridColumnVisibilityModel,
   GridDensity,
-  GridFilterModel,
   GridPaginationModel,
   GridValidRowModel,
 } from "@mui/x-data-grid";
 import type {
   SuperDataGridExportRequest,
   SuperDataGridAllDataFetcher,
+  SuperDataGridFilterModel,
   SuperDataGridView,
 } from "../types";
 
@@ -21,7 +21,7 @@ export interface SuperDataGridContextValue {
   rows: GridValidRowModel[];
   density: GridDensity;
   onDensityChange: (density: GridDensity) => void;
-  filterModel: GridFilterModel;
+  filterModel: SuperDataGridFilterModel;
   filterMode: "client" | "server";
   paginationMode: "client" | "server";
   paginationModel: GridPaginationModel;

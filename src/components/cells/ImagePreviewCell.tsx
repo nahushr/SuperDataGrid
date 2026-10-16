@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 import CollectionsOutlinedIcon from "@mui/icons-material/CollectionsOutlined";
 import OpenInFullOutlinedIcon from "@mui/icons-material/OpenInFullOutlined";
-import {
-  OpsModal as Dialog,
-  OpsModalContent as DialogContent,
-} from "@simplishelf/opscards";
+import { PolyFormModal } from "@simplishelf/polyform";
 import type {
   SuperDataGridImageOptions,
   SuperDataGridImageVariant,
@@ -128,49 +125,44 @@ export default function ImagePreviewCell({
           </span>
         )}
       </button>
-      <Dialog
+      <PolyFormModal
         onClose={() => setOpen(false)}
         open={open}
         maxWidth="lg"
-        title={(
-          <span className={styles.productImageDialogHeading}>
-            <span className={styles.productImageDialogEyebrow}>PRODUCT GALLERY</span>
-            <span className={styles.productImageDialogName}>{title}</span>
-          </span>
-        )}
+        title={title}
+        subtitle={activeVariant?.label ? `Photos for ${activeVariant.label}` : "Product image gallery"}
         closeButtonLabel="Close image gallery"
+        classNames={{ content: styles.productImageDialogContent }}
       >
-        <DialogContent>
-          {open && (
-            <>
-              {imageVariants.length > 1 && (
-                <div aria-label="Choose product variant photos" className={styles.imageVariantPicker}>
-                  <span className={styles.imageVariantPickerLabel}>Photos by variant</span>
-                  <div className={styles.imageVariantPickerOptions}>
-                    {imageVariants.map((variant) => (
-                      <button
-                        aria-pressed={activeVariant?.id === variant.id}
-                        className={`${styles.imageVariantOption} ${activeVariant?.id === variant.id ? styles.imageVariantOptionActive : ""}`}
-                        key={variant.id}
-                        onClick={() => setActiveVariantId(variant.id)}
-                        type="button"
-                      >
-                        <span>{variant.label}</span>
-                        <span className={styles.imageVariantPhotoCount}>{variant.images.length}</span>
-                      </button>
-                    ))}
-                  </div>
+        {open && (
+          <>
+            {imageVariants.length > 1 && (
+              <div aria-label="Choose product variant photos" className={styles.imageVariantPicker}>
+                <span className={styles.imageVariantPickerLabel}>Photos by variant</span>
+                <div className={styles.imageVariantPickerOptions}>
+                  {imageVariants.map((variant) => (
+                    <button
+                      aria-pressed={activeVariant?.id === variant.id}
+                      className={`${styles.imageVariantOption} ${activeVariant?.id === variant.id ? styles.imageVariantOptionActive : ""}`}
+                      key={variant.id}
+                      onClick={() => setActiveVariantId(variant.id)}
+                      type="button"
+                    >
+                      <span>{variant.label}</span>
+                      <span className={styles.imageVariantPhotoCount}>{variant.images.length}</span>
+                    </button>
+                  ))}
                 </div>
-              )}
-              <ProductImageCarousel
-                key={activeVariant?.id ?? "product-images"}
-                images={galleryImages}
-                fallbackLetter={activeVariant?.fallbackLetter ?? fallbackLetter}
-              />
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
+              </div>
+            )}
+            <ProductImageCarousel
+              key={activeVariant?.id ?? "product-images"}
+              images={galleryImages}
+              fallbackLetter={activeVariant?.fallbackLetter ?? fallbackLetter}
+            />
+          </>
+        )}
+      </PolyFormModal>
     </div>
   );
 }

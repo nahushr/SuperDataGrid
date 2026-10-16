@@ -1,25 +1,23 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
-  OpsModal as Dialog,
-  OpsModalActions as DialogActions,
-  OpsModalContent as DialogContent,
-} from "@simplishelf/opscards";
-import { Button } from "@mui/material";
-import { FieldType, PolyForm, type FormCardConfig } from "@simplishelf/polyform";
+  FieldType,
+  PolyForm,
+  PolyFormModal,
+  PolyFormModalButton,
+  type FormCardConfig,
+} from "@simplishelf/polyform";
 import { useForm } from "react-hook-form";
-import type { GridFilterModel } from "@mui/x-data-grid";
-import type { SuperDataGridView } from "../types";
+import type { SuperDataGridFilterModel, SuperDataGridView } from "../types";
 import type { SuperDataGridFilterField } from "../utils/filterFields";
 import SuperDataGridViewFilterBuilder from "./SuperDataGridViewFilterBuilder";
 import styles from "../styles/add-view.module.css";
-import { muiControlUtilities } from "../styles/tailwindClasses";
 
 interface SuperDataGridAddViewDialogProps {
   open: boolean;
   columns: SuperDataGridFilterField[];
   initialView: SuperDataGridView | null;
   onClose: () => void;
-  onSave: (name: string, notes: string, filterModel: GridFilterModel) => void;
+  onSave: (name: string, notes: string, filterModel: SuperDataGridFilterModel) => void;
 }
 
 interface ViewFormValues {
@@ -27,7 +25,7 @@ interface ViewFormValues {
   notes: string;
 }
 
-const EMPTY_FILTER_MODEL: GridFilterModel = { items: [] };
+const EMPTY_FILTER_MODEL: SuperDataGridFilterModel = { items: [] };
 
 function createDefaultViewFormValues(): ViewFormValues {
   return { name: "", notes: "" };
@@ -40,7 +38,7 @@ export default function SuperDataGridAddViewDialog({
   onClose,
   onSave,
 }: Readonly<SuperDataGridAddViewDialogProps>) {
-  const [filterModel, setFilterModel] = useState<GridFilterModel>(
+  const [filterModel, setFilterModel] = useState<SuperDataGridFilterModel>(
     EMPTY_FILTER_MODEL,
   );
   const { control, handleSubmit, reset, watch } = useForm<ViewFormValues>({
@@ -100,28 +98,45 @@ export default function SuperDataGridAddViewDialog({
   const isEditing = initialView != null;
 
   return (
-    <Dialog
-      className={muiControlUtilities}
+    <PolyFormModal
       open={open}
       onClose={onClose}
-      maxWidth="md"
+      maxWidth="lg"
       fullWidth
       title={isEditing ? "Edit view" : "Add view"}
       subtitle="Give this view a name and add optional filters."
       closeButtonLabel="Close view dialog"
+      classNames={{ content: styles.dialogContent, actions: styles.actions }}
+      actions={(
+        <>
+          <PolyFormModalButton
+            dataTestId="cancel-saved-view"
+            onClick={onClose}
+          >
+            Cancel
+          </PolyFormModalButton>
+          <PolyFormModalButton
+            dataTestId="save-saved-view"
+            type="submit"
+            form="super-data-grid-saved-view-form"
+            appearance="primary"
+            disabled={name.trim().length === 0}
+          >
+            {isEditing ? "Save changes" : "Save view"}
+          </PolyFormModalButton>
+        </>
+      )}
     >
-      <form className={styles.form} onSubmit={saveView}>
-        <DialogContent className={styles.dialogContent}>
+      <form
+        id="super-data-grid-saved-view-form"
+        className={styles.form}
+        onSubmit={saveView}
+      >
           <div className={styles.content}>
             <PolyForm
               cards={formCards}
               control={control}
-              classNames={{
-                root: styles.polyFormRoot,
-                card: styles.polyFormCard,
-                section: styles.polyFormSection,
-                fieldGridItem: styles.polyFormField,
-              }}
+              classNames={{ fieldGridItem: styles.polyFormField }}
             />
             {open && (
               <SuperDataGridViewFilterBuilder
@@ -131,21 +146,7 @@ export default function SuperDataGridAddViewDialog({
               />
             )}
           </div>
-        </DialogContent>
-        <DialogActions className={styles.actions}>
-          <Button data-testid="cancel-saved-view" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button
-            data-testid="save-saved-view"
-            type="submit"
-            variant="contained"
-            disabled={name.trim().length === 0}
-          >
-            {isEditing ? "Save changes" : "Save view"}
-          </Button>
-        </DialogActions>
       </form>
-    </Dialog>
+    </PolyFormModal>
   );
 }

@@ -117,9 +117,26 @@ export default function SuperDataGridToolbar() {
 
   if (gridState == null) return null;
 
-  const activeFilterCount = gridState.filterModel.items.filter(
-    (filter) => filter.field !== "" && filter.operator !== "",
-  ).length;
+  const countCompleteRules = (rules: readonly unknown[]): number =>
+    rules.reduce<number>((count, rule) => {
+      if (typeof rule !== "object" || rule === null) return count;
+      if ("rules" in rule && Array.isArray(rule.rules)) {
+        return count + countCompleteRules(rule.rules);
+      }
+      if (!("field" in rule) || !("operator" in rule)) return count;
+      const field = rule.field;
+      const operator = rule.operator;
+      if (typeof field !== "string" || field.length === 0) return count;
+      if (typeof operator !== "string" || operator.length === 0) return count;
+      const valueOptional = operator === "isEmpty" || operator === "isNotEmpty";
+      if (valueOptional || ("value" in rule && rule.value != null && String(rule.value).trim() !== "")) {
+        return count + 1;
+      }
+      return count;
+    }, 0);
+  const activeFilterCount = gridState.filterModel.filterQuery
+    ? countCompleteRules(gridState.filterModel.filterQuery.rules)
+    : countCompleteRules(gridState.filterModel.items);
   const toggleableColumns = gridState.columns.filter(
     (column) => column.hideable !== false,
   );

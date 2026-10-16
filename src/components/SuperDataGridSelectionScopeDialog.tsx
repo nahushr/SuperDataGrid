@@ -1,12 +1,7 @@
 import React from "react";
-import {
-  OpsModal as Dialog,
-  OpsModalActions as DialogActions,
-  OpsModalContent as DialogContent,
-} from "@simplishelf/opscards";
+import { PolyFormModal, PolyFormModalButton } from "@simplishelf/polyform";
 import {
   Alert,
-  Button,
   CircularProgress,
   Typography,
 } from "@mui/material";
@@ -39,15 +34,43 @@ export default function SuperDataGridSelectionScopeDialog({
   onSelectAll,
 }: Readonly<SuperDataGridSelectionScopeDialogProps>) {
   return (
-    <Dialog
-      className={muiControlUtilities}
+    <PolyFormModal
       open={open}
-      onClose={selectingAll ? undefined : onClose}
+      onClose={() => { if (!selectingAll) onClose(); }}
       maxWidth="sm"
       fullWidth
       title={`Select ${itemLabel}`}
+      closeButtonLabel="Close row selection dialog"
+      disableCloseButton={selectingAll}
+      classNames={{ actions: styles.actions }}
+      actions={(
+        <>
+          <PolyFormModalButton
+            dataTestId="cancel-row-selection"
+            onClick={onClose}
+            disabled={selectingAll}
+          >
+            Cancel
+          </PolyFormModalButton>
+          <PolyFormModalButton
+            dataTestId="select-current-page"
+            onClick={onSelectCurrentPage}
+            disabled={selectingAll}
+          >
+            Current page
+          </PolyFormModalButton>
+          <PolyFormModalButton
+            dataTestId="select-all-matching"
+            appearance="primary"
+            onClick={onSelectAll}
+            disabled={!canSelectAll || selectingAll}
+            startIcon={selectingAll ? <CircularProgress size={16} color="inherit" /> : undefined}
+          >
+            {selectingAll ? "Selecting…" : "Select all"}
+          </PolyFormModalButton>
+        </>
+      )}
     >
-      <DialogContent>
         <div className={styles.content}>
           <Typography className={styles.description}>
             Choose whether to select only the {currentPageCount} {itemLabel} on
@@ -60,33 +83,6 @@ export default function SuperDataGridSelectionScopeDialog({
             </Typography>
           )}
         </div>
-      </DialogContent>
-      <DialogActions className={styles.actions}>
-        <Button
-          className={styles.actionButton}
-          onClick={onClose}
-          disabled={selectingAll}
-        >
-          Cancel
-        </Button>
-        <Button
-          className={styles.actionButton}
-          variant="outlined"
-          onClick={onSelectCurrentPage}
-          disabled={selectingAll}
-        >
-          Current page
-        </Button>
-        <Button
-          className={styles.actionButton}
-          variant="contained"
-          onClick={onSelectAll}
-          disabled={!canSelectAll || selectingAll}
-          startIcon={selectingAll ? <CircularProgress size={16} /> : undefined}
-        >
-          {selectingAll ? "Selecting…" : "Select all"}
-        </Button>
-      </DialogActions>
-    </Dialog>
+    </PolyFormModal>
   );
 }
