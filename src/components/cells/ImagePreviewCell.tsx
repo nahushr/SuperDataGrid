@@ -5,7 +5,11 @@ import {
   OpsModal as Dialog,
   OpsModalContent as DialogContent,
 } from "@simplishelf/opscards";
-import type { SuperDataGridImageOptions, SuperDataGridRow } from "../../types";
+import type {
+  SuperDataGridImageOptions,
+  SuperDataGridImageVariant,
+  SuperDataGridRow,
+} from "../../types";
 import { getProductImages } from "../../utils/predefinedCellData";
 import ProductImageCarousel from "./ProductImageCarousel";
 import styles from "../../styles/predefined-cells.module.css";
@@ -15,6 +19,7 @@ interface ImagePreviewCellProps {
   field?: string;
   row?: SuperDataGridRow;
   options?: SuperDataGridImageOptions;
+  imageVariants?: readonly SuperDataGridImageVariant[];
 }
 
 function getRowTitle(
@@ -51,10 +56,16 @@ export default function ImagePreviewCell({
   field,
   row,
   options = {},
+  imageVariants = [],
 }: Readonly<ImagePreviewCellProps>) {
   const [open, setOpen] = useState(false);
+  const [activeVariantId, setActiveVariantId] = useState<string>();
   const [failedThumbnailUrl, setFailedThumbnailUrl] = useState("");
   const images = getProductImages(value, options);
+  const activeVariant =
+    imageVariants.find((variant) => variant.id === activeVariantId) ??
+    imageVariants[0];
+  const galleryImages = activeVariant?.images ?? images;
   const mainImage =
     images.find((image) => image.label?.toLowerCase().includes("main")) ??
     images[0];
@@ -76,7 +87,10 @@ export default function ImagePreviewCell({
         disabled={!mainImage}
         onClick={(event) => {
           event.stopPropagation();
-          if (mainImage) setOpen(true);
+          if (mainImage) {
+            setActiveVariantId(imageVariants[0]?.id);
+            setOpen(true);
+          }
         }}
         type="button"
       >
@@ -128,7 +142,32 @@ export default function ImagePreviewCell({
       >
         <DialogContent>
           {open && (
-            <ProductImageCarousel images={images} fallbackLetter={fallbackLetter} />
+            <>
+              {imageVariants.length > 1 && (
+                <div aria-label="Choose product variant photos" className={styles.imageVariantPicker}>
+                  <span className={styles.imageVariantPickerLabel}>Photos by variant</span>
+                  <div className={styles.imageVariantPickerOptions}>
+                    {imageVariants.map((variant) => (
+                      <button
+                        aria-pressed={activeVariant?.id === variant.id}
+                        className={`${styles.imageVariantOption} ${activeVariant?.id === variant.id ? styles.imageVariantOptionActive : ""}`}
+                        key={variant.id}
+                        onClick={() => setActiveVariantId(variant.id)}
+                        type="button"
+                      >
+                        <span>{variant.label}</span>
+                        <span className={styles.imageVariantPhotoCount}>{variant.images.length}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <ProductImageCarousel
+                key={activeVariant?.id ?? "product-images"}
+                images={galleryImages}
+                fallbackLetter={activeVariant?.fallbackLetter ?? fallbackLetter}
+              />
+            </>
           )}
         </DialogContent>
       </Dialog>

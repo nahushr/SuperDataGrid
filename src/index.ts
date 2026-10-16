@@ -96,6 +96,7 @@ export type {
   SuperDataGridEmailOptions,
   SuperDataGridImageOptions,
   SuperDataGridImageDetailsValue,
+  SuperDataGridImageVariant,
   SuperDataGridJsonOptions,
   SuperDataGridLongTextOptions,
   SuperDataGridPhoneOptions,

@@ -41,6 +41,7 @@ export default function ImageDetailsCell({
     <div className={styles.imageDetailsCell}>
       <ImagePreviewCell
         value={details?.images ?? []}
+        imageVariants={details?.imageVariants ?? []}
         field={field}
         row={{ title }}
         options={{ ...options, titleField: "title", thumbnailOnly: true }}
@@ -62,9 +63,13 @@ export default function ImageDetailsCell({
           </div>
         )}
         {metadata.length > 0 && (
-          <span className={styles.imageDetailsMetadata} title={metadata.join(" · ")}>
-            {metadata.join(" · ")}
-          </span>
+          <div className={styles.imageDetailsMetadataList}>
+            {metadata.map((item, index) => (
+              <span className={styles.imageDetailsMetadata} key={`${item}-${index}`} title={item}>
+                {item}
+              </span>
+            ))}
+          </div>
         )}
       </div>
     </div>

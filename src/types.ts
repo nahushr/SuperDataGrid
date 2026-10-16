@@ -281,8 +281,17 @@ export interface SuperDataGridImageDetailsValue {
   title?: string;
   description?: string;
   images?: readonly SuperDataGridProductImage[];
+  /** Optional variant-specific photo sets shown in the image gallery. */
+  imageVariants?: readonly SuperDataGridImageVariant[];
   badges?: readonly string[];
   metadata?: readonly string[];
+}
+
+export interface SuperDataGridImageVariant {
+  id: string;
+  label: string;
+  images: readonly SuperDataGridProductImage[];
+  fallbackLetter?: string;
 }
 
 /** Common purchase-order totals accepted by the `priceBreakdown` cell type. */
