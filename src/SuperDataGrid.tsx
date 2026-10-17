@@ -1029,9 +1029,13 @@ export function SuperDataGrid<
   );
 
   const filterOnlyColumns = useMemo<GridColDef[]>(
-    () =>
-      filterFields
-        .filter((field) => field.parentField != null)
+    () => {
+      const visibleFields = new Set(gridColumns.map((column) => column.field));
+      return filterFields
+        .filter((field) =>
+          field.filterable !== false &&
+          (field.parentField != null || !visibleFields.has(field.field)),
+        )
         .map((field) => ({
           field: field.field,
           headerName: field.headerName,
@@ -1063,8 +1067,9 @@ export function SuperDataGrid<
             const date = value instanceof Date ? value : new Date(String(value));
             return value == null || Number.isNaN(date.getTime()) ? null : date;
           },
-        })),
-    [columnTypes, filterFields],
+        }));
+    },
+    [columnTypes, filterFields, gridColumns],
   );
 
   const dataGridColumns = useMemo(
