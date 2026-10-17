@@ -305,3 +305,101 @@
   color: #64748b;
   font-size: 0.75rem;
 }
+
+.addressChipList {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 0;
+}
+
+.addressChip {
+  display: inline-flex;
+  min-width: 0;
+  max-width: 100%;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  overflow: hidden;
+  color: #0e7490;
+  background: #ecfeff;
+  border: 1px solid #a5f3fc;
+  border-radius: 999px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  line-height: 1.2;
+  transition: background-color 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.addressChip:hover,
+.addressChip:focus-visible {
+  background: #cffafe;
+  border-color: #22d3ee;
+  box-shadow: 0 0 0 2px rgb(34 211 238 / 16%);
+  outline: none;
+}
+
+.addressChipType {
+  flex: 0 0 auto;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.addressChipLocation {
+  min-width: 0;
+  overflow: hidden;
+  color: #475569;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.addressPopover {
+  width: min(360px, calc(100vw - 32px));
+  max-width: calc(100vw - 32px);
+  overflow: hidden;
+  border: 1px solid #cbd5e1;
+  border-radius: 14px !important;
+  box-shadow: 0 18px 48px rgb(15 23 42 / 20%) !important;
+}
+
+.addressPopoverContent {
+  padding: 16px;
+  color: #0f172a;
+  background: #fff;
+  font-family: var(--ops-font-sans, Inter, ui-sans-serif, system-ui, sans-serif);
+}
+
+.addressPopoverHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 11px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.addressPopoverHeading { display: flex; min-width: 0; flex-direction: column; gap: 3px; }
+.addressPopoverHeading strong { color: #0f172a; font-size: 14px; font-weight: 700; }
+.addressPopoverType { color: #0e7490; font-size: 10px; font-weight: 700; letter-spacing: .08em; }
+
+.addressPrimaryBadge {
+  flex: 0 0 auto;
+  padding: 3px 7px;
+  color: #047857;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.addressPopoverBody { display: flex; align-items: flex-start; gap: 9px; padding-top: 12px; }
+.addressPopoverIcon { width: 17px !important; height: 17px !important; flex: 0 0 auto; color: #0e7490; }
+.addressPopoverLines { display: flex; min-width: 0; flex-direction: column; gap: 3px; color: #334155; font-size: 13px; line-height: 1.45; overflow-wrap: anywhere; }
+.addressPopoverContact { display: flex; flex-direction: column; gap: 4px; margin: 12px 0 0 26px; padding-top: 10px; border-top: 1px solid #f1f5f9; font-size: 12px; }
+.addressPopoverContact strong { color: #334155; font-size: 12px; }
+.addressPopoverContact a { color: #0284c7; text-decoration: underline; text-underline-offset: 2px; overflow-wrap: anywhere; }
