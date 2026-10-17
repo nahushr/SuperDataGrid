@@ -477,6 +477,8 @@ export interface SuperDataGridProps<
   minHeight?: number | string;
   /** Workspace height. Numbers are pixels; omit to use the responsive default. */
   height?: number | string;
+  /** Vertical spacing around the grid workspace. Use none for grids embedded in cards. */
+  workspacePadding?: "default" | "none";
   /** Optional MUI column groups for related fields. */
   columnGroupingModel?: GridColumnGroupingModel;
   /** Fixed row height when `getRowHeight` is not provided. */

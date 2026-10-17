@@ -13,6 +13,11 @@
   background-color: #f8fafc;
 }
 
+.gridWorkspaceNoVerticalPadding {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
 .gridWorkspaceViewsClosed {
   gap: 0;
 }
