@@ -20,7 +20,7 @@ export default function LongTextCell({ value, options = {} }: Readonly<LongTextC
 
   return (
     <Tooltip title={text} placement="top-start">
-      <span className={styles.longText} title={text}>
+      <span className={styles.longText}>
         {preview}
       </span>
     </Tooltip>
