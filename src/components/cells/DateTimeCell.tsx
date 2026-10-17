@@ -17,16 +17,24 @@ export default function DateTimeCell({
   if (!date) return <span className={styles.emptyValue}>—</span>;
 
   try {
+    const formatOptions: Intl.DateTimeFormatOptions = options.formatOptions
+      ? {
+          ...options.formatOptions,
+          ...(options.timeZone
+            ? { timeZone: options.timeZone }
+            : {}),
+        }
+      : {
+          dateStyle: "medium",
+          timeStyle: "short",
+          ...(options.timeZone ? { timeZone: options.timeZone } : {}),
+        };
+
     return (
       <span className={styles.formattedDate}>
         {options.showIcon !== false && <CalendarMonthIcon className={styles.dateIcon} aria-hidden="true" />}
         <span>
-        {new Intl.DateTimeFormat(options.locale, {
-          dateStyle: "medium",
-          timeStyle: "short",
-          timeZone: options.timeZone,
-          ...options.formatOptions,
-        }).format(date)}
+        {new Intl.DateTimeFormat(options.locale, formatOptions).format(date)}
         </span>
       </span>
     );
@@ -35,7 +43,10 @@ export default function DateTimeCell({
       <span className={styles.formattedDate}>
         {options.showIcon !== false && <CalendarMonthIcon className={styles.dateIcon} aria-hidden="true" />}
         <span>
-        {date.toLocaleString(options.locale)}
+        {date.toLocaleString(
+          options.locale,
+          options.timeZone ? { timeZone: options.timeZone } : undefined,
+        )}
         </span>
       </span>
     );

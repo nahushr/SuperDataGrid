@@ -1411,6 +1411,97 @@
   -webkit-line-clamp: 2;
 }
 
+.activityCell {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  padding: 3px 0;
+  white-space: normal;
+}
+
+.activityHeading {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.activityAction {
+  min-width: 0;
+  overflow: hidden;
+  color: #0f172a;
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.activityDescription {
+  display: -webkit-box;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.activityLevel {
+  display: inline-flex;
+  min-height: 20px;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 5px;
+  padding: 1px 7px;
+  border: 1px solid #bae6fd;
+  border-radius: 999px;
+  background: #f0f9ff;
+  color: #0369a1;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.045em;
+  line-height: 1.2;
+}
+
+.activityLevel[data-level="DEBUG"] {
+  border-color: #e2e8f0;
+  background: #f8fafc;
+  color: #475569;
+}
+
+.activityLevel[data-level="WARN"],
+.activityLevel[data-level="WARNING"] {
+  border-color: #fde68a;
+  background: #fffbeb;
+  color: #b45309;
+}
+
+.activityLevel[data-level="ERROR"],
+.activityLevel[data-level="FATAL"] {
+  border-color: #fecdd3;
+  background: #fff1f2;
+  color: #be123c;
+}
+
+.activityLevelDot {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: currentColor;
+}
+
 .packageDetails {
   display: flex;
   min-width: 0;

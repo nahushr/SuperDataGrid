@@ -3,6 +3,7 @@ import "./styles/tailwind.css";
 export { SuperDataGrid as default, SuperDataGrid } from "./SuperDataGrid";
 export { default as CustomNoRowsOverlay } from "./components/SuperDataGridNoRowsOverlay";
 export { default as AddressCell } from "./components/cells/AddressCell";
+export { default as ActivityCell } from "./components/cells/ActivityCell";
 export { default as AddressChipsCell } from "./components/cells/AddressChipsCell";
 export { default as CreatedByCell } from "./components/cells/CreatedByCell";
 export { default as PeopleAuditPairCell } from "./components/cells/PeopleAuditPairCell";
@@ -86,6 +87,7 @@ export type {
   SuperDataGridMetricListOptions,
   SuperDataGridCountChipOptions,
   SuperDataGridTitleDescriptionOptions,
+  SuperDataGridActivityOptions,
   SuperDataGridPeopleDetailsOptions,
   SuperDataGridAuditPerson,
   SuperDataGridPeopleAuditPairValue,

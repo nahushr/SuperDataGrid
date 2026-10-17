@@ -293,6 +293,8 @@ export function getCommonCellSearchText(
     }
     case "titleDescription":
       return toSafeText(value);
+    case "activity":
+      return toSafeText(value);
     case "imageDetails": {
       const record = toRecord(value);
       if (!record) return toSafeText(value);

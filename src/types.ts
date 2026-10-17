@@ -53,6 +53,7 @@ export type SuperDataGridFilterModel = GridFilterModel & {
 export type SuperDataGridColumnType =
   | "peopleDetails"
   | "peopleAuditPair"
+  | "activity"
   | "address"
   | "audit"
   | "actions"
@@ -185,6 +186,15 @@ export interface SuperDataGridCountChipOptions {
 export interface SuperDataGridTitleDescriptionOptions {
   /** Row field shown under the primary cell value. */
   descriptionField?: string;
+}
+
+export interface SuperDataGridActivityOptions {
+  /** Row field shown as the primary activity label. Defaults to `action`. */
+  actionField?: string;
+  /** Row field shown as the activity description. Defaults to `description`. */
+  descriptionField?: string;
+  /** Row field shown as the compact log-level badge. Defaults to `logLevel`. */
+  levelField?: string;
 }
 
 export type SuperDataGridMetricFormat =
@@ -382,6 +392,7 @@ export interface SuperDataGridColumnOptions {
   metricList?: SuperDataGridMetricListOptions;
   countChip?: SuperDataGridCountChipOptions;
   titleDescription?: SuperDataGridTitleDescriptionOptions;
+  activity?: SuperDataGridActivityOptions;
   peopleDetails?: SuperDataGridPeopleDetailsOptions;
   companyDetails?: SuperDataGridCompanyDetailsOptions;
   packageDetails?: SuperDataGridPackageDetailsOptions;

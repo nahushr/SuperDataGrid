@@ -26,6 +26,7 @@ import SuperDataGridToolbar from "./components/SuperDataGridToolbar";
 import SuperDataGridViewsSidebar from "./components/SuperDataGridViewsSidebar";
 import SuperDataGridSelectionScopeDialog from "./components/SuperDataGridSelectionScopeDialog";
 import ActionsCell from "./components/cells/ActionsCell";
+import ActivityCell from "./components/cells/ActivityCell";
 import AddressCell from "./components/cells/AddressCell";
 import BadgeListCell from "./components/cells/BadgeListCell";
 import CompanyDetailsCell from "./components/cells/CompanyDetailsCell";
@@ -106,6 +107,7 @@ export type {
   SuperDataGridCellProps,
   SuperDataGridColumnType,
   SuperDataGridColumnConfiguration,
+  SuperDataGridActivityOptions,
   SuperDataGridAuditPerson,
   SuperDataGridBadgeColor,
   SuperDataGridBadgeOptions,
@@ -227,6 +229,7 @@ const DEFAULT_COLUMN_SIZING: Partial<Record<SuperDataGridColumnType, DefaultColu
   badgeList: { flex: 1.3, minWidth: 190 },
   metricList: { flex: 1.5, minWidth: 250 },
   titleDescription: { flex: 2.1, minWidth: 290 },
+  activity: { flex: 2.2, minWidth: 360 },
   imageDetails: { flex: 2.6, minWidth: 370 },
   promotionDetails: { flex: 1.7, minWidth: 250 },
   promotionPricingRedemption: { flex: 1.5, minWidth: 250 },
@@ -281,6 +284,7 @@ function getGridValueGetter(
       columnType === "metricList" ||
       columnType === "countChip" ||
       columnType === "titleDescription" ||
+      columnType === "activity" ||
       columnType === "imageDetails" ||
       columnType === "peopleDetails" ||
       columnType === "peopleAuditPair" ||
@@ -311,6 +315,18 @@ function getGridValueGetter(
     if (columnType === "date" || columnType === "dateTime") {
       return parseDateValue(rawValue);
     }
+    if (columnType === "activity") {
+      const record = row as Record<string, unknown>;
+      const activityOptions = options?.activity;
+      return [
+        record[activityOptions?.actionField ?? "action"],
+        record[activityOptions?.descriptionField ?? "description"],
+        record[activityOptions?.levelField ?? "logLevel"],
+      ]
+        .map(toDisplayValue)
+        .filter(Boolean)
+        .join(" | ");
+    }
     return getCommonCellSearchText(columnType, rawValue, row, field);
   };
 }
@@ -332,6 +348,8 @@ function renderGridCell<Row extends SuperDataGridRow>(
   if (CellComponent) return <CellComponent field={field} value={rawValue} row={row} />;
 
   switch (columnType) {
+    case "activity":
+      return <ActivityCell row={row as Record<string, unknown>} options={options?.activity} />;
     case "peopleDetails":
       return <PeopleDetailsCell value={resolvedValue} row={row} rowId={(row as GridValidRowModel).id} showAvatar options={options?.peopleDetails} />;
     case "peopleAuditPair":
@@ -870,6 +888,8 @@ export function SuperDataGrid<
   bulkDeleteLabel = "Bulk delete",
   hideBulkDelete = false,
 }: Readonly<SuperDataGridProps<Row>>) {
+  const usesActivityColumn = Object.values(columnTypes ?? {}).includes("activity");
+  const shouldMeasureUniformRowHeight = uniformRowHeight || usesActivityColumn;
   const apiRef = useGridApiRef();
   const viewsSidebarId = useId();
   const [autoSizedWidths, setAutoSizedWidths] = useState<Record<string, number>>({});
@@ -1131,6 +1151,7 @@ export function SuperDataGrid<
         JSON.stringify(sortModel),
         JSON.stringify(filterModel),
         density,
+        shouldMeasureUniformRowHeight,
       ].join("\u0001"),
     [
       autoSizeKey,
@@ -1140,6 +1161,7 @@ export function SuperDataGrid<
       resolvedPaginationModel,
       sortModel,
       widthsForCurrentViewport,
+      shouldMeasureUniformRowHeight,
     ],
   );
   const [measuredUniformHeight, setMeasuredUniformHeight] = useState<{
@@ -1158,7 +1180,7 @@ export function SuperDataGrid<
 
   useEffect(() => {
     if (
-      !uniformRowHeight ||
+      !shouldMeasureUniformRowHeight ||
       loading ||
       !flexSizingReady ||
       measuredUniformHeight?.key === uniformHeightKey
@@ -1210,7 +1232,7 @@ export function SuperDataGrid<
     loading,
     measuredUniformHeight,
     uniformHeightKey,
-    uniformRowHeight,
+    shouldMeasureUniformRowHeight,
   ]);
   const views = viewsProp ?? internalViews;
   const selectedViewId =
@@ -1853,13 +1875,13 @@ export function SuperDataGrid<
             disableColumnSorting
             disableVirtualization={
               isAutoSizing ||
-              (uniformRowHeight && currentUniformHeight === undefined)
+              (shouldMeasureUniformRowHeight && currentUniformHeight === undefined)
             }
             rows={rows}
             columns={dataGridColumns}
             columnGroupingModel={columnGroupingModel}
             columnHeaderHeight={getColumnHeaderHeight(gridColumns)}
-            rowHeight={uniformRowHeight ? undefined : rowHeight}
+            rowHeight={shouldMeasureUniformRowHeight ? undefined : rowHeight}
             density={density}
             sortingMode={sortingMode}
             sortModel={sortModel}
@@ -1873,14 +1895,14 @@ export function SuperDataGrid<
             }
             loading={loading}
             getRowHeight={
-              uniformRowHeight
+              shouldMeasureUniformRowHeight
                 ? currentUniformHeight === undefined
                   ? measureUniformRowHeight
                   : getMeasuredUniformRowHeight
                 : getRowHeight
             }
             getEstimatedRowHeight={
-              uniformRowHeight
+              shouldMeasureUniformRowHeight
                 ? getEstimatedRowHeight ?? (() => 76)
                 : getEstimatedRowHeight
             }
