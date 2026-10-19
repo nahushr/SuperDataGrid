@@ -5,6 +5,7 @@ export type GridChipTone = "cyan" | "blue" | "green" | "amber" | "rose" | "purpl
 
 export interface GridChipProps {
   label: React.ReactNode;
+  leadingIcon?: React.ReactNode;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   tone?: GridChipTone;
   disabled?: boolean;
@@ -29,6 +30,7 @@ const TONE_CLASSES: Record<GridChipTone, string> = {
 /** Shared compact chip button for clickable count and status cells. */
 export default function GridChip({
   label,
+  leadingIcon,
   onClick,
   tone = "cyan",
   disabled = false,
@@ -39,6 +41,16 @@ export default function GridChip({
   "aria-label": ariaLabel,
 }: Readonly<GridChipProps>) {
   const toneClass = TONE_CLASSES[tone];
+  const content = (
+    <>
+      {leadingIcon != null && (
+        <span className={styles.gridChipLeadingIcon} aria-hidden="true">
+          {leadingIcon}
+        </span>
+      )}
+      {label}
+    </>
+  );
 
   if (onClick == null) {
     return (
@@ -49,7 +61,7 @@ export default function GridChip({
         title={title}
         style={style}
       >
-        {label}
+        {content}
       </span>
     );
   }
@@ -65,7 +77,7 @@ export default function GridChip({
       title={title}
       style={style}
     >
-      {label}
+      {content}
     </button>
   );
 }

@@ -4,6 +4,7 @@ import type { SuperDataGridRow } from "../../types";
 
 interface PackageImageGalleryCellProps {
   row: SuperDataGridRow;
+  thumbnailOnly?: boolean;
 }
 
 const ATTACHMENT_FIELDS = [
@@ -31,6 +32,7 @@ function getImages(row: Readonly<Record<string, unknown>>) {
 /** Package-owned image preview and gallery for the standard package attachments. */
 export default function PackageImageGalleryCell({
   row,
+  thumbnailOnly = false,
 }: Readonly<PackageImageGalleryCellProps>) {
   const record = row as Record<string, unknown>;
   const packageRecord = record._package && typeof record._package === "object"
@@ -49,6 +51,7 @@ export default function PackageImageGalleryCell({
         fallbackLetter,
         thumbnailAlt: "Package image",
         titleField: "_package.packageName",
+        thumbnailOnly,
       }}
       row={row}
       value={getImages(record)}

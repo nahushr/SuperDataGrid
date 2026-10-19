@@ -48,6 +48,8 @@ import {
   PromotionPricingRedemptionCell,
 } from "./components/cells/PromotionCells";
 import PackageDetailsCell from "./components/cells/PackageDetailsCell";
+import PackageOverviewCell from "./components/cells/PackageOverviewCell";
+import PackageMetricsCell from "./components/cells/PackageMetricsCell";
 import PackageImageGalleryCell from "./components/cells/PackageImageGalleryCell";
 import PackageWeightCell from "./components/cells/PackageWeightCell";
 import PackagePriceCell from "./components/cells/PackagePriceCell";
@@ -235,6 +237,8 @@ const DEFAULT_COLUMN_SIZING: Partial<Record<SuperDataGridColumnType, DefaultColu
   promotionPricingRedemption: { flex: 1.5, minWidth: 250 },
   promotionLifecycle: { flex: 1.5, minWidth: 250 },
   packageDetails: { flex: 1.8, minWidth: 270 },
+  packageOverview: { flex: 2.4, minWidth: 370 },
+  packageMetrics: { flex: 1.15, minWidth: 230 },
   packagePrice: { flex: 0.8, minWidth: 145 },
   packageWeight: { flex: 0.65, minWidth: 125 },
   packageImageGallery: { flex: 0.9, minWidth: 150 },
@@ -290,6 +294,8 @@ function getGridValueGetter(
       columnType === "peopleAuditPair" ||
       columnType === "companyDetails" ||
       columnType === "packageDetails" ||
+      columnType === "packageOverview" ||
+      columnType === "packageMetrics" ||
       columnType === "currency" ||
       columnType === "editableNumber"
     )) {
@@ -399,6 +405,10 @@ function renderGridCell<Row extends SuperDataGridRow>(
       return <PromotionLifecycleCell row={row as Record<string, unknown>} />;
     case "packageDetails":
       return <PackageDetailsCell row={row as Record<string, unknown>} options={options?.packageDetails} />;
+    case "packageOverview":
+      return <PackageOverviewCell row={row} options={options?.packageDetails} />;
+    case "packageMetrics":
+      return <PackageMetricsCell row={row} />;
     case "packagePrice":
       return <PackagePriceCell row={row} field={field} />;
     case "packageWeight":

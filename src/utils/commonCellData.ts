@@ -398,6 +398,27 @@ export function getCommonCellSearchText(
         .filter(Boolean)
         .join(" | ");
     }
+    case "packageOverview": {
+      const record = toRecord(row);
+      const packageRecord = toRecord(record?._package) ?? record;
+      if (!packageRecord) return toSafeText(value);
+      return [
+        packageRecord.packageName,
+        packageRecord.packageType,
+        packageRecord.length,
+        packageRecord.breadth ?? packageRecord.width,
+        packageRecord.height,
+      ].map(toSafeText).filter(Boolean).join(" | ");
+    }
+    case "packageMetrics": {
+      const record = toRecord(row);
+      const packageRecord = toRecord(record?._package) ?? record;
+      if (!packageRecord) return toSafeText(value);
+      return [packageRecord.maxWeight, packageRecord.pricePerUnit, packageRecord.currency]
+        .map(toSafeText)
+        .filter(Boolean)
+        .join(" | ");
+    }
     case "address":
       return Object.values(getAddressParts(value)).filter(Boolean).join(" | ");
     default:

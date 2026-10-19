@@ -72,6 +72,8 @@ export type SuperDataGridColumnType =
   | "promotionPricingRedemption"
   | "promotionLifecycle"
   | "packageDetails"
+  | "packageOverview"
+  | "packageMetrics"
   | "packagePrice"
   | "packageWeight"
   | "packageImageGallery"

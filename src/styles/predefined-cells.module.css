@@ -1525,6 +1525,59 @@
   white-space: normal;
 }
 
+.packageOverview {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  gap: 12px;
+}
+
+.packageOverviewDetails {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.packageMetrics {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: 12px;
+}
+
+.packageMetric {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 3px 0;
+}
+
+.packageMetric + .packageMetric {
+  border-left: 1px solid #e2e8f0;
+  padding-left: 12px;
+}
+
+.packageMetricLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.packageMetricLabel svg {
+  width: 14px;
+  height: 14px;
+  color: #0e7490;
+}
+
 .packageDetailsNameRow {
   display: flex;
   min-width: 0;
@@ -1752,6 +1805,19 @@
   font-weight: 700;
   line-height: 1.2;
   transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+
+.gridChipLeadingIcon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  margin-right: 5px;
+}
+
+.gridChipLeadingIcon > svg {
+  width: 15px;
+  height: 15px;
 }
 
 .gridChipButton:hover {
