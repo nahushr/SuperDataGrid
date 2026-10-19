@@ -127,6 +127,7 @@ export default function ProductImageCarousel({
                 aria-pressed={isActive}
                 className={`${styles.carouselThumbnail} ${isActive ? styles.carouselThumbnailActive : ""}`}
                 key={`${image.url}-${index}`}
+                title={imageLabel}
                 onClick={(event) => {
                   event.stopPropagation();
                   setSelectedIndex(index);
