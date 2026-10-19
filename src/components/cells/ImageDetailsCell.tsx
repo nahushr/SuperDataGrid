@@ -42,6 +42,7 @@ export default function ImageDetailsCell({
       <ImagePreviewCell
         value={details?.images ?? []}
         imageVariants={details?.imageVariants ?? []}
+        selectedVariantId={details?.selectedImageVariantId}
         field={field}
         row={{ title }}
         options={{ ...options, titleField: "title", thumbnailOnly: true }}

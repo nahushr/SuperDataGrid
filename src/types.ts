@@ -333,6 +333,8 @@ export interface SuperDataGridImageDetailsValue {
   images?: readonly SuperDataGridProductImage[];
   /** Optional variant-specific photo sets shown in the image gallery. */
   imageVariants?: readonly SuperDataGridImageVariant[];
+  /** Gallery variant selected when this row's image is opened. */
+  selectedImageVariantId?: string;
   badges?: readonly string[];
   metadata?: readonly string[];
 }
@@ -502,6 +504,8 @@ export interface SuperDataGridProps<
   height?: number | string;
   /** Vertical spacing around the grid workspace. Use none for grids embedded in cards. */
   workspacePadding?: "default" | "none";
+  /** Use the package's compact, content-sized layout for a nested grid. */
+  embedded?: boolean;
   /** Optional MUI column groups for related fields. */
   columnGroupingModel?: GridColumnGroupingModel;
   /** Fixed row height when `getRowHeight` is not provided. */
@@ -613,6 +617,8 @@ export interface SuperDataGridProps<
   loading?: boolean;
   /** Show a selection checkbox beside each selectable row. Omit or pass false to hide them. */
   checkboxSelection?: boolean;
+  /** Hide the checkbox on rows rejected by `isRowSelectable`, while preserving its column alignment. */
+  hideCheckboxForUnselectableRows?: boolean;
   /** Controlled selection model. Omit to let the grid manage selection internally. */
   rowSelectionModel?: GridRowSelectionModel;
   /** Keep selected IDs in include mode for hosts that store explicit selections. */

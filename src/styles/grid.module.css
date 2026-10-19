@@ -18,6 +18,14 @@
   padding-bottom: 0;
 }
 
+.gridWorkspaceEmbedded {
+  display: block;
+  height: auto;
+  min-height: 0;
+  padding: 0;
+  background: transparent;
+}
+
 .gridWorkspaceViewsClosed {
   gap: 0;
 }
@@ -106,6 +114,19 @@
   box-shadow: 0 1px 2px rgb(15 23 42 / 4%);
 }
 
+.gridFrameEmbedded {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: none;
+}
+
 .gridFrameWithCardHeaderActions {
   display: flex;
   min-height: 0;
@@ -132,6 +153,17 @@
   --DataGrid-containerBackground: #ffffff;
   --DataGrid-pinnedBackground: #ffffff;
   --DataGrid-rowBorderColor: rgb(226 232 240 / 80%);
+}
+
+.gridRootEmbedded {
+  height: auto !important;
+  min-height: 0 !important;
+  border-radius: 11px;
+}
+
+.gridRowSelectionHidden :global(.MuiDataGrid-cellCheckbox) {
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .gridRootWithCardHeaderActions {

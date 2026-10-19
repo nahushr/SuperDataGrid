@@ -400,7 +400,10 @@ function renderGridCell<Row extends SuperDataGridRow>(
       // remains available to the reusable badge-list cell.
       return <BadgeListCell value={options?.valueGetter ? resolvedValue : rawValue} row={row as Record<string, unknown>} options={options?.badgeList} />;
     case "metricList":
-      return <MetricListCell value={resolvedValue} options={options?.metricList} />;
+      // Metric lists read several properties from one object cell. The grid's
+      // value getter produces a flattened search string, which is not suitable
+      // for rendering the structured metrics.
+      return <MetricListCell value={options?.valueGetter ? resolvedValue : rawValue} options={options?.metricList} />;
     case "countChip":
       return <CountChipCell value={resolvedValue} row={row as Record<string, unknown>} options={options?.countChip} />;
     case "titleDescription":
@@ -432,7 +435,9 @@ function renderGridCell<Row extends SuperDataGridRow>(
     case "image":
       return <ImagePreviewCell value={rawValue} field={field} row={row} options={options?.image} />;
     case "imageDetails":
-      return <ImageDetailsCell value={resolvedValue} field={field} options={options?.imageDetails} />;
+      // Image details are structured objects; keep the flattened value getter
+      // for filtering, while rendering the original object in the cell.
+      return <ImageDetailsCell value={options?.valueGetter ? resolvedValue : rawValue} field={field} options={options?.imageDetails} />;
     case "priceBreakdown":
       return <PriceBreakdownCell value={rawValue} row={row} options={options?.priceBreakdown} />;
     case "actions":
@@ -858,6 +863,7 @@ export function SuperDataGrid<
   minHeight,
   height,
   workspacePadding = "default",
+  embedded = false,
   columnGroupingModel,
   rowHeight,
   uniformRowHeight = false,
@@ -910,6 +916,7 @@ export function SuperDataGrid<
   onSelectedViewChange,
   loading = false,
   checkboxSelection = false,
+  hideCheckboxForUnselectableRows = false,
   rowSelectionModel: rowSelectionModelProp,
   disableRowSelectionExcludeModel = false,
   onRowSelectionModelChange,
@@ -1163,20 +1170,41 @@ export function SuperDataGrid<
     [data, getRowId, gridColumns],
   );
   const resolveRowClassName = useCallback(
-    (params: GridRowClassNameParams<GridValidRowModel>): string =>
-      getRowClassName
+    (params: GridRowClassNameParams<GridValidRowModel>): string => {
+      const row = params.row as Row;
+      const hostClassName = getRowClassName
         ? getRowClassName({
-            row: params.row as Row,
+            row,
             indexRelativeToCurrentPage: params.indexRelativeToCurrentPage,
           })
-        : getDefaultRowClassName(params),
-    [getRowClassName],
+        : getDefaultRowClassName(params);
+      const shouldHideCheckbox =
+        hideCheckboxForUnselectableRows &&
+        checkboxSelection &&
+        isRowSelectable != null &&
+        !isRowSelectable({ row });
+
+      return [
+        hostClassName,
+        shouldHideCheckbox ? styles.gridRowSelectionHidden : "",
+      ]
+        .filter(Boolean)
+        .join(" ");
+    },
+    [
+      checkboxSelection,
+      getRowClassName,
+      hideCheckboxForUnselectableRows,
+      isRowSelectable,
+    ],
   );
 
   const filterModel = filterModelProp ?? internalFilterModel;
   const sortModel = sortModelProp ?? internalSortModel;
   const resolvedPaginationModel =
-    paginationModelProp ?? internalPaginationModel;
+    paginationModelProp ?? (embedded
+      ? { page: 0, pageSize: Math.max(data.length, 1) }
+      : internalPaginationModel);
   const uniformHeightKey = useMemo(
     () =>
       [
@@ -1836,6 +1864,8 @@ export function SuperDataGrid<
   return (
     <div
       className={`super-data-grid ${styles.gridWorkspace} ${
+        embedded ? styles.gridWorkspaceEmbedded : ""
+      } ${
         workspacePadding === "none" ? styles.gridWorkspaceNoVerticalPadding : ""
       } ${densityClass} ${muiControlUtilities} tw:font-sans tw:relative tw:flex tw:w-full tw:items-stretch tw:gap-3.5 tw:[&_.MuiPaginationItem-root]:rounded-lg tw:[&_.MuiPaginationItem-root]:font-semibold tw:[&_.MuiPaginationItem-root.Mui-selected]:border-blue-600 tw:[&_.MuiPaginationItem-root.Mui-selected]:bg-blue-600 tw:[&_.MuiPaginationItem-root.Mui-selected]:text-white tw:hover:[&_.MuiPaginationItem-root.Mui-selected]:bg-blue-700 ${className ?? ""} ${
         !hideViews && !viewsOpen ? styles.gridWorkspaceViewsClosed : ""
@@ -1890,7 +1920,7 @@ export function SuperDataGrid<
         </div>
       )}
       <div
-        className={`${styles.gridFrame} ${
+        className={`${styles.gridFrame} ${embedded ? styles.gridFrameEmbedded : ""} ${
           cardHeaderActions != null ? styles.gridFrameWithCardHeaderActions : ""
         }`}
       >
@@ -1900,7 +1930,7 @@ export function SuperDataGrid<
         <SuperDataGridContext.Provider value={contextValue}>
           <DataGrid<GridValidRowModel>
             apiRef={apiRef}
-            className={`${styles.gridRoot} ${
+            className={`${styles.gridRoot} ${embedded ? styles.gridRootEmbedded : ""} ${
               cardHeaderActions != null ? styles.gridRootWithCardHeaderActions : ""
             } tw:font-sans tw:bg-white tw:text-slate-900 tw:[&_.MuiDataGrid-columnHeaders]:border-b tw:[&_.MuiDataGrid-columnHeaders]:border-[#155e75] tw:[&_.MuiDataGrid-columnHeaders]:bg-[#0e7490] tw:[&_.MuiDataGrid-columnHeaders]:text-white tw:[&_.MuiDataGrid-columnHeader]:bg-[#0e7490] tw:[&_.MuiDataGrid-columnHeader]:text-white tw:[&_.MuiDataGrid-columnSeparator]:text-[#155e75] tw:[&_.MuiDataGrid-columnHeaderTitle]:text-sm tw:[&_.MuiDataGrid-columnHeaderTitle]:font-bold tw:[&_.MuiDataGrid-columnHeaderTitle]:uppercase tw:[&_.MuiDataGrid-columnHeaderTitle]:tracking-wider tw:[&_.MuiDataGrid-columnHeader_.MuiDataGrid-sortIcon]:text-cyan-200 tw:[&_.MuiDataGrid-columnHeader_.MuiDataGrid-sortIcon]:h-4 tw:[&_.MuiDataGrid-columnHeader_.MuiDataGrid-sortIcon]:w-4 ${gridClassName ?? ""}`}
             classes={{
@@ -1915,6 +1945,7 @@ export function SuperDataGrid<
             }
             rows={rows}
             columns={dataGridColumns}
+            autoHeight={embedded}
             columnGroupingModel={columnGroupingModel}
             columnHeaderHeight={getColumnHeaderHeight(gridColumns)}
             rowHeight={shouldMeasureUniformRowHeight ? undefined : rowHeight}

@@ -17,6 +17,7 @@ interface ImagePreviewCellProps {
   row?: SuperDataGridRow;
   options?: SuperDataGridImageOptions;
   imageVariants?: readonly SuperDataGridImageVariant[];
+  selectedVariantId?: string;
 }
 
 function getRowTitle(
@@ -54,6 +55,7 @@ export default function ImagePreviewCell({
   row,
   options = {},
   imageVariants = [],
+  selectedVariantId,
 }: Readonly<ImagePreviewCellProps>) {
   const [open, setOpen] = useState(false);
   const [activeVariantId, setActiveVariantId] = useState<string>();
@@ -85,7 +87,10 @@ export default function ImagePreviewCell({
         onClick={(event) => {
           event.stopPropagation();
           if (mainImage) {
-            setActiveVariantId(imageVariants[0]?.id);
+            setActiveVariantId(
+              imageVariants.find((variant) => variant.id === selectedVariantId)?.id ??
+                imageVariants[0]?.id,
+            );
             setOpen(true);
           }
         }}
