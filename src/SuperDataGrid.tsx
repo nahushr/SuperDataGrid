@@ -870,6 +870,7 @@ export function SuperDataGrid<
   getRowHeight,
   getEstimatedRowHeight,
   getRowClassName,
+  animateRowEnter,
   pageSizeOptions = PAGE_SIZE_OPTIONS,
   hideFooter = false,
   hideFooterSelectedRowCount = true,
@@ -1178,6 +1179,10 @@ export function SuperDataGrid<
             indexRelativeToCurrentPage: params.indexRelativeToCurrentPage,
           })
         : getDefaultRowClassName(params);
+      const shouldAnimateRow = animateRowEnter?.({
+        row,
+        indexRelativeToCurrentPage: params.indexRelativeToCurrentPage,
+      });
       const shouldHideCheckbox =
         hideCheckboxForUnselectableRows &&
         checkboxSelection &&
@@ -1186,6 +1191,7 @@ export function SuperDataGrid<
 
       return [
         hostClassName,
+        shouldAnimateRow ? styles.gridRowEnter : "",
         shouldHideCheckbox ? styles.gridRowSelectionHidden : "",
       ]
         .filter(Boolean)
@@ -1193,6 +1199,7 @@ export function SuperDataGrid<
     },
     [
       checkboxSelection,
+      animateRowEnter,
       getRowClassName,
       hideCheckboxForUnselectableRows,
       isRowSelectable,

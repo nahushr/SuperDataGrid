@@ -518,6 +518,8 @@ export interface SuperDataGridProps<
   getEstimatedRowHeight?: (params: GridRowHeightParams) => number;
   /** Host row classes, for example to mark soft-deleted records. */
   getRowClassName?: (params: SuperDataGridRowClassNameParams<Row>) => string;
+  /** Animate selected rows when they are first inserted into the grid. */
+  animateRowEnter?: (params: SuperDataGridRowClassNameParams<Row>) => boolean;
   /** Supported page-size choices; defaults to 10, 25, 50, 100, and 500. */
   pageSizeOptions?: number[];
   /** Hide the pagination footer for embedded and selection grids. */

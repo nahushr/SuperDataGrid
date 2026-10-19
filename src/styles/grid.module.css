@@ -408,6 +408,31 @@
   transition: background-color 150ms ease;
 }
 
+.gridRoot :global(.MuiDataGrid-row).gridRowEnter {
+  transform-origin: top;
+  animation: grid-row-enter 260ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  will-change: opacity, clip-path;
+}
+
+@keyframes grid-row-enter {
+  from {
+    clip-path: inset(0 0 100% 0 round 12px);
+    opacity: 0.35;
+  }
+
+  to {
+    clip-path: inset(0 0 0 0 round 12px);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gridRoot :global(.MuiDataGrid-row).gridRowEnter {
+    animation: none;
+    will-change: auto;
+  }
+}
+
 .gridRoot :global(.MuiDataGrid-row.even) {
   background-color: #ffffff !important;
 }
