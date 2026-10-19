@@ -489,7 +489,7 @@
 
 .imageVariantPickerLabel {
   color: #475569;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -513,7 +513,7 @@
   color: #334155;
   cursor: pointer;
   font: inherit;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   transition: border-color 140ms ease, background-color 140ms ease, color 140ms ease;
 }
@@ -694,11 +694,16 @@
 
 .productImageDialogName {
   overflow: hidden;
-  color: #ffffff;
-  font-size: 16px;
+  color: #0f172a;
+  font-size: 20px;
   font-weight: 750;
-  line-height: 1.25;
+  line-height: 1.3;
   text-overflow: ellipsis;
+}
+
+.productImageDialogSubtitle {
+  font-size: 14px;
+  line-height: 1.4;
 }
 
 .carousel {
@@ -733,7 +738,7 @@
   border-radius: 999px;
   background: #eff6ff;
   color: #1d4ed8;
-  font-size: 11px;
+  font-size: 12px;
   font-variant-numeric: tabular-nums;
   font-weight: 800;
 }
@@ -745,7 +750,7 @@
 .carouselLabel {
   overflow: hidden;
   color: #334155;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -753,7 +758,7 @@
 
 .carouselKeyboardHint {
   color: #94a3b8;
-  font-size: 11px;
+  font-size: 12px;
   white-space: nowrap;
 }
 
@@ -912,7 +917,7 @@
   width: 100%;
   overflow: hidden;
   color: #475569;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 650;
   text-align: center;
   text-overflow: ellipsis;
@@ -966,6 +971,14 @@
 
   .productImageDialogContent {
     padding: 14px 14px 17px;
+  }
+
+  .productImageDialogName {
+    font-size: 18px;
+  }
+
+  .productImageDialogSubtitle {
+    font-size: 13px;
   }
 
   .carouselImageFrame {

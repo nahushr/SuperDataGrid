@@ -436,6 +436,7 @@ function createGridColumn<Row extends SuperDataGridRow>(
   const columnType = columnTypes?.[field];
   const options = columnOptions?.[field];
   const configuration = columnConfiguration?.[field];
+  const configuredColSpan = configuration?.colSpan;
   const defaultSizing = getDefaultColumnSizing(field, columnType);
   const monospaceCell = usesMonospacedFont(field, columnType);
   const canFlex = configuration?.width == null;
@@ -476,6 +477,11 @@ function createGridColumn<Row extends SuperDataGridRow>(
     hideable: configuration?.hideable,
     cellClassName,
     headerClassName: configuration?.headerClassName,
+    colSpan:
+      typeof configuredColSpan === "function"
+        ? (value, row, column, apiRef) =>
+            configuredColSpan(value, row, column, apiRef)
+        : configuredColSpan,
     renderCell: ({ value, row }) => renderGridCell(
       field,
       columnType,

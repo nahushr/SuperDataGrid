@@ -132,7 +132,11 @@ export default function ImagePreviewCell({
         title={title}
         subtitle={activeVariant?.label ? `Photos for ${activeVariant.label}` : "Product image gallery"}
         closeButtonLabel="Close image gallery"
-        classNames={{ content: styles.productImageDialogContent }}
+        classNames={{
+          title: styles.productImageDialogName,
+          subtitle: styles.productImageDialogSubtitle,
+          content: styles.productImageDialogContent,
+        }}
       >
         {open && (
           <>

@@ -421,6 +421,13 @@ export interface SuperDataGridColumnConfiguration {
   cellClassName?: string;
   /** Optional consumer class applied to the column header. */
   headerClassName?: string;
+  /** Span a cell across adjacent columns for host-provided detail rows. */
+  colSpan?: number | ((
+    value: unknown,
+    row: GridValidRowModel,
+    column: { field: string },
+    apiRef: unknown,
+  ) => number | undefined);
 }
 
 /** Minimal row metadata exposed to host callbacks without leaking MUI types. */
