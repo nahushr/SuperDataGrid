@@ -18,6 +18,7 @@ import { SuperDataGridContext } from "../src/context/SuperDataGridContext";
 interface MockGridProps {
   columns: GridColDef[];
   rows: Array<Record<string, unknown> & { id: string | number }>;
+  filterModel?: GridFilterModel;
   loading?: boolean;
   hideFooter?: boolean;
   onSortModelChange?: (model: unknown) => void;
@@ -143,6 +144,75 @@ describe("SuperDataGrid integration", () => {
     fireEvent.click(screen.getByRole("button", { name: "Open filters" }));
     expect(await screen.findByText("Filter Data")).toBeInTheDocument();
     expect(screen.getAllByRole("textbox", { name: "Value" })[0]).toHaveValue("Ada");
+  });
+
+  it("keeps advanced filters in SuperDataGrid instead of passing them to MUI X", async () => {
+    const filterModel: GridFilterModel & {
+      filterQuery: {
+        id: string;
+        combinator: "and";
+        rules: Array<{
+          id: string;
+          field: string;
+          operator: string;
+          value: string;
+        }>;
+      };
+    } = {
+      items: [
+        { id: "name-condition", field: "name", operator: "contains", value: "Ada" },
+        { id: "role-condition", field: "role", operator: "equals", value: "ADMIN" },
+      ],
+      logicOperator: GridLogicOperator.And,
+      filterQuery: {
+        id: "root",
+        combinator: "and",
+        rules: [
+          { id: "name-condition", field: "name", operator: "contains", value: "Ada" },
+          { id: "role-condition", field: "role", operator: "equals", value: "ADMIN" },
+        ],
+      },
+    };
+    const onFilterModelChange = vi.fn();
+
+    render(
+      <SuperDataGrid
+        columns={["name", "role"]}
+        data={[]}
+        filterModel={filterModel}
+        filterFields={[
+          { field: "name", headerName: "Name", type: "string" },
+          { field: "role", headerName: "Role", type: "string" },
+        ]}
+        onFilterModelChange={onFilterModelChange}
+      />,
+    );
+
+    expect(lastGridProps?.filterModel).toEqual({ items: [] });
+    fireEvent.click(screen.getByRole("button", { name: "Open filters" }));
+    expect(await screen.findByText("Filter Data")).toBeInTheDocument();
+    const values = await screen.findAllByRole("textbox", { name: "Value" });
+    expect(values).toHaveLength(2);
+    expect(values[0]).toHaveValue("Ada");
+    expect(values[1]).toHaveValue("ADMIN");
+
+    fireEvent.click(screen.getByRole("button", { name: "Apply filters" }));
+    await waitFor(() =>
+      expect(onFilterModelChange).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          items: expect.arrayContaining([
+            expect.objectContaining({ field: "name", value: "Ada" }),
+            expect.objectContaining({ field: "role", value: "ADMIN" }),
+          ]),
+          filterQuery: expect.objectContaining({
+            rules: expect.arrayContaining([
+              expect.objectContaining({ field: "name", value: "Ada" }),
+              expect.objectContaining({ field: "role", value: "ADMIN" }),
+            ]),
+          }),
+        }),
+      ),
+    );
   });
 
   it("does not reapply selected-view filters when a host callback changes identity", async () => {

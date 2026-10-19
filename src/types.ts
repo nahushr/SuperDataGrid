@@ -1,12 +1,14 @@
 import type { ComponentType, ReactNode } from "react";
 import type {
   GridColDef,
+  GridColSpanFn,
   GridColumnGroupingModel,
   GridColumnVisibilityModel,
   GridDensity,
   GridRowClassNameParams,
   GridRowId,
   GridRowHeightParams,
+  GridRenderCellParams,
   GridRowSelectionModel,
   GridSlotsComponent,
   GridSortModel,
@@ -430,12 +432,7 @@ export interface SuperDataGridColumnConfiguration {
   /** Optional consumer class applied to the column header. */
   headerClassName?: string;
   /** Span a cell across adjacent columns for host-provided detail rows. */
-  colSpan?: number | ((
-    value: unknown,
-    row: GridValidRowModel,
-    column: { field: string },
-    apiRef: unknown,
-  ) => number | undefined);
+  colSpan?: number | GridColSpanFn;
 }
 
 /** Minimal row metadata exposed to host callbacks without leaking MUI types. */
@@ -670,6 +667,8 @@ export interface SuperDataGridCellProps<Row extends SuperDataGridRow = object> {
   field: string;
   value: unknown;
   row: Row;
+  /** The originating grid cell params, for host-defined renderers. */
+  gridCellParams?: GridRenderCellParams;
 }
 
 /** Context passed to the handler for a predefined action button. */

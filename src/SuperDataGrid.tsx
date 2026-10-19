@@ -7,6 +7,7 @@ import {
   type GridDensity,
   type GridFilterModel,
   type GridPaginationModel,
+  type GridRenderCellParams,
   type GridRowClassNameParams,
   type GridRowId,
   type GridRowParams,
@@ -97,6 +98,10 @@ const shouldSizeColumnsToContent = (): boolean =>
   window.innerWidth >= 1536;
 const EMPTY_AUTO_SIZED_WIDTHS: Readonly<Record<string, number>> = Object.freeze({});
 const EMPTY_AUTO_SIZED_MIN_WIDTHS: Readonly<Record<string, number>> = Object.freeze({});
+// Advanced filters are owned by SuperDataGrid's filter panel and may contain
+// multiple conditions. MUI X Community only supports a single column filter
+// item, so keep its internal model empty to avoid warnings and dropped rules.
+const EMPTY_MUI_FILTER_MODEL: GridFilterModel = { items: [] };
 
 export type {
   SuperDataGridActionRequest,
@@ -345,13 +350,16 @@ function renderGridCell<Row extends SuperDataGridRow>(
   onAction: SuperDataGridProps<Row>["onAction"],
   value: unknown,
   row: Row,
+  gridCellParams: GridRenderCellParams,
 ): React.ReactNode {
   const rawValue = (row as Record<string, unknown>)[field];
   const resolvedValue = options?.valueGetter
     ? options.valueGetter(rawValue, row as Record<string, unknown>)
     : value;
   const CellComponent = components?.[field];
-  if (CellComponent) return <CellComponent field={field} value={rawValue} row={row} />;
+  if (CellComponent) {
+    return <CellComponent field={field} value={rawValue} row={row} gridCellParams={gridCellParams} />;
+  }
 
   switch (columnType) {
     case "activity":
@@ -500,14 +508,15 @@ function createGridColumn<Row extends SuperDataGridRow>(
         ? (value, row, column, apiRef) =>
             configuredColSpan(value, row, column, apiRef)
         : configuredColSpan,
-    renderCell: ({ value, row }) => renderGridCell(
+    renderCell: (params) => renderGridCell(
       field,
       columnType,
       options,
       cellComponents,
       onAction,
-      value,
-      row as Row,
+      params.value,
+      params.row as Row,
+      params,
     ),
   };
 }
@@ -1937,7 +1946,7 @@ export function SuperDataGrid<
             hideFooterSelectedRowCount={hideFooterSelectedRowCount}
             showToolbar={!hideToolbar}
             onDensityChange={handleDensityChange}
-            filterModel={filterModel}
+            filterModel={EMPTY_MUI_FILTER_MODEL}
             onFilterModelChange={handleFilterModelChange}
             columnVisibilityModel={dataGridColumnVisibilityModel}
             onColumnVisibilityModelChange={handleColumnVisibilityModelChange}
