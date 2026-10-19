@@ -560,10 +560,14 @@
   box-shadow: 0 5px 14px rgb(30 64 175 / 11%);
 }
 
-.productImageCard:focus-visible,
-.carouselThumbnail:focus-visible {
+.productImageCard:focus-visible {
   outline: 3px solid rgb(37 99 235 / 55%);
   outline-offset: 2px;
+}
+
+.carouselThumbnail:focus-visible {
+  outline: 3px solid rgb(8 145 178 / 55%);
+  outline-offset: 3px;
 }
 
 .productImageCard:disabled {
@@ -772,7 +776,7 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: clamp(300px, 59vh, 580px);
+  height: clamp(280px, 56vh, 550px);
   min-width: 0;
   overflow: hidden;
   border: 1px solid #e2e8f0;
@@ -859,77 +863,150 @@
 .carouselThumbnails {
   display: flex;
   justify-content: flex-start;
-  gap: 9px;
+  gap: 10px;
   max-width: 100%;
   overflow-x: auto;
-  padding: 3px 2px 8px;
+  padding: 5px 3px 10px;
+  scroll-snap-type: x proximity;
+  overscroll-behavior-inline: contain;
   scrollbar-color: #cbd5e1 transparent;
   scrollbar-width: thin;
 }
 
 .carouselThumbnail {
+  position: relative;
   display: flex;
-  flex: 0 0 112px;
+  flex: 0 0 128px;
   flex-direction: column;
-  gap: 5px;
-  width: 112px;
-  height: 112px;
+  align-items: stretch;
+  gap: 0;
+  width: 128px;
+  height: 126px;
   padding: 5px;
   overflow: hidden;
-  border: 2px solid transparent;
-  border-radius: 11px;
-  background: #f1f5f9;
+  border: 1px solid #dbe4ee;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 2px 5px rgb(15 23 42 / 6%);
   cursor: pointer;
-  transition: border-color 140ms ease, background 140ms ease, transform 140ms ease;
+  scroll-snap-align: start;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
 }
 
 .carouselThumbnail:hover {
-  transform: translateY(-1px);
-  background: #eaf2ff;
+  transform: translateY(-2px);
+  border-color: #67e8f9;
+  background: #f0fdff;
+  box-shadow: 0 7px 16px rgb(8 145 178 / 13%);
 }
 
 .carouselThumbnailActive {
-  border-color: #2563eb;
-  background: #eff6ff;
+  border-color: #0e7490;
+  background: #ecfeff;
+  box-shadow: 0 0 0 2px rgb(14 116 144 / 14%), 0 5px 12px rgb(14 116 144 / 10%);
+}
+
+.carouselThumbnailActive::after {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  display: flex;
+  width: 22px;
+  height: 22px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #0e7490;
+  box-shadow: 0 1px 4px rgb(15 23 42 / 20%);
+  color: #fff;
+  content: "✓";
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.carouselThumbnailVisual {
+  position: relative;
+  display: flex;
+  flex: 0 0 82px;
+  width: 100%;
+  height: 82px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #f1f5f9, #e8eef5);
 }
 
 .carouselThumbnailImage,
 .carouselThumbnailFallback {
   display: flex;
-  flex: 0 0 62px;
+  flex: 1 1 auto;
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 62px;
-  min-height: 62px;
+  height: 100%;
+  min-height: 0;
   overflow: hidden;
-  border-radius: 6px;
-  background: #e2e8f0;
+  background: transparent;
   object-fit: cover;
 }
 
 .carouselThumbnailFallback {
-  color: #2563eb;
+  color: #0e7490;
+  font-size: 28px;
   font-weight: 800;
 }
 
+.carouselThumbnailIndex {
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  display: inline-flex;
+  min-width: 26px;
+  height: 19px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+  border: 1px solid rgb(255 255 255 / 72%);
+  border-radius: 999px;
+  background: rgb(15 23 42 / 76%);
+  color: #fff;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  line-height: 1;
+}
+
 .carouselThumbnailLabel {
-  display: block;
-  flex: 0 0 30px;
+  display: -webkit-box;
+  flex: 1 1 auto;
   width: 100%;
-  height: 30px;
-  min-height: 30px;
+  min-height: 32px;
+  align-content: center;
   overflow: hidden;
-  color: #475569;
+  padding: 5px 3px 1px;
+  color: #334155;
   font-size: 13px;
   font-weight: 700;
-  line-height: 15px;
+  line-height: 16px;
   text-align: center;
   text-overflow: ellipsis;
   white-space: normal;
   overflow-wrap: anywhere;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
+  text-transform: capitalize;
+  transition: color 160ms ease;
+}
+
+.carouselThumbnail:hover .carouselThumbnailLabel,
+.carouselThumbnailActive .carouselThumbnailLabel {
+  color: #0e7490;
 }
 
 .carouselEmpty {
@@ -1018,24 +1095,26 @@
   .carouselThumbnail {
     flex-basis: 96px;
     width: 96px;
-    height: 104px;
-    gap: 4px;
+    height: 112px;
     padding: 4px;
   }
 
-  .carouselThumbnailImage,
-  .carouselThumbnailFallback {
-    flex-basis: 54px;
-    height: 54px;
-    min-height: 54px;
+  .carouselThumbnailVisual {
+    flex-basis: 70px;
+    height: 70px;
   }
 
   .carouselThumbnailLabel {
-    flex-basis: 30px;
-    height: 30px;
-    min-height: 30px;
+    min-height: 32px;
     font-size: 12px;
     line-height: 15px;
+  }
+
+  .carouselThumbnailActive::after {
+    top: 7px;
+    right: 7px;
+    width: 20px;
+    height: 20px;
   }
 }
 

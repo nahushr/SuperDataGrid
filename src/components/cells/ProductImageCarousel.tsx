@@ -135,19 +135,24 @@ export default function ProductImageCarousel({
                 onKeyDown={handleKeyboardNavigation}
                 type="button"
               >
-                {failedImages.has(image.url) ? (
-                  <span className={styles.carouselThumbnailFallback}>
-                    {fallbackLetter}
+                <span className={styles.carouselThumbnailVisual}>
+                  {failedImages.has(image.url) ? (
+                    <span className={styles.carouselThumbnailFallback}>
+                      {fallbackLetter}
+                    </span>
+                  ) : (
+                    <img
+                      alt=""
+                      className={styles.carouselThumbnailImage}
+                      loading="lazy"
+                      onError={() => markFailed(image.url)}
+                      src={image.url}
+                    />
+                  )}
+                  <span aria-hidden="true" className={styles.carouselThumbnailIndex}>
+                    {String(index + 1).padStart(2, "0")}
                   </span>
-                ) : (
-                  <img
-                    alt=""
-                    className={styles.carouselThumbnailImage}
-                    loading="lazy"
-                    onError={() => markFailed(image.url)}
-                    src={image.url}
-                  />
-                )}
+                </span>
                 <span className={styles.carouselThumbnailLabel}>{imageLabel}</span>
               </button>
             );
