@@ -1,6 +1,6 @@
 import React, { useState, type ReactElement } from "react";
 import Popover from "@mui/material/Popover";
-import PlaceOutlinedIcon from "@mui/icons-material/PlaceOutlined";
+import { AddressPopoverCard, type AddressCardData } from "@simplishelf/opscards";
 import { getAddressParts } from "../../utils/commonCellData";
 import styles from "../../styles/common-cells.module.css";
 
@@ -56,9 +56,25 @@ function AddressChip({ address, index, testId }: Readonly<AddressChipProps>): Re
     readText(address, ["streetAddress2", "street2"]),
     readText(address, ["streetAddress3", "street3"]),
   ].filter(Boolean);
-  const fullAddress = [...streetLines, citySummary, country].filter(Boolean).join(", ");
   const primaryId = String(address.addressId ?? address.id ?? index);
   const open = anchorEl != null;
+  const popoverTitle = nickname || (type ? `${type} address` : `Address ${index + 1}`);
+  const popoverAddress: AddressCardData = {
+    id: primaryId,
+    type,
+    nickname,
+    primary: isPrimary,
+    recipient: parts.name,
+    streetAddress: streetLines[0],
+    streetAddress2: streetLines[1],
+    streetAddress3: streetLines[2],
+    city,
+    state,
+    postalCode: postal,
+    country,
+    email: parts.email,
+    phone: parts.phone,
+  };
 
   return (
     <>
@@ -85,38 +101,7 @@ function AddressChip({ address, index, testId }: Readonly<AddressChipProps>): Re
         transformOrigin={{ vertical: "top", horizontal: "left" }}
         classes={{ paper: styles.addressPopover }}
       >
-        <section
-          className={styles.addressPopoverContent}
-          role="dialog"
-          aria-label={`${label} full address`}
-          onClick={(event) => event.stopPropagation()}
-        >
-          <header className={styles.addressPopoverHeader}>
-            <div className={styles.addressPopoverHeading}>
-              <span className={styles.addressPopoverType}>{type || "ADDRESS"}</span>
-              <strong>{nickname || type || `Address ${index + 1}`}</strong>
-            </div>
-            {isPrimary ? <span className={styles.addressPrimaryBadge}>Primary</span> : null}
-          </header>
-          <div className={styles.addressPopoverBody}>
-            <PlaceOutlinedIcon className={styles.addressPopoverIcon} aria-hidden="true" />
-            <div className={styles.addressPopoverLines}>
-              {streetLines.map((line, lineIndex) => (
-                <span key={`${lineIndex}-${line}`}>{line}</span>
-              ))}
-              {citySummary ? <span>{citySummary}</span> : null}
-              {country ? <span>{country}</span> : null}
-              {!fullAddress ? <span>No address details available.</span> : null}
-            </div>
-          </div>
-          {parts.name || parts.email || parts.phone ? (
-            <div className={styles.addressPopoverContact}>
-              {parts.name ? <strong>{parts.name}</strong> : null}
-              {parts.email ? <a href={`mailto:${parts.email}`}>{parts.email}</a> : null}
-              {parts.phone ? <a href={`tel:${parts.phone}`}>{parts.phone}</a> : null}
-            </div>
-          ) : null}
-        </section>
+        <AddressPopoverCard address={popoverAddress} title={popoverTitle} />
       </Popover>
     </>
   );
