@@ -373,7 +373,10 @@ function renderGridCell<Row extends SuperDataGridRow>(
     case "longText":
       return <LongTextCell value={resolvedValue} options={options?.longText} />;
     case "badgeList":
-      return <BadgeListCell value={resolvedValue} row={row as Record<string, unknown>} options={options?.badgeList} />;
+      // The grid value getter reduces badge lists to searchable text. Keep the
+      // original objects for rendering so per-item metadata (such as colors)
+      // remains available to the reusable badge-list cell.
+      return <BadgeListCell value={options?.valueGetter ? resolvedValue : rawValue} row={row as Record<string, unknown>} options={options?.badgeList} />;
     case "metricList":
       return <MetricListCell value={resolvedValue} options={options?.metricList} />;
     case "countChip":
