@@ -303,7 +303,7 @@
 .emptyContactValue {
   padding-left: 24px;
   color: #64748b;
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
 }
 
 .addressChipList {
@@ -322,7 +322,7 @@
   max-width: 100%;
   align-items: center;
   gap: 5px;
-  padding: 4px 8px;
+  padding: 5px 9px;
   overflow: hidden;
   color: #0e7490;
   background: #ecfeff;
@@ -330,8 +330,8 @@
   border-radius: 999px;
   cursor: pointer;
   font: inherit;
-  font-size: 11px;
-  line-height: 1.2;
+  font-size: 13px;
+  line-height: 1.3;
   transition: background-color 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
 }
 
