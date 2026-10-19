@@ -245,10 +245,16 @@ export interface SuperDataGridMetricListOptions {
 }
 
 export interface SuperDataGridPeopleDetailsOptions {
-  /** Render the address included in the people value beneath its contact details. */
+  /** Render addresses included in the people value beneath its contact details. */
   showAddress?: boolean;
-  /** Property in the people value containing the address object. Defaults to `address`. */
+  /** Property in the people value containing the address object or list. Defaults to `address`. */
   addressField?: string;
+  /** Render one compact chip per address instead of the inline address block. */
+  addressDisplay?: "inline" | "chips";
+  /** Show an avatar next to the name. Defaults to the grid's existing avatar behavior. */
+  showAvatar?: boolean;
+  /** Show the fallback person icon when no avatar is displayed. Defaults to true. */
+  showNameIcon?: boolean;
 }
 
 /** A person shown in one side of a two-person assignment and audit cell. */

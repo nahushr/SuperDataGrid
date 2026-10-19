@@ -46,6 +46,21 @@ describe("grid cell renderers", () => {
     expect(screen.getByText("Alex Doe")).toBeInTheDocument();
     expect(document.querySelector('img[alt="Alex Doe"]')).toHaveAttribute("src", "avatar.jpg");
     expect(screen.getByRole("link", { name: /\+1/i })).toHaveAttribute("href", "tel:+14155552671");
+    rerender(
+      <PeopleDetailsCell
+        value={{
+          name: "Downtown Office",
+          addresses: [
+            { addressId: 12, addressType: "OFFICE", city: "Boston", state: "MA", streetAddress: "10 Main St" },
+            { addressId: 13, addressType: "WAREHOUSE", city: "Salem", state: "MA", streetAddress: "22 Harbor Rd" },
+          ],
+        }}
+        options={{ showAddress: true, addressField: "addresses", addressDisplay: "chips", showAvatar: false, showNameIcon: false }}
+      />,
+    );
+    expect(screen.getByText("Downtown Office")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /OFFICE, Boston, MA/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /WAREHOUSE, Salem, MA/i })).toBeInTheDocument();
     rerender(<PeopleDetailsCell value={{}} emptyText="Unknown" />);
     expect(screen.getByText("Unknown")).toBeInTheDocument();
     rerender(<PeopleDetailsCell value={{}} showEmptyFields showPhone={false} />);

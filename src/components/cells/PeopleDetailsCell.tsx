@@ -6,6 +6,7 @@ import { getPeopleAvatarParts, getPeopleDetailsParts } from "../../utils/commonC
 import { getAvatarColorIndex } from "../../utils/avatar";
 import type { SuperDataGridPeopleDetailsOptions } from "../../types";
 import AddressCell from "./AddressCell";
+import AddressChipsCell from "./AddressChipsCell";
 import EmailCell from "./EmailCell";
 import PhoneCell from "./PhoneCell";
 import styles from "../../styles/common-cells.module.css";
@@ -52,11 +53,12 @@ export default function PeopleDetailsCell({
   const address = options.showAddress
     ? valueRecord?.[options.addressField ?? "address"]
     : undefined;
+  const hasAddress = Array.isArray(address) ? address.length > 0 : address != null;
   const avatar = getPeopleAvatarParts(value, row);
   const avatarColorIndex = getAvatarColorIndex(rowId ?? "unknown");
   const avatarColorClass = AVATAR_COLOR_CLASSES[avatarColorIndex];
 
-  if (!name && !email && !(showPhone && phone) && address == null && !showEmptyFields) {
+  if (!name && !email && !(showPhone && phone) && !hasAddress && !showEmptyFields) {
     return <span className={styles.emptyValue}>{emptyText}</span>;
   }
 
@@ -73,7 +75,7 @@ export default function PeopleDetailsCell({
             >
               {avatar.firstName.slice(0, 1).toUpperCase() || "?"}
             </Avatar>
-          ) : (
+          ) : options.showNameIcon === false ? null : (
             <PersonIcon className={styles.personIcon} aria-hidden="true" />
           )}
           <span className={styles.personName} title={name}>
@@ -87,13 +89,15 @@ export default function PeopleDetailsCell({
         <span className={styles.emptyContactValue}>{emptyText}</span>
       ))}
       {showPhone && phone && <PhoneCell value={phone} wrap />}
-      {address != null && (
+      {hasAddress && (options.addressDisplay === "chips" ? (
+        <AddressChipsCell value={address} testId="people-details-address" />
+      ) : (
         <AddressCell
           value={address}
           showContactInfo={false}
           testId="people-details-address"
         />
-      )}
+      ))}
     </div>
   );
 }

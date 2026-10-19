@@ -351,7 +351,15 @@ function renderGridCell<Row extends SuperDataGridRow>(
     case "activity":
       return <ActivityCell row={row as Record<string, unknown>} options={options?.activity} />;
     case "peopleDetails":
-      return <PeopleDetailsCell value={resolvedValue} row={row} rowId={(row as GridValidRowModel).id} showAvatar options={options?.peopleDetails} />;
+      return (
+        <PeopleDetailsCell
+          value={resolvedValue}
+          row={row}
+          rowId={(row as GridValidRowModel).id}
+          showAvatar={options?.peopleDetails?.showAvatar ?? true}
+          options={options?.peopleDetails}
+        />
+      );
     case "peopleAuditPair":
       return <PeopleAuditPairCell value={resolvedValue} />;
     case "address":
